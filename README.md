@@ -2,18 +2,16 @@
 
 Group Project for CIS4930
 
-## Setup
+## Development Setup
 
-Setup tools are under development. If you wish to contribute to the project, perform the following actions.
+This project should be developed in a clean virtual environment with pygame installed. To set up a new virtual environment that follows these requirements in PyCharm, do the following:
 
-1. **File**, **Settings**, **Project:Shooting_For_The_Star.../Python Interpreter**
-2. Click on the **gear icon** to the right of the scroll box.
-3. **Add...**
-4. **Virtulenv Environment**, **New environment** (should be created in the Shooting_For_The_Stars\ directory)
-6. Make sure that the new interpreter is selected.
-7. Click on the **+** icon.
-8. Search "**pygame**"
-9. **Install Package**
-9. **OK**
+1. File > Settings > Project > Python Interpreter
+2. Gear Icon > Add > Virtualenv Environment > New environment
+3. IMPORTANT: the location of the virtual environment does NOT need to exist in the project directory. It is discouraged to do so since venvs are not typically added in repos since they add up after numerous pushes. Instead, designate a separate directory to contain your venvs.
+4. Make available to all projects > OK
+5. After your new venv interpreter is selected, click on the plus icon
+6. search pygame > Install Package
+7. Apply
 
-Check to see if setup was done correctly by right clicking on main.py and click **Run 'main'**
+Now you can test if your venv is ready by right clicking on main.py and running it. While the project directory might change throughout development, your venv will not be destroyed or changed.
