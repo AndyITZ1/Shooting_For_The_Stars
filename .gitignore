@@ -1,2 +1,4 @@
 # Virtual environment
 /venv/
+# User specific files
+.idea/workspace.xml
