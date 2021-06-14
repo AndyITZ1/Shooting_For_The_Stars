@@ -9,6 +9,7 @@ class Game:
         pygame.init()
         self.playing = False
         self.set_pressed = False
+        self.LEFT_CLICK = False
 
         # width and height of the window
         self.WIDTH = 800
@@ -30,10 +31,17 @@ class Game:
         # background 800 x 600 img
         self.gamebg = pygame.image.load('assets/gamebg.png')
 
+        # font name
+        self.font_loc = 'assets/playmegames.ttf'
+
         # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
         pygame.mixer.music.load('assets/8bitmusic.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
+
+        # bgm sound
+        self.sfx_blip = pygame.mixer.Sound('assets/blip.wav')
+        self.sfx_blip.set_volume(0.4)
 
         self.mouse = pygame.mouse.get_pos()
 
@@ -69,6 +77,16 @@ class Game:
                     sys.exit()
                 elif 0 <= self.mouse[0] <= 32 and 0 <= self.mouse[1] <= 32:
                     self.set_pressed = True
+                    self.sfx_blip.play()
+                self.LEFT_CLICK = True
 
     def reset_state(self):
         self.set_pressed = False
+        self.LEFT_CLICK = False
+
+    def draw_text(self, text, size, x, y):
+        font = pygame.font.Font(self.font_loc, size)
+        text_surface = font.render(text, True, (0, 0, 0))
+        text_rect = text_surface.get_rect()
+        text_rect.center = (x, y)
+        self.screen.blit(text_surface, text_rect)
