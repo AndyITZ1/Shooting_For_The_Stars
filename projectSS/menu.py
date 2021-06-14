@@ -92,11 +92,11 @@ class SettingsMenu(Menu):
                     self.music_level += 1
                     pygame.mixer.music.set_volume(self.music_level*0.02)
             elif self.mid_w*0.58 <= self.game.mouse[0] <= self.mid_w*0.62 and self.mid_h*1.18 <= self.game.mouse[1] <= self.mid_w*1.22:
-                if self.music_level > 0:
+                if self.sfx_level > 0:
                     self.sfx_level -= 1
                     self.game.sfx_blip.set_volume(self.sfx_level*0.08)
             elif self.mid_w*1.38 <= self.game.mouse[0] <= self.mid_w*1.42 and self.mid_h*1.18 <= self.game.mouse[1] <= self.mid_w*1.22:
-                if self.music_level < 10:
+                if self.sfx_level < 10:
                     self.sfx_level += 1
                     self.game.sfx_blip.set_volume(self.sfx_level*0.08)
             else:
