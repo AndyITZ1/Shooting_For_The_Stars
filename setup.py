@@ -16,7 +16,6 @@ setup(
         "Topic :: Games/Entertainment"
     ],
     packages=['projectSS', ],  # Name of the modules. Do we need any, since we are developing a game?
-    package_dir={'': 'projectSS'},  # ?
     install_requires=[
         "pygame >= 2.0.1"
     ],
