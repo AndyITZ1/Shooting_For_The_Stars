@@ -122,3 +122,4 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,venv
 
 /shooting_for_the_stars.egg-info/
+/projectSS/__pycache__/

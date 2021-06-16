@@ -1,4 +1,4 @@
-from game import Game
+from projectSS.game import Game
 
 # Icon made by Freepik from www.flaticon.com
 

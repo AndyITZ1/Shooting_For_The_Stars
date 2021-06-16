@@ -1,6 +1,6 @@
 import pygame
 import sys
-from menu import *
+from projectSS.menu import *
 
 
 class Game:

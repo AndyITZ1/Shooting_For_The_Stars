@@ -1,4 +1,0 @@
-recursive-include projectSS *.mp3
-recursive-include projectSS *.png
-recursive-include projectSS *.ttf
-recursive-include projectSS *.wav
