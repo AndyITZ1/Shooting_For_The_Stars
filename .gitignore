@@ -123,3 +123,5 @@ pip-selfcheck.json
 
 /shooting_for_the_stars.egg-info/
 /projectSS/__pycache__/
+/build/
+/dist/
