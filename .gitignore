@@ -125,3 +125,4 @@ pip-selfcheck.json
 /projectSS/__pycache__/
 /build/
 /dist/
+*.xml

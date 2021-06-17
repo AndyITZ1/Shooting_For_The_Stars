@@ -15,3 +15,16 @@ This project should be developed in a clean virtual environment with pygame inst
 7. Apply
 
 Now you can test if your venv is ready by right clicking on main.py and running it. While the project directory might change throughout development, your venv will not be destroyed or changed.
+
+
+
+## Source Distribution and Installation
+
+To create a source distribution from the project, go to the directory "Shooting_For_The_Stars" and execute the setup.py script like so: "python setup.py sdist". This will create a new dist directory containing your sdist.
+
+If you want to install this sdist, say on a new computer or in a new venv, you can either
+
+- go to the extracted sdist directory and run the command "python setup.py install".
+- Run the command "pip install -e <absolute path to the project directory>"
+
+Once the game is installed, you can run it in a command window by running "shooting_for_the_stars".
