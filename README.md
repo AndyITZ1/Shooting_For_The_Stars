@@ -15,12 +15,3 @@ This project should be developed in a clean virtual environment with pygame inst
 7. Apply
 
 Now you can test if your venv is ready by right clicking on main.py and running it. While the project directory might change throughout development, your venv will not be destroyed or changed.
-
-
-
-## Creating the Executable
-
-Along with pygame installed, you need to install the "cx_Freeze" package. This package is what's used to create an executable and the MSI.
-
-- In a terminal (such as the one in PyCharm), run "python setup.py build". This will create an executable located in the new build directory.
-- In a terminal (such as the one in PyCharm), run "python setup.py bdist_msi". This will create an MSI in the new dist directory.  Running this MSI will guide you in the installation process for the game.
