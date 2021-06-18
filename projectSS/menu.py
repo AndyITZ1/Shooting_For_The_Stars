@@ -26,9 +26,10 @@ class MainMenu(Menu):
             self.game.screen.blit(self.game.gamebg, (0, 0))
 
             self.game.draw_text('Shooting for the Stars', 40, self.mid_w, self.mid_h-40)
+
             # the default quit button will be drawn and if hovered over the quit light up button is drawn instead
             if self.game.WIDTH >= self.game.mouse[0] >= self.quit_x and self.game.HEIGHT >= self.game.mouse[1] >= self.quit_y:
-                self.game.screen.blit(self.game.quit_light_img, (self.quit_x, self.quit_y))
+                self.game.screen.blit(self.game.quit_light, (self.quit_x, self.quit_y))
             else:
                 self.game.screen.blit(self.game.quit_img, (self.quit_x, self.quit_y))
 
@@ -39,7 +40,10 @@ class MainMenu(Menu):
                 self.game.screen.blit(self.game.play_button, (self.play_x, self.play_y))
 
             # settings button
-            self.game.screen.blit(self.game.settings, (self.setting_x, self.setting_y))
+            if 35 >= self.game.mouse[0] > self.setting_x and 35 >= self.game.mouse[1] > self.setting_y:
+                self.game.screen.blit(self.game.settings_light, (self.setting_x, self.setting_y))
+            else:
+                self.game.screen.blit(self.game.settings, (self.setting_x, self.setting_y))
 
             pygame.display.update()
             self.game.reset_state()
@@ -63,7 +67,10 @@ class SettingsMenu(Menu):
             self.check_input()
             self.game.screen.fill((255, 140, 105))
             # back to main menu
-            self.game.screen.blit(self.game.quit_img, (3, 3))
+            if 35 >= self.game.mouse[0] > 3 and 35 >= self.game.mouse[1] > 3:
+                self.game.screen.blit(self.game.quit_light, (3, 3))
+            else:
+                self.game.screen.blit(self.game.quit_img, (3, 3))
 
             self.game.draw_text('Options', 50, self.mid_w, self.mid_h*0.4)
             self.game.draw_text('Music Volume', 30, self.mid_w, self.mid_h*0.6)

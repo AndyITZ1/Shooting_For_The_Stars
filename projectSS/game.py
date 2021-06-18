@@ -2,6 +2,8 @@ import sys
 from projectSS.menu import *
 import os
 
+# Icon made by Freepik from www.flaticon.com
+
 
 class Game:
     def __init__(self):
@@ -15,20 +17,28 @@ class Game:
         self.WIDTH = 800
         self.HEIGHT = 600
 
+        # Create the game window.
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
 
         # loading assets.
-        # TODO: PLEASE use the below line of code to import assets! Without it, the installation is broken!
+        # TODO: PLEASE use the below line of code to import assets! Without it, the installation will break!
         abs_dir = os.path.dirname(__file__)
+
+        # Window caption and icon
+        pygame.display.set_caption("Shooting For The Stars")
+        self.icon = pygame.image.load(os.path.join(abs_dir, 'assets/musical_notes.png'))
+        pygame.display.set_icon(self.icon)
+
         # black-colored quit button (default look) (32x32)
         self.quit_img = pygame.image.load(os.path.join(abs_dir, 'assets/exit.png'))
         # when hovered quit button lights up (32x32)
-        self.quit_light_img = pygame.image.load(os.path.join(abs_dir, 'assets/exit_light.png'))
+        self.quit_light = pygame.image.load(os.path.join(abs_dir, 'assets/exit_light.png'))
 
         self.play_button = pygame.image.load(os.path.join(abs_dir, 'assets/play.png'))
-        self.play_light = pygame.image.load(os.path.join(abs_dir, 'assets/playlight.png'))
+        self.play_light = pygame.image.load(os.path.join(abs_dir, 'assets/play_light.png'))
 
         self.settings = pygame.image.load(os.path.join(abs_dir, 'assets/settings.png'))
+        self.settings_light = pygame.image.load(os.path.join(abs_dir, "assets/settings_light.png"))
 
         # background 800 x 600 img
         self.gamebg = pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png'))
