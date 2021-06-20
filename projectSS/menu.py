@@ -23,27 +23,29 @@ class MainMenu(Menu):
             self.game.check_events()
             self.check_input()
             # draws the background using the image
-            self.game.screen.blit(self.game.gamebg, (0, 0))
+            self.game.screen.blit(self.game.assets["main_menu_bg"], (0, 0))
 
             self.game.draw_text('Shooting for the Stars', 40, self.mid_w, self.mid_h-40)
 
             # the default quit button will be drawn and if hovered over the quit light up button is drawn instead
-            if self.game.WIDTH >= self.game.mouse[0] >= self.quit_x and self.game.HEIGHT >= self.game.mouse[1] >= self.quit_y:
-                self.game.screen.blit(self.game.quit_light, (self.quit_x, self.quit_y))
+            if self.game.WIDTH >= self.game.mouse[0] >= self.quit_x and \
+                    self.game.HEIGHT >= self.game.mouse[1] >= self.quit_y:
+                self.game.screen.blit(self.game.assets["quit_light"], (self.quit_x, self.quit_y))
             else:
-                self.game.screen.blit(self.game.quit_img, (self.quit_x, self.quit_y))
+                self.game.screen.blit(self.game.assets["quit_img"], (self.quit_x, self.quit_y))
 
             # play button
-            if self.mid_w + 32 >= self.game.mouse[0] >= self.play_x and self.mid_h+64 >= self.game.mouse[1] >= self.mid_h:
-                self.game.screen.blit(self.game.play_light, (self.play_x, self.play_y))
+            if self.mid_w + 32 >= self.game.mouse[0] >= self.play_x and \
+                    self.mid_h+64 >= self.game.mouse[1] >= self.mid_h:
+                self.game.screen.blit(self.game.assets["play_light"], (self.play_x, self.play_y))
             else:
-                self.game.screen.blit(self.game.play_button, (self.play_x, self.play_y))
+                self.game.screen.blit(self.game.assets["play_button"], (self.play_x, self.play_y))
 
             # settings button
             if 35 >= self.game.mouse[0] > self.setting_x and 35 >= self.game.mouse[1] > self.setting_y:
-                self.game.screen.blit(self.game.settings_light, (self.setting_x, self.setting_y))
+                self.game.screen.blit(self.game.assets["settings_light"], (self.setting_x, self.setting_y))
             else:
-                self.game.screen.blit(self.game.settings, (self.setting_x, self.setting_y))
+                self.game.screen.blit(self.game.assets["settings"], (self.setting_x, self.setting_y))
 
             pygame.display.update()
             self.game.reset_state()
@@ -68,20 +70,22 @@ class SettingsMenu(Menu):
             self.game.screen.fill((255, 140, 105))
             # back to main menu
             if 35 >= self.game.mouse[0] > 3 and 35 >= self.game.mouse[1] > 3:
-                self.game.screen.blit(self.game.quit_light, (3, 3))
+                self.game.screen.blit(self.game.assets["quit_light"], (3, 3))
             else:
-                self.game.screen.blit(self.game.quit_img, (3, 3))
+                self.game.screen.blit(self.game.assets["quit_img"], (3, 3))
 
             self.game.draw_text('Options', 50, self.mid_w, self.mid_h*0.4)
             self.game.draw_text('Music Volume', 30, self.mid_w, self.mid_h*0.6)
             self.game.draw_text('-', 30, self.mid_w*0.6, self.mid_w*0.6)
             for i in range(0, self.music_level):
-                pygame.draw.rect(self.game.screen, (0, 0, 0), pygame.Rect(self.mid_w*(0.63+i*0.08), self.mid_h*0.75, 12, 20))
+                pygame.draw.rect(self.game.screen, (0, 0, 0),
+                                 pygame.Rect(self.mid_w*(0.63+i*0.08), self.mid_h*0.75, 12, 20))
             self.game.draw_text('+', 30, self.mid_w*1.4, self.mid_h*0.8)
             self.game.draw_text('SFX Volume', 30, self.mid_w, self.mid_h)
             self.game.draw_text('-', 30, self.mid_w*0.6, self.mid_h*1.2)
             for i in range(0, self.sfx_level):
-                pygame.draw.rect(self.game.screen, (0, 0, 0), pygame.Rect(self.mid_w*(0.63+i*0.08), self.mid_h*1.15, 12, 20))
+                pygame.draw.rect(self.game.screen, (0, 0, 0),
+                                 pygame.Rect(self.mid_w*(0.63+i*0.08), self.mid_h*1.15, 12, 20))
             self.game.draw_text('+', 30, self.mid_w*1.4, self.mid_h*1.2)
             pygame.display.update()
             self.game.reset_state()
@@ -90,22 +94,26 @@ class SettingsMenu(Menu):
         blip_flag = False
         if self.game.LEFT_CLICK:
             blip_flag = True
-            if self.mid_w*0.58 <= self.game.mouse[0] <= self.mid_w*0.62 and self.mid_h*0.78 <= self.game.mouse[1] <= self.mid_w*0.82:
+            if self.mid_w*0.58 <= self.game.mouse[0] <= self.mid_w*0.62 and \
+                    self.mid_h*0.78 <= self.game.mouse[1] <= self.mid_w*0.82:
                 if self.music_level > 0:
                     self.music_level -= 1
                     pygame.mixer.music.set_volume(self.music_level*0.02)
-            elif self.mid_w*1.38 <= self.game.mouse[0] <= self.mid_w*1.42 and self.mid_h*0.78 <= self.game.mouse[1] <= self.mid_w*0.82:
+            elif self.mid_w*1.38 <= self.game.mouse[0] <= self.mid_w*1.42 and \
+                    self.mid_h*0.78 <= self.game.mouse[1] <= self.mid_w*0.82:
                 if self.music_level < 10:
                     self.music_level += 1
                     pygame.mixer.music.set_volume(self.music_level*0.02)
-            elif self.mid_w*0.58 <= self.game.mouse[0] <= self.mid_w*0.62 and self.mid_h*1.18 <= self.game.mouse[1] <= self.mid_w*1.22:
+            elif self.mid_w*0.58 <= self.game.mouse[0] <= self.mid_w*0.62 and \
+                    self.mid_h*1.18 <= self.game.mouse[1] <= self.mid_w*1.22:
                 if self.sfx_level > 0:
                     self.sfx_level -= 1
-                    self.game.sfx_blip.set_volume(self.sfx_level*0.08)
-            elif self.mid_w*1.38 <= self.game.mouse[0] <= self.mid_w*1.42 and self.mid_h*1.18 <= self.game.mouse[1] <= self.mid_w*1.22:
+                    self.game.assets["sfx_blip"].set_volume(self.sfx_level*0.08)
+            elif self.mid_w*1.38 <= self.game.mouse[0] <= self.mid_w*1.42 and \
+                    self.mid_h*1.18 <= self.game.mouse[1] <= self.mid_w*1.22:
                 if self.sfx_level < 10:
                     self.sfx_level += 1
-                    self.game.sfx_blip.set_volume(self.sfx_level*0.08)
+                    self.game.assets["sfx_blip"].set_volume(self.sfx_level*0.08)
             else:
                 blip_flag = False
         if self.game.set_pressed:
@@ -114,5 +122,4 @@ class SettingsMenu(Menu):
             self.run_display = False
 
         if blip_flag:
-            self.game.sfx_blip.play()
-
+            self.game.assets["sfx_blip"].play()
