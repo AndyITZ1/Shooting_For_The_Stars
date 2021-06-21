@@ -39,7 +39,7 @@ class Game:
                          "btn_plus": pygame.image.load(os.path.join(abs_dir, "assets/plus.png")),
                          "btn_plus_light": pygame.image.load(os.path.join(abs_dir, "assets/plus_light.png")),
                          "main_menu_bg": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
-                         "game_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
+                         "game_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.jpg')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
 
