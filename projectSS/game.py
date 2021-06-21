@@ -1,6 +1,6 @@
 import sys
 import os
-from projectSS.menu import *
+from projectSS.menus import *
 
 # Icon made by Freepik from www.flaticon.com
 
