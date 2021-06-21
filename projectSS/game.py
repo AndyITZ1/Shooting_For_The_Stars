@@ -38,7 +38,8 @@ class Game:
                          "btn_minus_light": pygame.image.load(os.path.join(abs_dir, "assets/minus-light.png")),
                          "btn_plus": pygame.image.load(os.path.join(abs_dir, "assets/plus.png")),
                          "btn_plus_light": pygame.image.load(os.path.join(abs_dir, "assets/plus_light.png")),
-                         "main_menu_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
+                         "main_menu_bg": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
+                         "game_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
 
@@ -63,12 +64,15 @@ class Game:
         self.scrn_main_menu = MainMenu(self)
         self.scrn_settings_menu = SettingsMenu(self)
         self.scrn_gameplay_screen = GameplayScreen(self)
-        
+
         # Set MainMenu as default game screen
         self.game_screen = self.scrn_main_menu
         
         # Game screen to change to on the next update
         self.next_game_screen = None
+
+        # Keep track of previous screen to know where to return on button clicks.
+        self.prev_screen = None
         
         # Run game
         self.game_loop()
@@ -96,6 +100,7 @@ class Game:
         
         # Change game screen if necessary
         if self.next_game_screen is not None:
+            self.prev_screen = self.game_screen
             self.game_screen = self.next_game_screen
             self.next_game_screen = None
         
@@ -130,7 +135,11 @@ class Game:
         
     def show_main_game_screen(self):
         self.next_game_screen = self.scrn_gameplay_screen
-        pass
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
+        pygame.mixer.music.play(-1)
+
+    def show_previous_screen(self):
+        self.next_game_screen = self.prev_screen
     
     # Apply settings updates
     def update_settings(self):
@@ -151,7 +160,6 @@ class Game:
         
         # TODO: All sfx should be in a list so they can be updated here, don't hard code
         self.assets["sfx_blip"].set_volume(self.setting_sfx_volume * 0.5)
-    
 
     @property
     def assets(self):

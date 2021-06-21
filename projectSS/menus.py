@@ -89,7 +89,7 @@ class SettingsMenu(Menu):
         
         self.btn_exit = Button(8, 8,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
-                               self.game.show_main_menu_screen, self.game)
+                               self.game.show_previous_screen, self.game)
         
         self.btn_music_minus = Button(self.center_x - 64, self.center_y - 64,
                                       self.game.assets["btn_minus"], self.game.assets["btn_minus_light"],
