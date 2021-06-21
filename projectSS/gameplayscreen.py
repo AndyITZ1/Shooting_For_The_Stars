@@ -1,6 +1,8 @@
 import sys
+import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
+from projectSS.entities import Player, Platform
 
 
 # TODO: write clean code pls
@@ -19,6 +21,17 @@ class GameplayScreen(GameScreen):
         self.buttons = []
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
+
+        # Initializing gameplay and calculation variables
+        self.__vector = pygame.math.Vector2
+        self.__acceleration = 0.5
+        self.__friction = -0.12
+        self.__FPS = 60
+        self.__FramePerSecond = pygame.time.Clock()
+
+        # Creation of the player and base platform
+        self.__platform1 = Platform(game)
+        self.__player = Player(game)
 
     def update(self):
         self.update_buttons()
