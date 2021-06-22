@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from pygame.locals import *
 
@@ -68,6 +70,7 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.surf = pygame.Surface((game.WIDTH, 20))
+        self.surf = pygame.Surface((random.randint(50,100), 12))
         self.surf.fill((211, 211, 211))
-        self.rect = self.surf.get_rect(center=(game.WIDTH / 2, game.HEIGHT - 10))    # center = spawn position
+        self.rect = self.surf.get_rect(center=(random.randint(0, game.WIDTH - 10),
+                                               random.randint(0, game.HEIGHT - 30)))    # center = spawn position

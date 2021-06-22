@@ -1,4 +1,7 @@
+import random
 import sys
+
+import pygame
 import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
@@ -28,6 +31,9 @@ class GameplayScreen(GameScreen):
 
         # Creation of the player and base platform
         self.PT1 = Platform(game)
+        self.PT1.surf = pygame.Surface((game.WIDTH, 20))
+        self.PT1.surf.fill((255, 0, 0))
+        self.PT1.rect = self.PT1.surf.get_rect(center = (game.WIDTH / 2, game.HEIGHT - 10))
         self.P1 = Player(game, self)
 
         # Creating a list of sprites and adding platform & player in it. Allows easy sprite access later in code.
@@ -39,11 +45,32 @@ class GameplayScreen(GameScreen):
         self.platforms = pygame.sprite.Group()
         self.platforms.add(self.PT1)
 
+        for x in range(random.randint(5,6)):
+            pl = Platform(game)
+            self.platforms.add(pl)
+            self.all_sprites.add(pl)
+
+    def plat_gen(self):
+        while len(self.platforms) < 7 :
+            width = random.randrange(50, 100)
+            p = Platform(self.game)
+            p.rect.center = (random.randrange(0, self.game.WIDTH - width), random.randrange(-50, 0))
+            self.platforms.add(p)
+            self.all_sprites.add(p)
+
     # All game logic and their changes go in this method
     def update(self):
         # This FramePerSecond clock object limits the FPS, determined by the FPS variable. Smooths gameplay.
         self.FramePerSec.tick(self.FPS)
         self.update_buttons()
+
+        # allows for screen to scroll up and destroy
+        if self.P1.rect.top <= self.game.HEIGHT / 3:
+            self.P1.pos.y += abs(self.P1.vel.y)
+            for plat in self.platforms:
+                plat.rect.y += abs(self.P1.vel.y)
+                if plat.rect.top >= self.game.HEIGHT:
+                    plat.kill()
 
         # Update the movement of the player
         self.P1.move()
@@ -58,6 +85,9 @@ class GameplayScreen(GameScreen):
         # Draw all sprites in our sprite group
         for entity in self.all_sprites:
             self.game.screen.blit(entity.surf, entity.rect)
+
+        # Creates platforms as screen scrolls upward
+        self.plat_gen()
 
     def update_buttons(self):
         for btn in self.buttons:
