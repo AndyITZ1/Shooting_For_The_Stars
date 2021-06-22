@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.surf = pygame.Surface((30, 30))
         self.surf.fill((237, 55, 55))
         self.rect = self.surf.get_rect()
+        self.alive = True
 
         # Kinematics: Governs the physics of player movement. vec allows us to make 2D vector variables.
         self.vec = pygame.math.Vector2
@@ -46,6 +47,10 @@ class Player(pygame.sprite.Sprite):
             self.pos.x = 0
         if self.pos.x < 0:
             self.pos.x = self.game.WIDTH
+
+        # Check for for player death if player falls off of screen
+        if self.pos.y > self.game.HEIGHT:
+            self.alive = False
 
         # Update the player rectangle to be at the new position that was calculated above
         self.rect.midbottom = self.pos

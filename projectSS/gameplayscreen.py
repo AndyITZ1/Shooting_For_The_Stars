@@ -76,6 +76,12 @@ class GameplayScreen(GameScreen):
         self.P1.move()
         self.P1.update()
 
+        # Check if the player has died
+        if not self.P1.alive:
+            self.game.show_main_menu_screen()
+            self.game.scrn_gameplay_screen = GameplayScreen(self.game)
+            # TODO: Make a more elegant way of killing the current game process, game music still persists
+
     # All game visuals and their changes go in this method
     def render(self):
         # Draws the background and buttons
