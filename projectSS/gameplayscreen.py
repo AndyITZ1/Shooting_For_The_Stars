@@ -90,14 +90,6 @@ class GameplayScreen(GameScreen):
                 if plat.rect.top >= self.game.HEIGHT:
                     plat.kill()
 
-        for event in self.game.events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.P1.jump()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    self.P1.cancel_jump()
-
         # Update the movement of the player
         self.P1.move()
         self.P1.update()

@@ -35,12 +35,13 @@ class Player(pygame.sprite.Sprite):
             self.acc.x = -self.ACC
         if pressed_keys[K_RIGHT]:
             self.acc.x = self.ACC
-        #if pressed_keys[K_SPACE]:
-            #self.jump()
+        if pressed_keys[K_SPACE]:
+            self.jump()
 
         # Basic kinematics. They all change based on the acceleration from above.
         self.acc.x += self.vel.x * self.FRIC
         self.vel += self.acc
+        print(self.vel)
         self.pos += self.vel + 0.5 * self.acc
 
         # FEATURE: Screen Warping. Player will wrap around screen borders. Can be removed with border acting as barrier.
@@ -59,7 +60,7 @@ class Player(pygame.sprite.Sprite):
     # Jump method first check if a player is on a platform before allowing player to jump
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
-        if hits and not self.jumping:
+        if hits:
             self.jumping = True
             self.vel.y = -15    # TODO: Change jump value to suit game needs.
 
@@ -73,8 +74,12 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if self.vel.y > 0:
             if hits:
-                if self.pos.y < hits[0].rect.bottom:
-                    self.pos.y = hits[0].rect.top + 1  # hits[0] returns the first collision in the list
+                lowest = hits[0]
+                for hit in hits:
+                    if hit.rect.bottom > lowest.rect.bottom:
+                        lowest = hit
+                if self.pos.y < lowest.rect.bottom:
+                    self.pos.y = lowest.rect.top + 1  # hits[0] returns the first collision in the list
                     self.vel.y = 0
                     self.jumping = False
 
