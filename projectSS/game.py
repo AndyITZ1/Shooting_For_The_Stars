@@ -73,7 +73,7 @@ class Game:
 
         # Keep track of previous screen to know where to return on button clicks.
         self.prev_screen = None
-        
+        self.events = pygame.event.get()
         # Run game
         self.game_loop()
 
@@ -90,7 +90,8 @@ class Game:
         self.mouse_clicked = False
         
         # Handle events
-        for event in pygame.event.get():
+        self.events = pygame.event.get()
+        for event in self.events:
             # if X button of window is clicked the game is exited
             if event.type == pygame.QUIT:
                 sys.exit()
