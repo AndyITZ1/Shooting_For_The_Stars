@@ -39,17 +39,13 @@ class Game:
                          "btn_plus": pygame.image.load(os.path.join(abs_dir, "assets/plus.png")),
                          "btn_plus_light": pygame.image.load(os.path.join(abs_dir, "assets/plus_light.png")),
                          "main_menu_bg": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
-                         "game_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.jpg')),
+                         "game_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
         pygame.display.set_icon(self.__assets["icon"])
-
-        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
-        pygame.mixer.music.load(os.path.join(abs_dir, 'assets/8bitmusic.mp3'))
-        pygame.mixer.music.play(-1)
         
         # Game settings
         self.setting_music_volume = 0.8
@@ -73,7 +69,8 @@ class Game:
 
         # Keep track of previous screen to know where to return on button clicks.
         self.prev_screen = None
-        
+
+        self.player_jump = False
         # Run game
         self.game_loop()
 
@@ -97,7 +94,11 @@ class Game:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_clicked = True
-        
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.player_jump = True
+
         # Change game screen if necessary
         if self.next_game_screen is not None:
             self.prev_screen = self.game_screen
@@ -129,6 +130,9 @@ class Game:
     # Methods used by the current game screen to change to a different game screen
     def show_main_menu_screen(self):
         self.next_game_screen = self.scrn_main_menu
+        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
+        pygame.mixer.music.play(-1)
         
     def show_settings_screen(self):
         self.next_game_screen = self.scrn_settings_menu

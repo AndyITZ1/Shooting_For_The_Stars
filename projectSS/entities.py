@@ -14,6 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.surf.fill((237, 55, 55))
         self.rect = self.surf.get_rect()
         self.alive = True
+        self.jumping = False
 
         # Kinematics: Governs the physics of player movement. vec allows us to make 2D vector variables.
         self.vec = pygame.math.Vector2
@@ -34,8 +35,6 @@ class Player(pygame.sprite.Sprite):
             self.acc.x = -self.ACC
         if pressed_keys[K_RIGHT]:
             self.acc.x = self.ACC
-        if pressed_keys[K_SPACE]:
-            self.jump()
 
         # Basic kinematics. They all change based on the acceleration from above.
         self.acc.x += self.vel.x * self.FRIC
@@ -59,15 +58,26 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if hits:
+            self.game.player_jump = False
             self.vel.y = -15    # TODO: Change jump value to suit game needs.
+
+    def cancel_jump(self):
+        if self.jumping:
+            if self.vel.y < -3:
+                self.vel.y = -3
 
     # Player platform collision detection. Check if velocity is greater than 0 to prevent jump cancellation
     def update(self):
-        hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if self.vel.y > 0:
+            hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
             if hits:
-                self.vel.y = 0
-                self.pos.y = hits[0].rect.top + 1   # hits[0] returns the first collision in the list
+                lowest = hits[0]
+                for hit in hits:
+                    if lowest.rect.bottom < hit.rect.bottom:
+                        lowest = hit
+                if self.pos.y < lowest.rect.bottom:
+                    self.pos.y = lowest.rect.top + 1 # hits[0] returns the first collision in the list
+                    self.vel.y = 0
 
 
 # For now, platforms will be represented with gray rectangles.
@@ -75,7 +85,7 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.surf = pygame.Surface((random.randint(50,100), 12))
+        self.surf = pygame.Surface((random.randint(50, 100), 20))
         self.surf.fill((211, 211, 211))
         self.rect = self.surf.get_rect(center=(random.randint(0, game.WIDTH - 10),
-                                               random.randint(0, game.HEIGHT - 30)))    # center = spawn position
+                                               random.randint(0, game.HEIGHT - 60)))    # center = spawn position

@@ -1,3 +1,5 @@
+import pygame
+import os.path
 import sys
 from abc import ABC
 from projectSS.gamescreen import GameScreen
@@ -69,6 +71,10 @@ class MainMenu(Menu):
         self.buttons.append(self.btn_play)
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
+
+        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
+        pygame.mixer.music.play(-1)
 
     def update(self):
         self.update_buttons()
