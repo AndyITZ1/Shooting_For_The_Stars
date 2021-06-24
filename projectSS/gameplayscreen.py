@@ -45,8 +45,12 @@ class GameplayScreen(GameScreen):
         self.platforms = pygame.sprite.Group()
         self.platforms.add(self.PT1)
 
-        for x in range(random.randint(5, 6)):
+        for x in range(6): # TODO: Adjust number of starting platforms
+            check = True
             pl = Platform(game)
+            while check:
+                pl = Platform(game)
+                check = self.check_plat(pl, self.platforms)
             self.platforms.add(pl)
             self.all_sprites.add(pl)
 
@@ -58,11 +62,13 @@ class GameplayScreen(GameScreen):
             for entity in group_plat:
                 if entity == platform:
                     continue
-                if (abs(platform.rect.top - entity.rect.bottom) < 50) and (abs(platform.rect.bottom - entity.rect.top) < 50):
+                # TODO: Find appropriate spacing value between platforms.
+                # Note: Values above 50 may cause freezing of game.
+                # print("PRT %d PRB %d ERB %d ERT %d" % (platform.rect.top, platform.rect.bottom, entity.rect.bottom, entity.rect.top))
+                if (abs(platform.rect.top - entity.rect.bottom) < 80) and (
+                        abs(platform.rect.bottom - entity.rect.top) < 80):
                     return True
-                #if (abs(platform.rect.left - entity.rect.right) > 40) or (abs(platform.rect.right - entity.rect.left) > 40):
-                    #return True
-            C = False
+            return False
 
     def plat_gen(self):
         while len(self.platforms) < 7:
@@ -71,7 +77,8 @@ class GameplayScreen(GameScreen):
             check = True
             while check:
                 p = Platform(self.game)
-                p.rect.center = (random.randrange(0, self.game.WIDTH - width), random.randrange(-50, 0))
+                # TODO: Adjust platform center height in accordance with checking platform spacing.
+                p.rect.center = (random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
                 check = self.check_plat(p, self.platforms)
             self.platforms.add(p)
             self.all_sprites.add(p)
@@ -93,6 +100,9 @@ class GameplayScreen(GameScreen):
         # Update the movement of the player
         self.P1.move()
         self.P1.update()
+
+        if self.game.player_jump:
+            self.P1.jump()
 
         # Check if the player has died
         if not self.P1.alive:

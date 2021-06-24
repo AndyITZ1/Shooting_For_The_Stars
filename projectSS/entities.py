@@ -35,13 +35,10 @@ class Player(pygame.sprite.Sprite):
             self.acc.x = -self.ACC
         if pressed_keys[K_RIGHT]:
             self.acc.x = self.ACC
-        if pressed_keys[K_SPACE]:
-            self.jump()
 
         # Basic kinematics. They all change based on the acceleration from above.
         self.acc.x += self.vel.x * self.FRIC
         self.vel += self.acc
-        print(self.vel)
         self.pos += self.vel + 0.5 * self.acc
 
         # FEATURE: Screen Warping. Player will wrap around screen borders. Can be removed with border acting as barrier.
@@ -61,7 +58,7 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if hits:
-            self.jumping = True
+            self.game.player_jump = False
             self.vel.y = -15    # TODO: Change jump value to suit game needs.
 
     def cancel_jump(self):
@@ -71,18 +68,16 @@ class Player(pygame.sprite.Sprite):
 
     # Player platform collision detection. Check if velocity is greater than 0 to prevent jump cancellation
     def update(self):
-        hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if self.vel.y > 0:
+            hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
             if hits:
                 lowest = hits[0]
                 for hit in hits:
-                    if hit.rect.bottom > lowest.rect.bottom:
+                    if lowest.rect.bottom < hit.rect.bottom:
                         lowest = hit
                 if self.pos.y < lowest.rect.bottom:
-                    self.pos.y = lowest.rect.top + 1  # hits[0] returns the first collision in the list
+                    self.pos.y = lowest.rect.top + 1 # hits[0] returns the first collision in the list
                     self.vel.y = 0
-                    self.jumping = False
-
 
 
 # For now, platforms will be represented with gray rectangles.
@@ -90,7 +85,7 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.surf = pygame.Surface((random.randint(50, 100), 13))
+        self.surf = pygame.Surface((random.randint(50, 100), 20))
         self.surf.fill((211, 211, 211))
         self.rect = self.surf.get_rect(center=(random.randint(0, game.WIDTH - 10),
-                                               random.randint(0, game.HEIGHT - 30)))    # center = spawn position
+                                               random.randint(0, game.HEIGHT - 60)))    # center = spawn position
