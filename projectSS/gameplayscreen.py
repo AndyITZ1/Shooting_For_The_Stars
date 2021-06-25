@@ -1,14 +1,11 @@
+import time
 import random
 import sys
-
 import pygame
 import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
 from projectSS.entities import Player, Platform
-
-
-# TODO: write clean code pls
 
 
 class GameplayScreen(GameScreen):
@@ -29,17 +26,12 @@ class GameplayScreen(GameScreen):
         self.FPS = 60
         self.FramePerSec = pygame.time.Clock()
 
-
-        # Creating a list of sprites and adding platform & player in it. Allows easy sprite access later in code.
+        # Creating a list of sprites, platforms, and powerups. Allows easy sprite access.
         self.all_sprites = pygame.sprite.Group()
-
-        # Creating a list of platforms. Allows easy platform collision detection. Used in player update() method.
-        self.platforms = pygame.sprite.Group()
-
-        # Creating a list of power-ups. Similar to platforms functionality
+        self.platforms = pygame.sprite.Group()  # Used in player update() method.
         self.powerups = pygame.sprite.Group()
 
-        # Creation of the player and base platform
+        # Creation of the player and base platform. Base platform colored red
         self.PT1 = Platform(game, self, game.WIDTH, game.WIDTH / 2, game.HEIGHT - 10)
         self.PT1.surf.fill((255, 0, 0))
         self.P1 = Player(game, self)
@@ -50,7 +42,7 @@ class GameplayScreen(GameScreen):
 
         for x in range(6):  # TODO: Adjust number of starting platforms
             width = random.randrange(50, 100)
-            #pl =
+            # pl =
             Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
             # check = True
             # while check:
@@ -78,15 +70,15 @@ class GameplayScreen(GameScreen):
     def plat_gen(self):
         while len(self.platforms) < 7:
             width = random.randrange(50, 100)
-            #p =
+            # p =
             Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
             # check = True
             # while check:
             #     p = Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
             #     # TODO: Adjust platform center height in accordance with checking platform spacing.
             #     check = self.check_plat(p, self.platforms)
-            #self.all_sprites.add(p)
-            #self.platforms.add(p)
+            # self.all_sprites.add(p)
+            # self.platforms.add(p)
 
     # All game logic and their changes go in this method
     def update(self):
@@ -103,6 +95,7 @@ class GameplayScreen(GameScreen):
                 if plat.rect.top >= self.game.HEIGHT:
                     plat.kill()
 
+        # Player is holding space key? Jump until max jump height is reached. Space key is let go? Stop jump.
         if self.game.player_jump:
             self.P1.jump()
         if self.game.player_jump_c:

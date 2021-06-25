@@ -1,5 +1,5 @@
+import time
 import random
-
 import pygame
 from pygame.locals import *
 
@@ -24,6 +24,9 @@ class Player(pygame.sprite.Sprite):
         self.pos = self.vec((20, 565))
         self.vel = self.vec(0, 0)
         self.acc = self.vec(0, 0)
+
+        # Rhythm gameplay.
+        self.start_time = time.time() + 0.01
 
     # This method allows us to control our player. Heavy use of physics and kinematics.
     def move(self):
@@ -59,22 +62,32 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if hits and not self.jumping:
-            self.jumping = True
-            self.vel.y = -15    # TODO: Change jump value to suit game needs.
+            # Rhythm detection
+            if time.time() - self.start_time < 0.3:
+                self.jumping = True
+                self.vel.y = -20
+                self.vel.x *= 2
+                self.game.assets["sfx_blip"].play()
+            else:
+                self.jumping = True
+                self.vel.y = -15    # TODO: Change jump value to suit game needs.
 
     def cancel_jump(self):
         if self.jumping:
             if self.vel.y < -3:
                 self.vel.y = -3
 
-    # Player platform collision detection. Check if velocity is greater than 0 to prevent jump cancellation
+    # Player platform collision detection & rhythm restart
     def update(self):
+        # 83 BPM or 0.7229 seconds-per-beat
+        if (time.time() - self.start_time) > 0.7229:
+            self.start_time = time.time() + 0.01
 
         # Check if player hits powerups
         pows_hits = pygame.sprite.spritecollide(self, self.gameplayscreen.powerups, True)
         for pow in pows_hits:
             if pow.type == 'boost':
-                self.vel.y = -60
+                self.vel.y = -30
                 self.jumping = False
 
         if self.vel.y > 0:
