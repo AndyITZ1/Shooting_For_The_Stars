@@ -7,7 +7,8 @@ from pygame.locals import *
 # For now, player will be represented with red squares.
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, gameplayscreen):
-        super().__init__()
+        self.groups = gameplayscreen.all_sprites
+        super().__init__(self.groups)
         self.game = game
         self.gameplayscreen = gameplayscreen
         self.surf = pygame.Surface((30, 30))
@@ -57,8 +58,8 @@ class Player(pygame.sprite.Sprite):
     # Jump method first check if a player is on a platform before allowing player to jump
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
-        if hits:
-            self.game.player_jump = False
+        if hits and not self.jumping:
+            self.jumping = True
             self.vel.y = -15    # TODO: Change jump value to suit game needs.
 
     def cancel_jump(self):
@@ -68,6 +69,14 @@ class Player(pygame.sprite.Sprite):
 
     # Player platform collision detection. Check if velocity is greater than 0 to prevent jump cancellation
     def update(self):
+
+        # Check if player hits powerups
+        pows_hits = pygame.sprite.spritecollide(self, self.gameplayscreen.powerups, True)
+        for pow in pows_hits:
+            if pow.type == 'boost':
+                self.vel.y = -60
+                self.jumping = False
+
         if self.vel.y > 0:
             hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
             if hits:
@@ -76,16 +85,45 @@ class Player(pygame.sprite.Sprite):
                     if lowest.rect.bottom < hit.rect.bottom:
                         lowest = hit
                 if self.pos.y < lowest.rect.bottom:
-                    self.pos.y = lowest.rect.top + 1 # hits[0] returns the first collision in the list
+                    self.pos.y = lowest.rect.top + 1  # hits[0] returns the first collision in the list
                     self.vel.y = 0
+                    self.jumping = False
+                    self.game.player_jump = False
+                    self.game.player_jump_c = False
 
 
 # For now, platforms will be represented with gray rectangles.
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, game):
-        super().__init__()
+    def __init__(self, game, gameplayscreen, width, x, y):
+        self.groups = gameplayscreen.all_sprites, gameplayscreen.platforms
+        super().__init__(self.groups)
         self.game = game
-        self.surf = pygame.Surface((random.randint(50, 100), 20))
+        self.gameplayscreen = gameplayscreen
+        self.surf = pygame.Surface((width, 20))
         self.surf.fill((211, 211, 211))
-        self.rect = self.surf.get_rect(center=(random.randint(0, game.WIDTH - 10),
-                                               random.randint(0, game.HEIGHT - 60)))    # center = spawn position
+        self.rect = self.surf.get_rect(center=(x, y))    # center = spawn position
+        if random.randrange(100) < 30:
+            p = Powerups(self.game, self, self.gameplayscreen)
+            self.gameplayscreen.powerups.add(p)
+            self.gameplayscreen.all_sprites.add(p)
+
+
+class Powerups(pygame.sprite.Sprite):
+    def __init__(self, game, platform, gameplayscreen):
+        self.groups = gameplayscreen.all_sprites, gameplayscreen.powerups
+        super().__init__(self.groups)
+        self.game = game
+        self.plat = platform
+        self.gameplayscreen = gameplayscreen
+        self.type = random.choice(['boost'])
+        self.surf = pygame.Surface((10, 10))
+        self.surf.fill((200, 100, 200))
+        self.rect = self.surf.get_rect()
+        self.rect.centerx = self.plat.rect.centerx
+        self.rect.bottom = self.plat.rect.top - 5
+
+    def update(self):
+        self.rect.bottom = self.plat.rect.top - 5
+        if not self.gameplayscreen.platforms.has(self.plat):
+            self.kill()
+

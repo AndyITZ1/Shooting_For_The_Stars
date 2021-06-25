@@ -71,6 +71,7 @@ class Game:
         self.prev_screen = None
 
         self.player_jump = False
+        self.player_jump_c = False
         # Run game
         self.game_loop()
 
@@ -98,6 +99,9 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.player_jump = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.player_jump_c = True
 
         # Change game screen if necessary
         if self.next_game_screen is not None:

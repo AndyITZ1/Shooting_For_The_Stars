@@ -29,30 +29,35 @@ class GameplayScreen(GameScreen):
         self.FPS = 60
         self.FramePerSec = pygame.time.Clock()
 
-        # Creation of the player and base platform
-        self.PT1 = Platform(game)
-        self.PT1.surf = pygame.Surface((game.WIDTH, 20))
-        self.PT1.surf.fill((255, 0, 0))
-        self.PT1.rect = self.PT1.surf.get_rect(center = (game.WIDTH / 2, game.HEIGHT - 10))
-        self.P1 = Player(game, self)
 
         # Creating a list of sprites and adding platform & player in it. Allows easy sprite access later in code.
         self.all_sprites = pygame.sprite.Group()
-        self.all_sprites.add(self.PT1)
-        self.all_sprites.add(self.P1)
 
         # Creating a list of platforms. Allows easy platform collision detection. Used in player update() method.
         self.platforms = pygame.sprite.Group()
-        self.platforms.add(self.PT1)
 
-        for x in range(6): # TODO: Adjust number of starting platforms
-            check = True
-            pl = Platform(game)
-            while check:
-                pl = Platform(game)
-                check = self.check_plat(pl, self.platforms)
-            self.platforms.add(pl)
-            self.all_sprites.add(pl)
+        # Creating a list of power-ups. Similar to platforms functionality
+        self.powerups = pygame.sprite.Group()
+
+        # Creation of the player and base platform
+        self.PT1 = Platform(game, self, game.WIDTH, game.WIDTH / 2, game.HEIGHT - 10)
+        self.PT1.surf.fill((255, 0, 0))
+        self.P1 = Player(game, self)
+
+        # self.all_sprites.add(self.P1)
+        # self.all_sprites.add(self.PT1)
+        # self.platforms.add(self.PT1)
+
+        for x in range(6):  # TODO: Adjust number of starting platforms
+            width = random.randrange(50, 100)
+            #pl =
+            Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
+            # check = True
+            # while check:
+            #     pl = Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
+            #     check = self.check_plat(pl, self.platforms)
+            # self.all_sprites.add(pl)
+            # self.platforms.add(pl)
 
     # Check to see if newly generated platform is "decently" spaced from other previously-gen platforms
     def check_plat(self, platform, group_plat):
@@ -73,21 +78,22 @@ class GameplayScreen(GameScreen):
     def plat_gen(self):
         while len(self.platforms) < 7:
             width = random.randrange(50, 100)
-            p = Platform(self.game)
-            check = True
-            while check:
-                p = Platform(self.game)
-                # TODO: Adjust platform center height in accordance with checking platform spacing.
-                p.rect.center = (random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
-                check = self.check_plat(p, self.platforms)
-            self.platforms.add(p)
-            self.all_sprites.add(p)
+            #p =
+            Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
+            # check = True
+            # while check:
+            #     p = Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
+            #     # TODO: Adjust platform center height in accordance with checking platform spacing.
+            #     check = self.check_plat(p, self.platforms)
+            #self.all_sprites.add(p)
+            #self.platforms.add(p)
 
     # All game logic and their changes go in this method
     def update(self):
         # This FramePerSecond clock object limits the FPS, determined by the FPS variable. Smooths gameplay.
         self.FramePerSec.tick(self.FPS)
         self.update_buttons()
+        self.all_sprites.update()
 
         # allows for screen to scroll up and destroy
         if self.P1.rect.top <= self.game.HEIGHT / 3:
@@ -97,12 +103,14 @@ class GameplayScreen(GameScreen):
                 if plat.rect.top >= self.game.HEIGHT:
                     plat.kill()
 
+        if self.game.player_jump:
+            self.P1.jump()
+        if self.game.player_jump_c:
+            self.P1.cancel_jump()
+
         # Update the movement of the player
         self.P1.move()
         self.P1.update()
-
-        if self.game.player_jump:
-            self.P1.jump()
 
         # Check if the player has died
         if not self.P1.alive:
