@@ -25,6 +25,9 @@ class Player(pygame.sprite.Sprite):
         self.vel = self.vec(0, 0)
         self.acc = self.vec(0, 0)
 
+        # Power-up effects
+        self.boosted = False
+
         # Rhythm gameplay.
         self.start_time = time.time() + 0.01
 
@@ -62,15 +65,20 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
         if hits and not self.jumping:
-            # Rhythm detection
-            if time.time() - self.start_time < 0.3:
+            if self.boosted:
                 self.jumping = True
-                self.vel.y = -20
-                self.vel.x *= 2
-                self.game.assets["sfx_blip"].play()
+                self.vel.y = -30
+                self.boosted = False
             else:
-                self.jumping = True
-                self.vel.y = -15    # TODO: Change jump value to suit game needs.
+                # Rhythm detection
+                if time.time() - self.start_time < 0.3:
+                    self.jumping = True
+                    self.vel.y = -20
+                    self.vel.x *= 2
+                    self.game.assets["sfx_blip"].play()
+                else:
+                    self.jumping = True
+                    self.vel.y = -15
 
     def cancel_jump(self):
         if self.jumping:
@@ -79,13 +87,16 @@ class Player(pygame.sprite.Sprite):
 
     # Player platform collision detection & rhythm restart
     def update(self):
-        cur_time = time.time()
-        if cur_time - self.start_time <= 0.14:
-            self.surf.fill((0, 255, 0))
-        elif cur_time - self.start_time >= 0.5729:
-            self.surf.fill((0, 255, 0))
+        if self.boosted:
+            self.surf.fill((255,165,0))
         else:
-            self.surf.fill((237, 55, 55))
+            cur_time = time.time()
+            if cur_time - self.start_time <= 0.14:
+                self.surf.fill((0, 255, 0))
+            elif cur_time - self.start_time >= 0.5729:
+                self.surf.fill((0, 255, 0))
+            else:
+                self.surf.fill((237, 55, 55))
         # 83 BPM or 0.7229 seconds-per-beat
         if (time.time() - self.start_time) > 0.7229:
             self.start_time = time.time()
@@ -94,8 +105,7 @@ class Player(pygame.sprite.Sprite):
         pows_hits = pygame.sprite.spritecollide(self, self.gameplayscreen.powerups, True)
         for pow in pows_hits:
             if pow.type == 'boost':
-                self.vel.y = -30
-                self.jumping = True
+                self.boosted = True
 
         if self.vel.y > 0:
             hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
@@ -122,7 +132,7 @@ class Platform(pygame.sprite.Sprite):
         self.surf = pygame.Surface((width, 20))
         self.surf.fill((211, 211, 211))
         self.rect = self.surf.get_rect(center=(x, y))    # center = spawn position
-        if random.randrange(100) < 30:
+        if random.randrange(100) < 15:
             p = Powerups(self.game, self, self.gameplayscreen)
             self.gameplayscreen.powerups.add(p)
             self.gameplayscreen.all_sprites.add(p)
