@@ -30,6 +30,7 @@ class GameplayScreen(GameScreen):
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()  # Used in player update() method.
         self.powerups = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         # Creation of the player and base platform. Base platform colored red
         self.PT1 = Platform(game, self, game.WIDTH, game.WIDTH / 2, game.HEIGHT - 10)

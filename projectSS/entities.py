@@ -71,7 +71,8 @@ class Player(pygame.sprite.Sprite):
                 self.boosted = False
             else:
                 # Rhythm detection
-                if time.time() - self.start_time < 0.3:
+                curr_time = time.time()
+                if curr_time - self.start_time <= 0.15 or curr_time - self.start_time >= (1/83)*60-0.15:
                     self.jumping = True
                     self.vel.y = -20
                     self.vel.x *= 2
@@ -91,14 +92,15 @@ class Player(pygame.sprite.Sprite):
             self.surf.fill((255,165,0))
         else:
             cur_time = time.time()
-            if cur_time - self.start_time <= 0.14:
+            # turn green within a 0.3 interval of the bpm start time
+            if cur_time - self.start_time <= 0.15:
                 self.surf.fill((0, 255, 0))
-            elif cur_time - self.start_time >= 0.5729:
+            elif cur_time - self.start_time >= (1/83)*60-0.15:
                 self.surf.fill((0, 255, 0))
             else:
                 self.surf.fill((237, 55, 55))
-        # 83 BPM or 0.7229 seconds-per-beat
-        if (time.time() - self.start_time) > 0.7229:
+        # 83 BPM or 0.7229 seconds-per-beat: (1 / 83 bpm) * 60 to get exact seconds
+        if (time.time() - self.start_time) > (1/83)*60:
             self.start_time = time.time()
 
         # Check if player hits powerups
@@ -136,6 +138,18 @@ class Platform(pygame.sprite.Sprite):
             p = Powerups(self.game, self, self.gameplayscreen)
             self.gameplayscreen.powerups.add(p)
             self.gameplayscreen.all_sprites.add(p)
+
+
+# Representing enemies with yellow squares
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, game, gameplayscreen):
+        self.groups = gameplayscreen.all_sprites, gameplayscreen.enemies
+        super().__init__(self.groups)
+        self.game = game
+        self.gameplayscreen = gameplayscreen
+        self.surf = pygame.Surface((20, 20))
+        self.surf.fill((211, 211, 0))
+
 
 
 class Powerups(pygame.sprite.Sprite):
