@@ -79,16 +79,23 @@ class Player(pygame.sprite.Sprite):
 
     # Player platform collision detection & rhythm restart
     def update(self):
+        cur_time = time.time()
+        if cur_time - self.start_time <= 0.14:
+            self.surf.fill((0, 255, 0))
+        elif cur_time - self.start_time >= 0.5729:
+            self.surf.fill((0, 255, 0))
+        else:
+            self.surf.fill((237, 55, 55))
         # 83 BPM or 0.7229 seconds-per-beat
         if (time.time() - self.start_time) > 0.7229:
-            self.start_time = time.time() + 0.01
+            self.start_time = time.time()
 
         # Check if player hits powerups
         pows_hits = pygame.sprite.spritecollide(self, self.gameplayscreen.powerups, True)
         for pow in pows_hits:
             if pow.type == 'boost':
                 self.vel.y = -30
-                self.jumping = False
+                self.jumping = True
 
         if self.vel.y > 0:
             hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
