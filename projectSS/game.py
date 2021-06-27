@@ -1,7 +1,7 @@
 import pygame
 import sys
 import os
-from projectSS.menus import MainMenu, SettingsMenu
+from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu
 from projectSS.gameplayscreen import GameplayScreen
 
 # Icon made by Freepik from www.flaticon.com
@@ -60,6 +60,7 @@ class Game:
         self.scrn_main_menu = MainMenu(self)
         self.scrn_settings_menu = SettingsMenu(self)
         self.scrn_gameplay_screen = GameplayScreen(self)
+        self.scrn_gameover_menu = GameOverMenu(self, self.scrn_gameplay_screen)
 
         # Set MainMenu as default game screen
         self.game_screen = self.scrn_main_menu
@@ -148,6 +149,14 @@ class Game:
 
     def show_previous_screen(self):
         self.next_game_screen = self.prev_screen
+
+    def show_game_over_screen(self):
+        self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
+        self.next_game_screen = self.scrn_gameover_menu
+        self.scrn_gameplay_screen = GameplayScreen(self)
+        # bgm source: https://thewhitepianokey.bandcamp.com/track/leaving-yoshi-slow-loopable
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/gameover_bgm.mp3'))
+        pygame.mixer.music.play(-1)
     
     # Apply settings updates
     def update_settings(self):

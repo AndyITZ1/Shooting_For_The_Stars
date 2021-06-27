@@ -1,3 +1,4 @@
+import math
 import time
 import random
 import pygame
@@ -24,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = self.vec((20, 565))
         self.vel = self.vec(0, 0)
         self.acc = self.vec(0, 0)
+        self.last_y = self.pos.y
 
         # Power-up effects
         self.boosted = False
@@ -54,12 +56,12 @@ class Player(pygame.sprite.Sprite):
         if self.pos.x < 0:
             self.pos.x = self.game.WIDTH
 
-        # Check for for player death if player falls off of screen
-        if self.pos.y > self.game.HEIGHT:
-            self.alive = False
-
         # Update the player rectangle to be at the new position that was calculated above
         self.rect.midbottom = self.pos
+
+        # Check for for player death if player falls off of screen
+        if self.rect.bottom > self.game.HEIGHT:
+            self.alive = False
 
     # Jump method first check if a player is on a platform before allowing player to jump
     def jump(self):
@@ -109,6 +111,11 @@ class Player(pygame.sprite.Sprite):
             if pow.type == 'boost':
                 self.boosted = True
 
+        # Check if player hits enemy
+        hit_enemy = pygame.sprite.spritecollide(self, self.gameplayscreen.enemies, True)
+        if hit_enemy:
+            self.alive = False
+
         if self.vel.y > 0:
             hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
             if hits:
@@ -122,6 +129,11 @@ class Player(pygame.sprite.Sprite):
                     self.jumping = False
                     self.game.player_jump = False
                     self.game.player_jump_c = False
+
+        # Tracking player height for distance traveled
+        delta_y = self.pos.y - self.last_y
+        self.last_y = self.pos.y
+        self.gameplayscreen.total_distance -= delta_y
 
 
 # For now, platforms will be represented with gray rectangles.
@@ -142,14 +154,27 @@ class Platform(pygame.sprite.Sprite):
 
 # Representing enemies with yellow squares
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, gameplayscreen):
+    def __init__(self, game, gameplayscreen, span, x):
         self.groups = gameplayscreen.all_sprites, gameplayscreen.enemies
         super().__init__(self.groups)
         self.game = game
         self.gameplayscreen = gameplayscreen
-        self.surf = pygame.Surface((20, 20))
+        self.surf = pygame.Surface((30, 30))
         self.surf.fill((211, 211, 0))
+        self.rect = self.surf.get_rect()
 
+        # Vectors for simple enemy movement
+        self.vec = pygame.math.Vector2
+        self.pos = self.vec((x, 30))
+        self.start = self.pos
+        self.span = span
+
+    def update(self):
+        # Sine wave oscillation for basic enemies, could be improved
+        self.pos.x = self.start.x + math.sin(time.time() * 83/120 * 2 * math.pi) * -self.span
+        self.rect.midbottom = self.pos
+        if self.rect.top >= self.game.HEIGHT:
+            self.kill()
 
 
 class Powerups(pygame.sprite.Sprite):
