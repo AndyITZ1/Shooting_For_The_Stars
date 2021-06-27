@@ -161,7 +161,7 @@ class GameOverMenu(Menu):
         self.score = score
         # TODO: RETRY BUTTON PLACEHOLDER, GET A REAL RETRY BUTTON
         self.btn_retry = Button(self.center_x - 48, self.center_y + 30,
-                                self.game.assets["btn_settings"], self.game.assets["btn_settings_light"],
+                                self.game.assets["retry"], self.game.assets["retry_light"],
                                 self.game.show_main_game_screen, self.game)
 
         self.btn_quit = Button(self.center_x + 32, self.center_y + 30,

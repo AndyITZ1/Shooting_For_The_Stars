@@ -60,7 +60,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
         # Check for for player death if player falls off of screen
-        if self.rect.bottom > self.game.HEIGHT:
+        if self.rect.bottom > self.game.HEIGHT + 32:
             self.alive = False
 
     # Jump method first check if a player is on a platform before allowing player to jump

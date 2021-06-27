@@ -129,7 +129,6 @@ class GameplayScreen(GameScreen):
         # Check if the player has died
         if not self.P1.alive:
             self.game.show_game_over_screen()
-            # TODO: Make a more elegant way of killing the current game process, game music still persists
 
         # Tracking player distance/progress
         if self.total_distance > self.best_distance:
