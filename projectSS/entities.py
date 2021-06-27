@@ -55,7 +55,7 @@ class Player(pygame.sprite.Sprite):
             self.pos.x = self.game.WIDTH
 
         # Check for for player death if player falls off of screen
-        if self.pos.y > self.game.HEIGHT:
+        if self.pos.y > self.game.HEIGHT + 32:
             self.alive = False
 
         # Update the player rectangle to be at the new position that was calculated above
