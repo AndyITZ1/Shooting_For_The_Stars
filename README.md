@@ -18,11 +18,6 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
 
 ​	Your installation process will differ based on your given game distribution. It is important to note that this game is meant to be installed and run on Windows 10 machines only. The game is only stable using Python 3.8. Please note that you have to have the repository setup locally and refer to the Developer's FAQ for files needed in the following sections.
 
-### setup.py
-​	Using your Python 3.8 installation, running setup.py with the sdist parameter will generate a tar.gz file that can be installed with the Python package installer.
-
-- python setup.py sdist
-
 ### tar.gz file
 
 ​	Receiving this game as a compressed archive (also known as a tar.gz file) might seem intimidating to install, but is rather easy if you have Python installed on your machine. Python's handy built-in pip tool can install the game in one simple terminal command. Navigate to where you placed the tar.gz file and run 
