@@ -63,6 +63,16 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
   An MSI can be created by navigating inside the project directory where msi_setup.py is located, runnning the command "python msi_setup.py bdist_msi", and obtaining the installer within the newly created dist directory. Be warned that you must first pip install "cx_Freeze" to create the MSI.
 
 ---
+## End User Feedback/Experience from outside demo testers
+Controls: Basic controls similar to other games, but easy to pick up on without telling users.
+  
+Difficulty: From a new player perspective, the game was difficult and met with frustration between jumps at the beginning. Upon learning about other key features like power-ups and rhythmic jump mechanic without letting the user know the game became less frustrating. 
+
+Pacing of difficulty change upon was not either too fast or slow, since the player had to adapt to key features, but this did not make it quickly easier given other challenges like the rate of power-up spawns and also enemies spawning. 
+
+Overall experience from users was challenging and addictive for enjoyment. 
+
+---
 
 ## Acknowledgements
 
