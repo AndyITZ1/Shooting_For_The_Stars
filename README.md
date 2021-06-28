@@ -75,5 +75,5 @@ Assets:
 
 - Game vector icons: https://www.flaticon.com/
 - Game music: 8 Bit Retro Funk by David Renda: https://www.fesliyanstudios.com/royalty-free-music/downloads-c/8-bit-music/6
-              Up In My Jam by Kubbi: https://youtu.be/cLX0cyh6_Ro
+- Game music: Up In My Jam by Kubbi: https://youtu.be/cLX0cyh6_Ro
 - Game background, by u/ak077: https://www.reddit.com/r/wallpapers/comments/b4eyji/8bit_sunset_2560x1700/
