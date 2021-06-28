@@ -22,7 +22,7 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
 
 ​	Receiving this game as a compressed archive (also known as a tar.gz file) might seem intimidating to install, but is rather easy if you have Python installed on your machine. Python's handy built-in pip tool can install the game in one simple terminal command. Navigate to where you placed the tar.gz file and run 
 
-- pip install <file-name>.tar.gz
+- pip install [file-name].tar.gz
 
 ​	in any terminal. Pip will download and install any necessary Python package dependencies to run the game. When it is done, a new command will be created that you can use through any terminal, regardless of the directory, that will run the game:
 
