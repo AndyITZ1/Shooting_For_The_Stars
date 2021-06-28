@@ -50,46 +50,62 @@ class GameplayScreen(GameScreen):
 
         # Putting gameover screen here
 
+        # Start variable to identify if plat gen is initialization or during game
 
         for x in range(6):  # TODO: Adjust number of starting platforms
             width = random.randrange(50, 100)
-            # pl =
-            Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
-            # check = True
-            # while check:
-            #     pl = Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
-            #     check = self.check_plat(pl, self.platforms)
-            # self.all_sprites.add(pl)
-            # self.platforms.add(pl)
+            check = True
+            while check:
+                p = Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
+                check = self.check_plat(p, self.platforms)
+                if check:
+                    p.kill()
 
     # Check to see if newly generated platform is "decently" spaced from other previously-gen platforms
     def check_plat(self, platform, group_plat):
-        if pygame.sprite.spritecollideany(platform, group_plat):
+        higher = False
+        if pygame.sprite.spritecollideany(platform, group_plat) != platform:
             return True
         else:
+            highest = None
+            i = 0
+            for rand_first in group_plat:
+                highest = rand_first
+                i += 1
+                if i > 0:
+                    break
             for entity in group_plat:
                 if entity == platform:
                     continue
+                elif entity.rect.top < highest.rect.top:
+                    highest = entity
                 # TODO: Find appropriate spacing value between platforms.
                 # Note: Values above 50 may cause freezing of game.
-                # print("PRT %d PRB %d ERB %d ERT %d" % (platform.rect.top, platform.rect.bottom, entity.rect.bottom, entity.rect.top))
-                if (abs(platform.rect.top - entity.rect.bottom) < 80) and (
-                        abs(platform.rect.bottom - entity.rect.top) < 80):
+                if (abs(platform.rect.top - entity.rect.bottom) < 60) and (abs(platform.rect.bottom - entity.rect.top) < 60):
+                    higher = True
                     return True
+            # Highest Top Difference ensures that between the highest platform
+            # (that is not the platform being checked) and platform being checked
+            # are both not super far away and impossible to jump to (vertically)
+            highest_top_diff = abs(abs(highest.rect.top) - abs(platform.rect.top))
+            if highest_top_diff > 380:
+                return True
+            # Similarly as above Width Difference prevents horizontal spacing from becoming too far away
+            # or too close for platforms
+            highest_width_diff = abs(abs(highest.rect.centerx) - abs(platform.rect.centerx))
+            if highest_width_diff > 274 or highest_width_diff < 100:
+                return True
             return False
 
     def plat_gen(self):
         while len(self.platforms) < 7:
             width = random.randrange(50, 100)
-            # p =
-            Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
-            # check = True
-            # while check:
-            #     p = Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-95, -30))
-            #     # TODO: Adjust platform center height in accordance with checking platform spacing.
-            #     check = self.check_plat(p, self.platforms)
-            # self.all_sprites.add(p)
-            # self.platforms.add(p)
+            check = True
+            while check:
+                p = Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-250, -50))
+                check = self.check_plat(p, self.platforms)
+                if check:
+                    p.kill()
 
     # enemy generation algorithm 30% every 500 spaces after 1500
     def enemy_gen(self):
@@ -107,7 +123,7 @@ class GameplayScreen(GameScreen):
         self.all_sprites.update()
 
         # allows for screen to scroll up and destroy
-        if self.P1.rect.top <= self.game.HEIGHT / 3:
+        if self.P1.rect.top <= self.game.HEIGHT / 4:
             self.P1.pos.y += abs(self.P1.vel.y)
             self.total_distance += abs(self.P1.vel.y)
             for plat in self.platforms:
