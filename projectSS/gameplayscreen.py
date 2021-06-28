@@ -65,7 +65,6 @@ class GameplayScreen(GameScreen):
     def check_plat(self, platform, group_plat):
         higher = False
         if pygame.sprite.spritecollideany(platform, group_plat) != platform:
-            print("TRUE 2")
             return True
         else:
             highest = None
@@ -82,24 +81,19 @@ class GameplayScreen(GameScreen):
                     highest = entity
                 # TODO: Find appropriate spacing value between platforms.
                 # Note: Values above 50 may cause freezing of game.
-                print("PRT %d PRB %d ERB %d ERT %d" % (platform.rect.top, platform.rect.bottom, entity.rect.bottom, entity.rect.top))
                 if (abs(platform.rect.top - entity.rect.bottom) < 60) and (abs(platform.rect.bottom - entity.rect.top) < 60):
                     higher = True
-                    print("TRUE 3")
                     return True
-
             # Highest Top Difference ensures that between the highest platform
             # (that is not the platform being checked) and platform being checked
             # are both not super far away and impossible to jump to (vertically)
             highest_top_diff = abs(abs(highest.rect.top) - abs(platform.rect.top))
             if highest_top_diff > 380:
-                print("TRUE 4")
                 return True
             # Similarly as above Width Difference prevents horizontal spacing from becoming too far away
             # or too close for platforms
             highest_width_diff = abs(abs(highest.rect.centerx) - abs(platform.rect.centerx))
             if highest_width_diff > 274 or highest_width_diff < 100:
-                print("TRUE 5")
                 return True
             return False
 
@@ -108,7 +102,6 @@ class GameplayScreen(GameScreen):
             width = random.randrange(50, 100)
             check = True
             while check:
-                print("THIS IS A PLAT_GEN PROB")
                 p = Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-250, -50))
                 check = self.check_plat(p, self.platforms)
                 if check:
