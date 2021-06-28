@@ -16,7 +16,7 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
 
 ## User Installation
 
-​	Your installation process will differ based on your given game distribution. It is important to note that this game is meant to be installed and run on Windows 10 machines only. The game is only stable using Python 3.8.
+​	Your installation process will differ based on your given game distribution. It is important to note that this game is meant to be installed and run on Windows 10 machines only. The game is only stable using Python 3.8. Please note that you have to have the repository setup locally and refer to the Developer's FAQ for files needed in the following sections.
 
 ### setup.py
 ​	Using your Python 3.8 installation, running setup.py with the sdist parameter will generate a tar.gz file that can be installed with the Python package installer.
@@ -79,5 +79,6 @@ Websites that aided in the development of the game:
 Assets:
 
 - Game vector icons: https://www.flaticon.com/
-- Game music. 8 Bit Retro Funk by David Renda: https://www.fesliyanstudios.com/royalty-free-music/downloads-c/8-bit-music/6
+- Game music: 8 Bit Retro Funk by David Renda: https://www.fesliyanstudios.com/royalty-free-music/downloads-c/8-bit-music/6
+- Game music: Up In My Jam by Kubbi: https://youtu.be/cLX0cyh6_Ro
 - Game background, by u/ak077: https://www.reddit.com/r/wallpapers/comments/b4eyji/8bit_sunset_2560x1700/
