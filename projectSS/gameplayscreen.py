@@ -48,10 +48,6 @@ class GameplayScreen(GameScreen):
         # Stuff for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
 
-        # Putting gameover screen here
-
-        # Start variable to identify if plat gen is initialization or during game
-
         for x in range(6):  # TODO: Adjust number of starting platforms
             width = random.randrange(50, 100)
             check = True
