@@ -165,13 +165,13 @@ class Enemy(pygame.sprite.Sprite):
 
         # Vectors for simple enemy movement
         self.vec = pygame.math.Vector2
-        self.pos = self.vec((x, 30))
-        self.start = self.pos
+        self.pos = self.vec((x, 0))
+        self.start = self.pos.x
         self.span = span
 
     def update(self):
         # Sine wave oscillation for basic enemies, could be improved
-        self.pos.x = self.start.x + math.sin(time.time() * 83/120 * 2 * math.pi) * -self.span
+        self.pos.x = self.start + (self.span * math.sin(time.time() * 83/120 * 2 * math.pi) + self.span)
         self.rect.midbottom = self.pos
         if self.rect.top >= self.game.HEIGHT:
             self.kill()

@@ -47,6 +47,7 @@ class GameplayScreen(GameScreen):
 
         # Stuff for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
+        self.rand_dist = 0
 
         for x in range(6):  # TODO: Adjust number of starting platforms
             width = random.randrange(50, 100)
@@ -103,13 +104,17 @@ class GameplayScreen(GameScreen):
                 if check:
                     p.kill()
 
-    # enemy generation algorithm 30% every 500 spaces after 1500
+    # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
     def enemy_gen(self):
-        if self.best_distance > 1500 and len(self.enemies) < 3:
-            if self.best_distance - self.enemy_dist > 500:
-                if random.random() >= 0.7:
-                    self.enemies.add(Enemy(self.game, self, 30, self.game.WIDTH/2))
+        if self.best_distance > 1000 and len(self.enemies) < 3:
+            if self.rand_dist == 0:
+                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.best_distance - 1000)//1000))
                 self.enemy_dist = self.best_distance
+            if self.best_distance - self.enemy_dist > self.rand_dist:
+                self.enemies.add(Enemy(self.game, self,
+                                       random.randrange(self.game.WIDTH//6, self.game.WIDTH//4),  # Platform span
+                                       random.randrange(0, self.game.WIDTH//2)))                  # Platform x
+                self.rand_dist = 0
 
     # All game logic and their changes go in this method
     def update(self):
