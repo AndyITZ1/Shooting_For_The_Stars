@@ -6,7 +6,11 @@ from abc import ABC, abstractmethod
 class GameScreen(ABC):
 	def __init__(self, game):
 		self.game = game
-	
+
+	# Called when this screen is shown
+	def on_show(self):
+		pass
+
 	@abstractmethod
 	def update(self):
 		pass

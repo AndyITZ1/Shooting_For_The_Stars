@@ -1,7 +1,7 @@
 import pygame
 import sys
 import os
-from projectSS.menus import MainMenu, SettingsMenu
+from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu
 from projectSS.gameplayscreen import GameplayScreen
 
 # Icon made by Freepik from www.flaticon.com
@@ -38,17 +38,16 @@ class Game:
                          "btn_minus_light": pygame.image.load(os.path.join(abs_dir, "assets/minus-light.png")),
                          "btn_plus": pygame.image.load(os.path.join(abs_dir, "assets/plus.png")),
                          "btn_plus_light": pygame.image.load(os.path.join(abs_dir, "assets/plus_light.png")),
-                         "main_menu_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
+                         "btn_retry": pygame.image.load(os.path.join(abs_dir, 'assets/retry.png')),
+                         "btn_retry_light": pygame.image.load(os.path.join(abs_dir, 'assets/retry_light.png')),
+                         "bg_main_menu": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
+                         "bg_game": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
         pygame.display.set_icon(self.__assets["icon"])
-
-        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
-        pygame.mixer.music.load(os.path.join(abs_dir, 'assets/8bitmusic.mp3'))
-        pygame.mixer.music.play(-1)
         
         # Game settings
         self.setting_music_volume = 0.8
@@ -63,18 +62,30 @@ class Game:
         self.scrn_main_menu = MainMenu(self)
         self.scrn_settings_menu = SettingsMenu(self)
         self.scrn_gameplay_screen = GameplayScreen(self)
-        
+        self.scrn_gameover_menu = GameOverMenu(self, self.scrn_gameplay_screen)
+
         # Set MainMenu as default game screen
         self.game_screen = self.scrn_main_menu
         
         # Game screen to change to on the next update
         self.next_game_screen = None
-        
+
+        # Keep track of previous screen to know where to return on button clicks.
+        self.prev_game_screen = None
+
+        self.game_screen.on_show()
+
+        # Fixed FPS timer
+        self.FPS = 60
+        self.FramePerSec = pygame.time.Clock()
+
         # Run game
         self.game_loop()
 
     def game_loop(self):
         while self.running:
+            # Limit FPS to fixed value
+            self.FramePerSec.tick(self.FPS)
             self.update()
             self.render()
 
@@ -93,10 +104,14 @@ class Game:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_clicked = True
-        
+
         # Change game screen if necessary
         if self.next_game_screen is not None:
+            self.prev_game_screen = self.game_screen
+
             self.game_screen = self.next_game_screen
+            self.game_screen.on_show()
+
             self.next_game_screen = None
         
         # Update current game screen
@@ -130,8 +145,14 @@ class Game:
         
     def show_main_game_screen(self):
         self.next_game_screen = self.scrn_gameplay_screen
-        pass
-    
+
+    def show_previous_game_screen(self):
+        self.next_game_screen = self.prev_game_screen
+
+    def show_game_over_screen(self):
+        self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
+        self.next_game_screen = self.scrn_gameover_menu
+
     # Apply settings updates
     def update_settings(self):
         
@@ -151,7 +172,6 @@ class Game:
         
         # TODO: All sfx should be in a list so they can be updated here, don't hard code
         self.assets["sfx_blip"].set_volume(self.setting_sfx_volume * 0.5)
-    
 
     @property
     def assets(self):

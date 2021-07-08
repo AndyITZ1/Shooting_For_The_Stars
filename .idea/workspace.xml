@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a225552b-fc8a-408d-8575-439779a7f8b5" name="Default Changelist" comment="">
+    <list default="true" id="a225552b-fc8a-408d-8575-439779a7f8b5" name="Default Changelist" comment="Refactored menus to use GameScreen class, added Button class, added main gameplay screen, various  code tweaks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/assets/playlight.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/assets/settings.png" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/assets/settings.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectSS/entities.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/entities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/projectSS/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectSS/gameplayscreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/gameplayscreen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectSS/gamescreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/gamescreen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectSS/menus.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/menus.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +30,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_MARK_IGNORED_FILES_AS_EXCLUDED" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -39,6 +40,7 @@
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -90,7 +92,25 @@
       <workItem from="1623878970904" duration="1163000" />
       <workItem from="1623966466873" duration="387000" />
       <workItem from="1624034465444" duration="4969000" />
+      <workItem from="1625706272195" duration="45000" />
+      <workItem from="1625706441320" duration="34000" />
+      <workItem from="1625706476943" duration="12231000" />
     </task>
+    <task id="LOCAL-00001" summary="Added gamescreen.py">
+      <created>1624242462554</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1624242462554</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Refactored menus to use GameScreen class, added Button class, added main gameplay screen, various  code tweaks">
+      <created>1624250201276</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1624250201276</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -118,9 +138,13 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added gamescreen.py" />
+    <MESSAGE value="Refactored menus to use GameScreen class, added Button class, various consistency tweaks/fixes" />
+    <MESSAGE value="Refactored menus to use GameScreen class, added Button class, added main gameplay screen, various  code tweaks" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored menus to use GameScreen class, added Button class, added main gameplay screen, various  code tweaks" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/setup_py$main.coverage" NAME="main Coverage Results" MODIFIED="1624039444973" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/projectSS" />
-    <SUITE FILE_PATH="coverage/Shooting_For_The_Stars$main.coverage" NAME="main Coverage Results" MODIFIED="1623529577298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/projectSS" />
-    <SUITE FILE_PATH="coverage/setup_py$setup.coverage" NAME="setup Coverage Results" MODIFIED="1623953019723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/setup_py$main.coverage" NAME="main Coverage Results" MODIFIED="1625718790881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/projectSS" />
   </component>
 </project>
