@@ -4,6 +4,7 @@ import os
 from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu
 from projectSS.gameplayscreen import GameplayScreen
 
+
 # Icon made by Freepik from www.flaticon.com
 
 
@@ -43,12 +44,15 @@ class Game:
                          "bg_main_menu": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
                          "bg_game": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
-                         "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
+                         "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
+                         "minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame.png')),
+                         "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png'))}
+        # TODO: Delete minigame assets when done with testing
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
         pygame.display.set_icon(self.__assets["icon"])
-        
+
         # Game settings
         self.setting_music_volume = 0.8
         self.setting_sfx_volume = 0.8
@@ -66,7 +70,7 @@ class Game:
 
         # Set MainMenu as default game screen
         self.game_screen = self.scrn_main_menu
-        
+
         # Game screen to change to on the next update
         self.next_game_screen = None
 
@@ -93,9 +97,9 @@ class Game:
     def update(self):
         # Update mouse position.
         self.mouse_pos = pygame.mouse.get_pos()
-        
+
         self.mouse_clicked = False
-        
+
         # Handle events
         for event in pygame.event.get():
             # if X button of window is clicked the game is exited
@@ -113,19 +117,19 @@ class Game:
             self.game_screen.on_show()
 
             self.next_game_screen = None
-        
+
         # Update current game screen
         self.game_screen.update()
 
     # Main render function
     def render(self):
-        
+
         # Clear screen
         self.screen.fill((0, 0, 0))
-        
+
         # Render current game screen
         self.game_screen.render()
-        
+
         # Tell PyGame to update screen with everything drawn
         pygame.display.update()
 
@@ -139,10 +143,10 @@ class Game:
     # Methods used by the current game screen to change to a different game screen
     def show_main_menu_screen(self):
         self.next_game_screen = self.scrn_main_menu
-        
+
     def show_settings_screen(self):
         self.next_game_screen = self.scrn_settings_menu
-        
+
     def show_main_game_screen(self):
         self.next_game_screen = self.scrn_gameplay_screen
 
@@ -153,24 +157,26 @@ class Game:
         self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
         self.next_game_screen = self.scrn_gameover_menu
 
+    # TODO: Delete after finishing minigame testing
+    def show_minigame_screen(self):
+        pass
+
     # Apply settings updates
     def update_settings(self):
-        
+
         # Set volumes min/max
         if self.setting_music_volume < 0:
             self.setting_music_volume = 0
         elif self.setting_music_volume > 1:
             self.setting_music_volume = 1
-        
+
         if self.setting_sfx_volume < 0:
             self.setting_sfx_volume = 0
         elif self.setting_sfx_volume > 1:
             self.setting_sfx_volume = 1
-        
+
         # Apply volumes
         pygame.mixer.music.set_volume(self.setting_music_volume * 0.1)
-        
-        # TODO: All sfx should be in a list so they can be updated here, don't hard code
         self.assets["sfx_blip"].set_volume(self.setting_sfx_volume * 0.5)
 
     @property
