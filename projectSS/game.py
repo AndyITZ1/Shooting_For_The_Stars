@@ -3,10 +3,12 @@ import sys
 import os
 from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu
 from projectSS.gameplayscreen import GameplayScreen
+from projectSS.minigame import MinigameScreen
 
 
 # Icon made by Freepik from www.flaticon.com
-
+# Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
+# Music in the background from https://www.FesliyanStudios.com
 
 class Game:
     # Initialization of the game. This includes starting up pygame, creating the screen, loading assets,
@@ -47,7 +49,6 @@ class Game:
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
                          "minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame.png')),
                          "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png'))}
-        # TODO: Delete minigame assets when done with testing
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
@@ -67,6 +68,7 @@ class Game:
         self.scrn_settings_menu = SettingsMenu(self)
         self.scrn_gameplay_screen = GameplayScreen(self)
         self.scrn_gameover_menu = GameOverMenu(self, self.scrn_gameplay_screen)
+        self.scrn_minigame_screen = MinigameScreen(self)
 
         # Set MainMenu as default game screen
         self.game_screen = self.scrn_main_menu
@@ -95,9 +97,8 @@ class Game:
 
     # Main update function. Updates user I/O and game logic
     def update(self):
-        # Update mouse position.
+        # Update mouse position
         self.mouse_pos = pygame.mouse.get_pos()
-
         self.mouse_clicked = False
 
         # Handle events
@@ -112,7 +113,6 @@ class Game:
         # Change game screen if necessary
         if self.next_game_screen is not None:
             self.prev_game_screen = self.game_screen
-
             self.game_screen = self.next_game_screen
             self.game_screen.on_show()
 
@@ -157,9 +157,8 @@ class Game:
         self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
         self.next_game_screen = self.scrn_gameover_menu
 
-    # TODO: Delete after finishing minigame testing
     def show_minigame_screen(self):
-        pass
+        self.next_game_screen = self.scrn_minigame_screen
 
     # Apply settings updates
     def update_settings(self):

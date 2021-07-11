@@ -1,8 +1,5 @@
-import time
-import random
 import os
 import sys
-import pygame
 import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
@@ -45,8 +42,9 @@ class GameplayScreen(GameScreen):
         self.enemy_dist = 0
         self.rand_dist = 0
 
+    # Called when the game has begun (player clicked on play button)
     def on_show(self):
-
+        
         # Reset variables
         self.camera_y = -self.game.HEIGHT + 10
         self.despawn_y = self.camera_y + self.game.HEIGHT + 32
@@ -99,12 +97,12 @@ class GameplayScreen(GameScreen):
     def gen_enemies(self):
         if self.best_distance > 1000 and len(self.enemies) < 3:
             if self.rand_dist == 0:
-                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.best_distance - 1000)//1000))
+                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.best_distance - 1000) // 1000))
                 self.enemy_dist = self.best_distance
             if self.best_distance - self.enemy_dist > self.rand_dist:
                 Enemy(self,
-                      random.randrange(self.game.WIDTH//6, self.game.WIDTH//4),  # Platform span
-                      random.randrange(0, self.game.WIDTH//2),                  # Platform x
+                      random.randrange(self.game.WIDTH // 6, self.game.WIDTH // 4),  # Platform span
+                      random.randrange(0, self.game.WIDTH // 2),  # Platform x
                       self.camera_y - 15)
                 self.rand_dist = 0
 
@@ -144,7 +142,7 @@ class GameplayScreen(GameScreen):
         self.render_buttons()
 
         # Draw current score
-        self.game.draw_text(str(round(self.best_distance)), 30, self.game.WIDTH/2, 20)
+        self.game.draw_text(str(round(self.best_distance)), 30, self.game.WIDTH / 2, 20)
 
     def update_buttons(self):
         for btn in self.buttons:
