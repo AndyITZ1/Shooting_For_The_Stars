@@ -20,12 +20,12 @@ class MinigameScreen(GameScreen):
 
     def update(self):
         if self.counting_down:
-            # If the timer has gone off, load the next button
             seconds = (pygame.time.get_ticks() - self.start_ticks) / 1000
             if seconds >= 1 and self.counter > 0:
                 self.counter -= 1
-                self.counter_str = str(self.counter)
-                self.start_ticks = pygame.time.get_ticks()
+                if self.counter > 0:
+                    self.counter_str = str(self.counter)
+                    self.start_ticks = pygame.time.get_ticks()
             elif self.counter == 0:
                 self.counting_down = False
 
