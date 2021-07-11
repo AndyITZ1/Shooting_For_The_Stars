@@ -44,7 +44,7 @@ class GameplayScreen(GameScreen):
 
     # Called when the game has begun (player clicked on play button)
     def on_show(self):
-        
+
         # Reset variables
         self.camera_y = -self.game.HEIGHT + 10
         self.despawn_y = self.camera_y + self.game.HEIGHT + 32

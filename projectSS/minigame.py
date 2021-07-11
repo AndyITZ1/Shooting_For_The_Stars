@@ -19,7 +19,7 @@ class MinigameScreen(GameScreen):
     def update(self):
         # If the timer has gone off, load the next button
         seconds = (pygame.time.get_ticks() - self.start_ticks) / 1000
-        if seconds > 1 and self.counter > 0:
+        if seconds >= 1 and self.counter > 0:
             self.counter -= 1
             self.counter_str = str(self.counter)
             self.start_ticks = pygame.time.get_ticks()
@@ -27,6 +27,6 @@ class MinigameScreen(GameScreen):
             self.counter_str = 'Boom!'  # Placeholder for when countdown ends.
 
     def render(self):
-        self.game.screen.fill((255, 255, 255))
+        self.game.screen.fill((251, 171, 52))
         self.game.draw_text('Boss battle! Get ready to click!', 40, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 80)
         self.game.draw_text(self.counter_str, 80, self.game.WIDTH / 2, self.game.HEIGHT / 2)
