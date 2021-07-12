@@ -1,11 +1,12 @@
 import time
 import random
+import os
 import sys
 import pygame
 import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
-from projectSS.entities import Player, Platform, Enemy
+from projectSS.entities import *
 
 
 class GameplayScreen(GameScreen):
@@ -18,156 +19,151 @@ class GameplayScreen(GameScreen):
         self.btn_quit = Button(self.game.WIDTH - 40, 8,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
                                sys.exit, self.game)
+
         self.buttons = []
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
 
-        # Framerate smoothing objects/variables. Used in update() method.
-        self.FPS = 60
-        self.FramePerSec = pygame.time.Clock()
-
         # Creating a list of sprites, platforms, and powerups. Allows easy sprite access.
-        self.all_sprites = pygame.sprite.Group()
+        self.entities = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()  # Used in player update() method.
         self.powerups = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
-        # Creation of the player and base platform. Base platform colored red
-        self.PT1 = Platform(game, self, game.WIDTH, game.WIDTH / 2, game.HEIGHT - 10)
-        self.PT1.surf.fill((255, 0, 0))
-        self.P1 = Player(game, self)
+        self.camera_y = 0
 
-        # self.all_sprites.add(self.P1)
-        # self.all_sprites.add(self.PT1)
-        # self.platforms.add(self.PT1)
+        # Despawn point for entities
+        self.despawn_y = self.camera_y + self.game.HEIGHT + 32
+
+        self.player = Player(self)
 
         # Keeping track of distance for score
-        self.total_distance = 0
         self.best_distance = 0
+        self.progress = 0
+        self.times_hit = 0
 
-        # Stuff for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
+        # Variables for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
         self.rand_dist = 0
 
-        for x in range(6):  # TODO: Adjust number of starting platforms
-            width = random.randrange(50, 100)
-            check = True
-            while check:
-                p = Platform(game, self, width, random.randrange(0, game.WIDTH - width), random.randrange(0, game.HEIGHT - 60))
-                check = self.check_plat(p, self.platforms)
-                if check:
-                    p.kill()
+    def on_show(self):
 
-    # Check to see if newly generated platform is "decently" spaced from other previously-gen platforms
-    def check_plat(self, platform, group_plat):
-        higher = False
-        if pygame.sprite.spritecollideany(platform, group_plat) != platform:
-            return True
-        else:
-            highest = None
-            i = 0
-            for rand_first in group_plat:
-                highest = rand_first
-                i += 1
-                if i > 0:
-                    break
-            for entity in group_plat:
-                if entity == platform:
-                    continue
-                elif entity.rect.top < highest.rect.top:
-                    highest = entity
-                # TODO: Find appropriate spacing value between platforms.
-                # Note: Values above 50 may cause freezing of game.
-                if (abs(platform.rect.top - entity.rect.bottom) < 60) and (abs(platform.rect.bottom - entity.rect.top) < 60):
-                    higher = True
-                    return True
-            # Highest Top Difference ensures that between the highest platform
-            # (that is not the platform being checked) and platform being checked
-            # are both not super far away and impossible to jump to (vertically)
-            highest_top_diff = abs(abs(highest.rect.top) - abs(platform.rect.top))
-            if highest_top_diff > 380:
-                return True
-            # Similarly as above Width Difference prevents horizontal spacing from becoming too far away
-            # or too close for platforms
-            highest_width_diff = abs(abs(highest.rect.centerx) - abs(platform.rect.centerx))
-            if highest_width_diff > 274 or highest_width_diff < 100:
-                return True
-            return False
+        # Reset variables
+        self.camera_y = -self.game.HEIGHT + 10
+        self.despawn_y = self.camera_y + self.game.HEIGHT + 32
+        self.best_distance = 0
+        self.enemy_dist = 0
+        self.times_hit = 0
+        self.progress = 0
+        self.rand_dist = 0
 
-    def plat_gen(self):
+        self.player.reset()
+
+        for e in self.entities:
+            e.kill()
+
+        # Add base platform
+        base_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
+        base_platform.surf.fill((255, 0, 0))
+
+        self.gen_platforms(True)
+
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
+        pygame.mixer.music.play(-1)
+
+    def gen_platforms(self, whole_screen=False):
+
+        # TODO: Adjust platform position generation
+        # Don't use a check function and infinite loop like before
+        # Instead, base the random position on existing platforms
+        # For whole_screen=True, generate one platform first, then the rest based on the first
+
         while len(self.platforms) < 7:
+            # Set width/position
             width = random.randrange(50, 100)
-            check = True
-            while check:
-                p = Platform(self.game, self, width, random.randrange(0, self.game.WIDTH - width), random.randrange(-250, -50))
-                check = self.check_plat(p, self.platforms)
-                if check:
-                    p.kill()
+            x = random.randrange(0, self.game.WIDTH - width)
+
+            # Generate platforms at the top of the screen, just offscreen
+            y = self.camera_y - random.randrange(10, 50)
+
+            # Generate platforms on the entire screen
+            if whole_screen:
+                y = self.camera_y + random.randrange(20, self.game.HEIGHT - 60)
+
+            # Create platform
+            Platform(self, width, x, y)
+
+            # Random powerup spawn
+            if random.randrange(100) < 15:
+                p = Powerup(self, x, y - 25)
 
     # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
-    def enemy_gen(self):
-        if self.best_distance > 1000 and len(self.enemies) < 3:
+    def gen_enemies(self):
+        if self.progress > 1000 and len(self.enemies) < 3:
             if self.rand_dist == 0:
-                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.best_distance - 1000)//1000))
-                self.enemy_dist = self.best_distance
-            if self.best_distance - self.enemy_dist > self.rand_dist:
-                self.enemies.add(Enemy(self.game, self,
-                                       random.randrange(self.game.WIDTH//6, self.game.WIDTH//4),  # Platform span
-                                       random.randrange(0, self.game.WIDTH//2)))                  # Platform x
+                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.progress - 1000)//1000))
+                self.enemy_dist = self.progress
+            if self.progress - self.enemy_dist > self.rand_dist:
+                Enemy(self,
+                      random.randrange(self.game.WIDTH//6, self.game.WIDTH//4),  # Platform span
+                      random.randrange(0, self.game.WIDTH//2),                  # Platform x
+                      self.camera_y - 15)
                 self.rand_dist = 0
 
     # All game logic and their changes go in this method
     def update(self):
-        # This FramePerSecond clock object limits the FPS, determined by the FPS variable. Smooths gameplay.
-        self.FramePerSec.tick(self.FPS)
         self.update_buttons()
-        self.all_sprites.update()
+        self.entities.update()
+        self.player.update()
 
-        # allows for screen to scroll up and destroy
-        if self.P1.rect.top <= self.game.HEIGHT / 4:
-            self.P1.pos.y += abs(self.P1.vel.y)
-            self.total_distance += abs(self.P1.vel.y)
-            for plat in self.platforms:
-                plat.rect.y += abs(self.P1.vel.y)
-                if plat.rect.top >= self.game.HEIGHT:
-                    plat.kill()
-            for enem in self.enemies:
-                enem.pos.y += abs(self.P1.vel.y)
-        # Player is holding space key? Jump until max jump height is reached. Space key is let go? Stop jump.
-        if self.game.player_jump:
-            self.P1.jump()
-        if self.game.player_jump_c:
-            self.P1.cancel_jump()
-
-        # Update the movement of the player
-        self.P1.move()
-        self.P1.update()
+        # Check if player has hit an enemy, lowering progress by 1500
+        if self.player.hit:
+            self.player.hit = False
+            self.times_hit += 1
+            self.progress = self.best_distance - 1500*self.times_hit
+            self.rand_dist = 0
 
         # Check if the player has died
-        if not self.P1.alive:
+        if not self.player.alive or self.progress < 0:
             self.game.show_game_over_screen()
 
-        # Tracking player distance/progress
-        if self.total_distance > self.best_distance:
-            self.best_distance = self.total_distance
+        # allows for screen to scroll up and destroy
+        if self.player.rect_render.top <= self.game.HEIGHT / 4:
+            self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
+            self.despawn_y = self.camera_y + self.game.HEIGHT + 32
+
+        # Tracking player distance/progress, adjusted to start point
+        if self.player.pos.y + 25 < -self.best_distance:
+            self.best_distance = -(self.player.pos.y + 25)
+            self.progress = -(self.player.pos.y + 25) - 1500*self.times_hit
+
+        # Generate platforms and enemies
+        self.gen_platforms()
+        self.gen_enemies()
 
     # All game visuals and their changes go in this method
     def render(self):
         # Draws the background and buttons
-        self.game.screen.blit(self.game.assets["game_bg"], (0, 0))
+        self.game.screen.blit(self.game.assets["bg_game"], (0, 0))
+
+        for e in self.entities:
+            e.render()
+
+        self.player.render()
+
         self.render_buttons()
 
-        # Draw all sprites in our sprite group
-        for entity in self.all_sprites:
-            self.game.screen.blit(entity.surf, entity.rect)
+        # Draw progress bar
+        self.draw_progress()
 
         # Draw current score
-        self.game.draw_text(str(int(self.best_distance)), 30, self.game.WIDTH/2, 20)
+        self.game.draw_text(str(round(self.progress)), 30, self.game.WIDTH/2, 50)
 
-        # Creates platforms as screen scrolls upward
-        self.plat_gen()
-
-        self.enemy_gen()
+    def draw_progress(self):
+        pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH/3, 10, self.game.WIDTH/3, 20), 3, 5, 5, 5, 5)
+        pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH/3+2, 12,
+                                                           min(self.game.WIDTH/3*(self.progress/10000),
+                                                               self.game.WIDTH/3-2), 16), 0, 5, 5, 5, 5)
 
     def update_buttons(self):
         for btn in self.buttons:

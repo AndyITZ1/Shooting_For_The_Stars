@@ -3,29 +3,64 @@ import time
 import random
 import pygame
 from pygame.locals import *
+from pygame.math import Vector2
+from abc import ABC, abstractmethod
+
+
+# Abstract entity class
+class Entity(pygame.sprite.Sprite, ABC):
+    def __init__(self, gameplay_screen, *groups):
+        super().__init__(groups)
+        self.gameplay_screen = gameplay_screen
+        self.game = gameplay_screen.game
+
+        self.surf = pygame.Surface((0, 0))
+        self.rect = self.surf.get_rect()
+        self.rect_render = self.surf.get_rect()
+
+        self.pos = Vector2(0, 0)
+
+    def update(self):
+        if self.pos.y > self.gameplay_screen.despawn_y:
+            self.kill()
+
+        self.update_rect()
+
+    def update_rect(self):
+        self.rect = self.surf.get_rect(center=self.pos)
+        self.rect_render = self.surf.get_rect(
+            center=(self.pos.x, self.pos.y - self.gameplay_screen.camera_y))
+
+    def render(self):
+        self.game.screen.blit(self.surf, self.rect_render)
 
 
 # For now, player will be represented with red squares.
-class Player(pygame.sprite.Sprite):
-    def __init__(self, game, gameplayscreen):
-        self.groups = gameplayscreen.all_sprites
-        super().__init__(self.groups)
-        self.game = game
-        self.gameplayscreen = gameplayscreen
+class Player(Entity):
+    def __init__(self, gameplay_screen):
+        super().__init__(gameplay_screen)
+
+        # Rendering surface
         self.surf = pygame.Surface((30, 30))
         self.surf.fill((237, 55, 55))
-        self.rect = self.surf.get_rect()
-        self.alive = True
-        self.jumping = False
 
-        # Kinematics: Governs the physics of player movement. vec allows us to make 2D vector variables.
-        self.vec = pygame.math.Vector2
-        self.ACC = 0.5
-        self.FRIC = -0.12     # TODO: Change friction value to suit game needs.
-        self.pos = self.vec((20, 565))
-        self.vel = self.vec(0, 0)
-        self.acc = self.vec(0, 0)
-        self.last_y = self.pos.y
+        # Velocity and acceleration variables
+        self.vel = Vector2(0, 0)
+        self.acc = Vector2(0, 0)
+
+        self.alive = True
+        self.hit = False
+        self.on_ground = False
+        self.jumping = False
+        self.jumped = False
+
+        # Physics constants
+        # TODO: Adjust values for game balance
+        self.ACCELERATION = 0.5
+        self.FRICTION = 0.1
+        self.AIR_FRICTION = 0.06
+        self.GRAVITY = 0.5
+        self.MAX_FALL_VELOCITY = 15
 
         # Power-up effects
         self.boosted = False
@@ -33,63 +68,122 @@ class Player(pygame.sprite.Sprite):
         # Rhythm gameplay.
         self.start_time = time.time() + 0.01
 
+    # Reset player variables when starting gameplay
+    def reset(self):
+        self.pos.x = self.game.WIDTH / 2
+        self.pos.y = -25
+
+        self.vel.x = 0
+        self.vel.y = 0
+
+        self.acc.x = 0
+        self.acc.y = 0
+
+        self.alive = True
+        self.hit = False
+        self.on_ground = False
+        self.jumping = False
+        self.jumped = False
+
     # This method allows us to control our player. Heavy use of physics and kinematics.
     def move(self):
         # Reset acceleration, or else player ends up wobbling back and forth
-        self.acc = self.vec(0, 0.5)     # TODO: Change gravity (y) value to suit game needs.
+        self.acc.x = 0
+        self.acc.y = 0
+
+        # Apply gravity if player is not on a platform
+        if not self.on_ground:
+            self.acc.y = self.GRAVITY
 
         # Check if any keyboard keys have been pressed. Modify acceleration/velocity accordingly.
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_LEFT]:
-            self.acc.x = -self.ACC
-        if pressed_keys[K_RIGHT]:
-            self.acc.x = self.ACC
+            self.acc.x = -self.ACCELERATION
+        elif pressed_keys[K_RIGHT]:
+            self.acc.x = self.ACCELERATION
+
+        # Player is holding space key? Jump until max jump height is reached. Space key is let go? Stop jump.
+        if pressed_keys[K_SPACE]:
+            self.jump()
+            self.jumping = True
+        else:
+            self.cancel_jump()
+            self.jumping = False
+
+        # Apply friction
+        if self.on_ground:
+            self.acc.x -= self.vel.x * self.FRICTION
+        else:
+            self.acc.x -= self.vel.x * self.AIR_FRICTION
 
         # Basic kinematics. They all change based on the acceleration from above.
-        self.acc.x += self.vel.x * self.FRIC
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        # FEATURE: Screen Warping. Player will wrap around screen borders. Can be removed with border acting as barrier.
+        # Apply maximum falling velocity
+        if self.vel.y > self.MAX_FALL_VELOCITY:
+            self.vel.y = self.MAX_FALL_VELOCITY
+
+        # Screen Warping. Player will wrap around screen borders. Can be removed with border acting as barrier.
         if self.pos.x > self.game.WIDTH:
-            self.pos.x = 0
+            self.pos.x = self.pos.x - self.game.WIDTH
         if self.pos.x < 0:
-            self.pos.x = self.game.WIDTH
-
-        # Update the player rectangle to be at the new position that was calculated above
-        self.rect.midbottom = self.pos
-
-        # Check for for player death if player falls off of screen
-        if self.rect.bottom > self.game.HEIGHT + 32:
-            self.alive = False
+            self.pos.x = self.game.WIDTH - self.pos.x
 
     # Jump method first check if a player is on a platform before allowing player to jump
     def jump(self):
-        hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
-        if hits and not self.jumping:
+        if self.on_ground and not self.jumping:
+            self.jumped = True
+
             if self.boosted:
-                self.jumping = True
                 self.vel.y = -30
                 self.boosted = False
             else:
                 # Rhythm detection
                 curr_time = time.time()
                 if curr_time - self.start_time <= 0.15 or curr_time - self.start_time >= (1/83)*60-0.15:
-                    self.jumping = True
                     self.vel.y = -20
                     self.vel.x *= 2
                     self.game.assets["sfx_blip"].play()
                 else:
-                    self.jumping = True
                     self.vel.y = -15
 
     def cancel_jump(self):
         if self.jumping:
-            if self.vel.y < -3:
-                self.vel.y = -3
+            if self.vel.y < -5:
+                self.vel.y = -5
 
     # Player platform collision detection & rhythm restart
     def update(self):
+        self.jumped = False
+
+        # Update movement
+        self.move()
+
+        # Check for for player death if player falls off of screen
+        if self.pos.y > self.gameplay_screen.despawn_y:
+            self.alive = False
+            return
+
+        # Platform collisions
+        plat_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.platforms, False)
+
+        # Ignore collisions if the player jumped this frame
+        if not self.jumped and plat_collisions:
+            for p in plat_collisions:
+                # Place the player on the platform if they are high enough (w/ vel forgiveness) and falling
+                if self.vel.y > 0 and self.rect.bottom < p.rect.centery + self.vel.y:
+                    # Set player to be slightly inside platform, otherwise they will jitter
+                    self.pos.y = p.rect.top - 14.9
+                    self.vel.y = 0
+                    self.on_ground = True
+
+        # If player is not colliding with a platform
+        else:
+            self.on_ground = False
+
+        self.update_rect()
+
         if self.boosted:
             self.surf.fill((255,165,0))
         else:
@@ -106,93 +200,65 @@ class Player(pygame.sprite.Sprite):
             self.start_time = time.time()
 
         # Check if player hits powerups
-        pows_hits = pygame.sprite.spritecollide(self, self.gameplayscreen.powerups, True)
-        for pow in pows_hits:
-            if pow.type == 'boost':
+        pows_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.powerups, True)
+        for p in pows_collisions:
+            if p.type == 'boost':
                 self.boosted = True
 
         # Check if player hits enemy
-        hit_enemy = pygame.sprite.spritecollide(self, self.gameplayscreen.enemies, True)
-        if hit_enemy:
-            self.alive = False
-
-        if self.vel.y > 0:
-            hits = pygame.sprite.spritecollide(self, self.gameplayscreen.platforms, False)
-            if hits:
-                lowest = hits[0]
-                for hit in hits:
-                    if lowest.rect.bottom < hit.rect.bottom:
-                        lowest = hit
-                if self.pos.y < lowest.rect.bottom:
-                    self.pos.y = lowest.rect.top + 1  # hits[0] returns the first collision in the list
-                    self.vel.y = 0
-                    self.jumping = False
-                    self.game.player_jump = False
-                    self.game.player_jump_c = False
-
-        # Tracking player height for distance traveled
-        delta_y = self.pos.y - self.last_y
-        self.last_y = self.pos.y
-        self.gameplayscreen.total_distance -= delta_y
+        enemy_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.enemies, True)
+        if enemy_collisions:
+            self.game.assets["sfx_hit"].play()
+            self.hit = True
+            for e in enemy_collisions:
+                e.kill()
 
 
 # For now, platforms will be represented with gray rectangles.
-class Platform(pygame.sprite.Sprite):
-    def __init__(self, game, gameplayscreen, width, x, y):
-        self.groups = gameplayscreen.all_sprites, gameplayscreen.platforms
-        super().__init__(self.groups)
-        self.game = game
-        self.gameplayscreen = gameplayscreen
+class Platform(Entity):
+    def __init__(self, gameplay_screen, width, x, y):
+        super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.platforms)
         self.surf = pygame.Surface((width, 20))
         self.surf.fill((211, 211, 211))
-        self.rect = self.surf.get_rect(center=(x, y))    # center = spawn position
-        if random.randrange(100) < 15:
-            p = Powerups(self.game, self, self.gameplayscreen)
-            self.gameplayscreen.powerups.add(p)
-            self.gameplayscreen.all_sprites.add(p)
+        self.pos.x = x
+        self.pos.y = y
+
+        self.update_rect()
 
 
 # Representing enemies with yellow squares
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, gameplayscreen, span, x):
-        self.groups = gameplayscreen.all_sprites, gameplayscreen.enemies
-        super().__init__(self.groups)
-        self.game = game
-        self.gameplayscreen = gameplayscreen
-        self.surf = pygame.Surface((30, 30))
-        self.surf.fill((211, 211, 0))
-        self.rect = self.surf.get_rect()
+class Enemy(Entity):
+    def __init__(self, gameplay_screen, span, x, y):
+        super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.enemies)
+        self.surf = pygame.transform.scale(self.game.assets["enemy_disc"].convert_alpha(), (35, 35))
+        # self.surf.fill((211, 211, 0))
 
         # Vectors for simple enemy movement
-        self.vec = pygame.math.Vector2
-        self.pos = self.vec((x, 0))
+        self.pos.x = x
+        self.pos.y = y
         self.start = self.pos.x
         self.span = span
+
+        self.update_rect()
 
     def update(self):
         # Sine wave oscillation for basic enemies, could be improved
         self.pos.x = self.start + (self.span * math.sin(time.time() * 83/120 * 2 * math.pi) + self.span)
-        self.rect.midbottom = self.pos
-        if self.rect.top >= self.game.HEIGHT:
+
+        if self.pos.y > self.gameplay_screen.despawn_y:
             self.kill()
 
+        self.update_rect()
 
-class Powerups(pygame.sprite.Sprite):
-    def __init__(self, game, platform, gameplayscreen):
-        self.groups = gameplayscreen.all_sprites, gameplayscreen.powerups
-        super().__init__(self.groups)
-        self.game = game
-        self.plat = platform
-        self.gameplayscreen = gameplayscreen
+
+class Powerup(Entity):
+    def __init__(self, gameplay_screen, x, y):
+        super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.powerups)
         self.type = random.choice(['boost'])
-        self.surf = pygame.Surface((10, 10))
+        self.surf = pygame.Surface((15, 15))
         self.surf.fill((200, 100, 200))
-        self.rect = self.surf.get_rect()
-        self.rect.centerx = self.plat.rect.centerx
-        self.rect.bottom = self.plat.rect.top - 5
 
-    def update(self):
-        self.rect.bottom = self.plat.rect.top - 5
-        if not self.gameplayscreen.platforms.has(self.plat):
-            self.kill()
+        self.pos.x = x
+        self.pos.y = y
 
+        self.update_rect()

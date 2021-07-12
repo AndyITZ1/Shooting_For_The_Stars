@@ -73,16 +73,17 @@ class MainMenu(Menu):
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
 
-        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
-        pygame.mixer.music.play(-1)
+    def on_show(self):
+        if self.game.prev_game_screen != self.game.scrn_settings_menu:
+            pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
+            pygame.mixer.music.play(-1)
 
     def update(self):
         self.update_buttons()
 
     def render(self):
         # Draws the background using the image
-        self.game.screen.blit(self.game.assets["main_menu_bg"], (0, 0))
+        self.game.screen.blit(self.game.assets["bg_main_menu"], (0, 0))
 
         # Title text
         self.game.draw_text('Shooting for the Stars', 40, self.center_x, self.center_y - 40)
@@ -96,7 +97,7 @@ class SettingsMenu(Menu):
 
         self.btn_exit = Button(8, 8,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
-                               self.game.show_previous_screen, self.game)
+                               self.game.show_previous_game_screen, self.game)
 
         self.btn_music_minus = Button(self.center_x - 64, self.center_y - 64,
                                       self.game.assets["btn_minus"], self.game.assets["btn_minus_light"],
@@ -161,7 +162,7 @@ class GameOverMenu(Menu):
         self.score = score
         # TODO: RETRY BUTTON PLACEHOLDER, GET A REAL RETRY BUTTON
         self.btn_retry = Button(self.center_x - 48, self.center_y + 30,
-                                self.game.assets["retry"], self.game.assets["retry_light"],
+                                self.game.assets["btn_retry"], self.game.assets["btn_retry_light"],
                                 self.game.show_main_game_screen, self.game)
 
         self.btn_quit = Button(self.center_x + 32, self.center_y + 30,
@@ -171,8 +172,9 @@ class GameOverMenu(Menu):
         self.buttons.append(self.btn_retry)
         self.buttons.append(self.btn_quit)
 
-        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
+    def on_show(self):
+        # bgm source: https://thewhitepianokey.bandcamp.com/track/leaving-yoshi-slow-loopable
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/gameover_bgm.mp3'))
         pygame.mixer.music.play(-1)
 
     def update(self):
@@ -180,7 +182,7 @@ class GameOverMenu(Menu):
 
     def render(self):
         # Draws the background using the image
-        self.game.screen.blit(self.game.assets["game_bg"], (0, 0))
+        self.game.screen.blit(self.game.assets["bg_game"], (0, 0))
 
         # Text
         self.game.draw_text('Game Over', 40, self.center_x, self.center_y - 40)

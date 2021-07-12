@@ -38,12 +38,17 @@ class Game:
                          "btn_minus_light": pygame.image.load(os.path.join(abs_dir, "assets/minus-light.png")),
                          "btn_plus": pygame.image.load(os.path.join(abs_dir, "assets/plus.png")),
                          "btn_plus_light": pygame.image.load(os.path.join(abs_dir, "assets/plus_light.png")),
-                         "main_menu_bg": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
-                         "game_bg": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
-                         "retry": pygame.image.load(os.path.join(abs_dir, 'assets/retry.png')),
-                         "retry_light": pygame.image.load(os.path.join(abs_dir, 'assets/retry_light.png')),
+                         "btn_retry": pygame.image.load(os.path.join(abs_dir, 'assets/retry.png')),
+                         "btn_retry_light": pygame.image.load(os.path.join(abs_dir, 'assets/retry_light.png')),
+                         "bg_main_menu": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
+                         "bg_game": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
-                         "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
+                         "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
+                         "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav')),
+                         "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
+
+        # setup sfx list
+        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"]]
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
@@ -71,15 +76,21 @@ class Game:
         self.next_game_screen = None
 
         # Keep track of previous screen to know where to return on button clicks.
-        self.prev_screen = None
+        self.prev_game_screen = None
 
-        self.player_jump = False
-        self.player_jump_c = False
+        self.game_screen.on_show()
+
+        # Fixed FPS timer
+        self.FPS = 60
+        self.FramePerSec = pygame.time.Clock()
+
         # Run game
         self.game_loop()
 
     def game_loop(self):
         while self.running:
+            # Limit FPS to fixed value
+            self.FramePerSec.tick(self.FPS)
             self.update()
             self.render()
 
@@ -99,17 +110,13 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_clicked = True
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.player_jump = True
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    self.player_jump_c = True
-
         # Change game screen if necessary
         if self.next_game_screen is not None:
-            self.prev_screen = self.game_screen
+            self.prev_game_screen = self.game_screen
+
             self.game_screen = self.next_game_screen
+            self.game_screen.on_show()
+
             self.next_game_screen = None
         
         # Update current game screen
@@ -137,28 +144,19 @@ class Game:
     # Methods used by the current game screen to change to a different game screen
     def show_main_menu_screen(self):
         self.next_game_screen = self.scrn_main_menu
-        # load music, set volume, -1 = plays song infinitely, change it to 0 to play once only
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
-        pygame.mixer.music.play(-1)
         
     def show_settings_screen(self):
         self.next_game_screen = self.scrn_settings_menu
         
     def show_main_game_screen(self):
         self.next_game_screen = self.scrn_gameplay_screen
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
-        pygame.mixer.music.play(-1)
 
-    def show_previous_screen(self):
-        self.next_game_screen = self.prev_screen
+    def show_previous_game_screen(self):
+        self.next_game_screen = self.prev_game_screen
 
     def show_game_over_screen(self):
         self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
         self.next_game_screen = self.scrn_gameover_menu
-        self.scrn_gameplay_screen = GameplayScreen(self)
-        # bgm source: https://thewhitepianokey.bandcamp.com/track/leaving-yoshi-slow-loopable
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/gameover_bgm.mp3'))
-        pygame.mixer.music.play(-1)
 
     # Apply settings updates
     def update_settings(self):
@@ -178,8 +176,10 @@ class Game:
         pygame.mixer.music.set_volume(self.setting_music_volume * 0.1)
         
         # TODO: All sfx should be in a list so they can be updated here, don't hard code
-        self.assets["sfx_blip"].set_volume(self.setting_sfx_volume * 0.5)
+        for s in self.sfx:
+            s.set_volume(self.setting_sfx_volume * 0.5)
 
     @property
     def assets(self):
         return self.__assets
+
