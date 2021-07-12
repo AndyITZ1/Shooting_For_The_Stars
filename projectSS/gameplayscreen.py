@@ -116,11 +116,11 @@ class GameplayScreen(GameScreen):
         self.entities.update()
         self.player.update()
 
-        # Check if player has hit an enemy, lowering progress by 2000
+        # Check if player has hit an enemy, lowering progress by 1500
         if self.player.hit:
             self.player.hit = False
             self.times_hit += 1
-            self.progress = self.best_distance - 2000*self.times_hit
+            self.progress = self.best_distance - 1500*self.times_hit
             self.rand_dist = 0
 
         # Check if the player has died
@@ -157,12 +157,13 @@ class GameplayScreen(GameScreen):
         self.draw_progress()
 
         # Draw current score
-        self.game.draw_text(str(round(self.best_distance)), 30, self.game.WIDTH/2, 70)
+        self.game.draw_text(str(round(self.progress)), 30, self.game.WIDTH/2, 50)
 
     def draw_progress(self):
         pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH/3, 10, self.game.WIDTH/3, 20), 3, 5, 5, 5, 5)
         pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH/3+2, 12,
-                                                           self.game.WIDTH/3*(self.progress/10000), 16), 0, 5, 5, 5, 5)
+                                                           min(self.game.WIDTH/3*(self.progress/10000),
+                                                               self.game.WIDTH/3-2), 16), 0, 5, 5, 5, 5)
 
     def update_buttons(self):
         for btn in self.buttons:
