@@ -8,6 +8,7 @@ from projectSS.minigame import MinigameScreen
 
 # Icon made by Freepik from www.flaticon.com
 # Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
+# Icon made by iconixor from www.flaticon.com
 # Music in the background from https://www.FesliyanStudios.com
 
 class Game:
@@ -48,7 +49,8 @@ class Game:
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
                          "minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame.png')),
-                         "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png'))}
+                         "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png')),
+                         "circle": pygame.image.load(os.path.join(abs_dir, 'assets/circle.png'))}
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
