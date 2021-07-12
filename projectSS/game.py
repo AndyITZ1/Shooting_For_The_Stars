@@ -43,7 +43,11 @@ class Game:
                          "bg_main_menu": pygame.image.load(os.path.join(abs_dir, 'assets/mainbg.png')),
                          "bg_game": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
-                         "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav'))}
+                         "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
+                         "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav'))}
+
+        # setup sfx list
+        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"]]
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
@@ -171,8 +175,10 @@ class Game:
         pygame.mixer.music.set_volume(self.setting_music_volume * 0.1)
         
         # TODO: All sfx should be in a list so they can be updated here, don't hard code
-        self.assets["sfx_blip"].set_volume(self.setting_sfx_volume * 0.5)
+        for s in self.sfx:
+            s.set_volume(self.setting_sfx_volume * 0.5)
 
     @property
     def assets(self):
         return self.__assets
+

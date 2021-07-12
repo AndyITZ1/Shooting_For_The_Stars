@@ -49,6 +49,7 @@ class Player(Entity):
         self.acc = Vector2(0, 0)
 
         self.alive = True
+        self.hit = False
         self.on_ground = False
         self.jumping = False
         self.jumped = False
@@ -79,6 +80,7 @@ class Player(Entity):
         self.acc.y = 0
 
         self.alive = True
+        self.hit = False
         self.on_ground = False
         self.jumping = False
         self.jumped = False
@@ -206,7 +208,10 @@ class Player(Entity):
         # Check if player hits enemy
         enemy_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.enemies, True)
         if enemy_collisions:
-            self.alive = False
+            self.game.assets["sfx_hit"].play()
+            self.hit = True
+            for e in enemy_collisions:
+                e.kill()
 
 
 # For now, platforms will be represented with gray rectangles.

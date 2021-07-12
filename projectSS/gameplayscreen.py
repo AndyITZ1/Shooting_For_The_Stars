@@ -38,8 +38,9 @@ class GameplayScreen(GameScreen):
         self.player = Player(self)
 
         # Keeping track of distance for score
-        self.total_distance = 0
         self.best_distance = 0
+        self.progress = 0
+        self.times_hit = 0
 
         # Variables for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
@@ -50,9 +51,10 @@ class GameplayScreen(GameScreen):
         # Reset variables
         self.camera_y = -self.game.HEIGHT + 10
         self.despawn_y = self.camera_y + self.game.HEIGHT + 32
-        self.total_distance = 0
         self.best_distance = 0
         self.enemy_dist = 0
+        self.times_hit = 0
+        self.progress = 0
         self.rand_dist = 0
 
         self.player.reset()
@@ -97,11 +99,11 @@ class GameplayScreen(GameScreen):
 
     # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
     def gen_enemies(self):
-        if self.best_distance > 1000 and len(self.enemies) < 3:
+        if self.progress > 1000 and len(self.enemies) < 3:
             if self.rand_dist == 0:
-                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.best_distance - 1000)//1000))
-                self.enemy_dist = self.best_distance
-            if self.best_distance - self.enemy_dist > self.rand_dist:
+                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.progress - 1000)//1000))
+                self.enemy_dist = self.progress
+            if self.progress - self.enemy_dist > self.rand_dist:
                 Enemy(self,
                       random.randrange(self.game.WIDTH//6, self.game.WIDTH//4),  # Platform span
                       random.randrange(0, self.game.WIDTH//2),                  # Platform x
@@ -114,8 +116,15 @@ class GameplayScreen(GameScreen):
         self.entities.update()
         self.player.update()
 
+        # Check if player has hit an enemy, lowering progress by 2000
+        if self.player.hit:
+            self.player.hit = False
+            self.times_hit += 1
+            self.progress = self.best_distance - 2000*self.times_hit
+            self.rand_dist = 0
+
         # Check if the player has died
-        if not self.player.alive:
+        if not self.player.alive or self.progress < 0:
             self.game.show_game_over_screen()
 
         # allows for screen to scroll up and destroy
@@ -126,6 +135,7 @@ class GameplayScreen(GameScreen):
         # Tracking player distance/progress, adjusted to start point
         if self.player.pos.y + 25 < -self.best_distance:
             self.best_distance = -(self.player.pos.y + 25)
+            self.progress = -(self.player.pos.y + 25) - 1500*self.times_hit
 
         # Generate platforms and enemies
         self.gen_platforms()
@@ -143,8 +153,16 @@ class GameplayScreen(GameScreen):
 
         self.render_buttons()
 
+        # Draw progress bar
+        self.draw_progress()
+
         # Draw current score
-        self.game.draw_text(str(round(self.best_distance)), 30, self.game.WIDTH/2, 20)
+        self.game.draw_text(str(round(self.best_distance)), 30, self.game.WIDTH/2, 70)
+
+    def draw_progress(self):
+        pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH/3, 10, self.game.WIDTH/3, 20), 3, 5, 5, 5, 5)
+        pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH/3+2, 12,
+                                                           self.game.WIDTH/3*(self.progress/10000), 16), 0, 5, 5, 5, 5)
 
     def update_buttons(self):
         for btn in self.buttons:
