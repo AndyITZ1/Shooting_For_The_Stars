@@ -13,6 +13,7 @@ class Ring:
 
         self.width = sprite.get_width()
         self.height = sprite.get_height()
+        self.radius = 200
 
         self.mouse_hover = False
 
@@ -26,10 +27,11 @@ class Ring:
             self.game.assets["sfx_blip"].play()
             return True
         else:
-            return False
+            self.radius -= 2
 
     def render(self):
         self.game.screen.blit(self.sprite, (self.x, self.y))
+        pygame.draw.circle(self.game.screen, (245, 64, 41), (self.x + 64, self.y + 64), self.radius, width=3)
 
 
 class MinigameScreen(GameScreen):
