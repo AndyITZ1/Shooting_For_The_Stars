@@ -23,15 +23,17 @@ class Ring:
                             self.y <= self.game.mouse_pos[1] < self.y + self.height)
 
         # Invoke on_click if clicked
-        if self.mouse_hover and self.game.mouse_clicked:
+        if self.mouse_hover and self.game.mouse_clicked and 52 <= self.radius <= 67:
             self.game.assets["sfx_blip"].play()
             return True
         else:
-            self.radius -= 2
+            if self.radius < 52:
+                return True  # Should be considered a failure to click ring on time.
+            self.radius -= 1.75
 
     def render(self):
         self.game.screen.blit(self.sprite, (self.x, self.y))
-        pygame.draw.circle(self.game.screen, (245, 64, 41), (self.x + 64, self.y + 64), self.radius, width=3)
+        pygame.draw.circle(self.game.screen, (134, 144, 250), (self.x + 64, self.y + 64), self.radius, width=3)
 
 
 class MinigameScreen(GameScreen):
