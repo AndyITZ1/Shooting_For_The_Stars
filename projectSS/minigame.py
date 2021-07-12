@@ -1,4 +1,5 @@
 import os
+import random
 import pygame
 from projectSS.gamescreen import GameScreen
 
@@ -49,7 +50,8 @@ class MinigameScreen(GameScreen):
         self.counter = 7
         self.counter_str = str(self.counter)
         self.circles = [
-            Ring(self.game.WIDTH / 2 - 128, self.game.HEIGHT / 2 - 128, self.game.assets["circle"], self.game)]
+            Ring(random.randrange(self.game.WIDTH - 128), random.randrange(self.game.HEIGHT - 128),
+                 self.game.assets["circle"], self.game)]
 
     def update(self):
         if self.counting_down:
