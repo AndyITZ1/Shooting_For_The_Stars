@@ -44,7 +44,8 @@ class Game:
                          "bg_game": pygame.image.load(os.path.join(abs_dir, 'assets/gamebg.png')),
                          "font_loc": os.path.join(abs_dir, 'assets/playmegames.ttf'),
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
-                         "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav'))}
+                         "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav')),
+                         "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
 
         # setup sfx list
         self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"]]

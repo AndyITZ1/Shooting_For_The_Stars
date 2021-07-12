@@ -230,8 +230,8 @@ class Platform(Entity):
 class Enemy(Entity):
     def __init__(self, gameplay_screen, span, x, y):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.enemies)
-        self.surf = pygame.Surface((30, 30))
-        self.surf.fill((211, 211, 0))
+        self.surf = pygame.transform.scale(self.game.assets["enemy_disc"].convert_alpha(), (35, 35))
+        # self.surf.fill((211, 211, 0))
 
         # Vectors for simple enemy movement
         self.pos.x = x
