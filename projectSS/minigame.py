@@ -46,6 +46,8 @@ class MinigameScreen(GameScreen):
         pygame.mixer.music.play(-1)
         self.counting_down = True
         self.start_ticks = pygame.time.get_ticks()
+        self.counter = 7
+        self.counter_str = str(self.counter)
         self.circles = [
             Ring(self.game.WIDTH / 2 - 128, self.game.HEIGHT / 2 - 128, self.game.assets["circle"], self.game)]
 
@@ -66,7 +68,7 @@ class MinigameScreen(GameScreen):
                 if clicked:
                     self.circles.remove(circle)
             if not self.circles:
-                self.game.show_previous_game_screen()
+                self.game.show_main_menu_screen()
 
     def render(self):
         self.game.screen.fill((251, 171, 52))
