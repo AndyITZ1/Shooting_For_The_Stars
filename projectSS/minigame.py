@@ -28,7 +28,7 @@ class Ring:
             return True
         else:
             if self.radius < 52:
-                return True  # Should be considered a failure to click ring on time.
+                raise Exception("Didn't click the button in time.")
             self.radius -= 1.75
 
     def render(self):
@@ -52,10 +52,12 @@ class MinigameScreen(GameScreen):
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/minigame_bgm.mp3'))
         pygame.mixer.music.play(-1)
 
+        self.dormant_circles.clear()
+        self.active_circles.clear()
         for _ in range(0, 5):
             self.dormant_circles.append(
-                    Ring(random.randrange(self.game.WIDTH - 128), random.randrange(self.game.HEIGHT - 128),
-                         self.game.assets["circle"], self.game),
+                Ring(random.randrange(self.game.WIDTH - 128), random.randrange(self.game.HEIGHT - 128),
+                     self.game.assets["circle"], self.game),
             )
 
         self.counting_down = True
@@ -83,9 +85,12 @@ class MinigameScreen(GameScreen):
                     self.ring_ticks = pygame.time.get_ticks()
 
             for circle in self.active_circles:
-                clicked = circle.update()
-                if clicked:
-                    self.active_circles.remove(circle)
+                try:
+                    clicked = circle.update()
+                    if clicked:
+                        self.active_circles.remove(circle)
+                except:
+                    self.game.show_main_menu_screen()
 
             if not self.active_circles and not self.dormant_circles:
                 self.game.show_main_menu_screen()
