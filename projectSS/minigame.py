@@ -4,6 +4,11 @@ import pygame
 from projectSS.gamescreen import GameScreen
 
 
+class ClickedTooLate(Exception):
+    def __init__(self, message="Didn't click the minigame button in time"):
+        self.message = message
+
+
 class Ring:
     def __init__(self, x, y, sprite, game):
         self.x = x
@@ -28,7 +33,7 @@ class Ring:
             return True
         else:
             if self.radius < 52:
-                raise Exception("Didn't click the button in time.")
+                raise ClickedTooLate
             self.radius -= 1.75
 
     def render(self):
@@ -89,7 +94,7 @@ class MinigameScreen(GameScreen):
                     clicked = circle.update()
                     if clicked:
                         self.active_circles.remove(circle)
-                except:
+                except ClickedTooLate:
                     self.game.show_main_menu_screen()
 
             if not self.active_circles and not self.dormant_circles:
