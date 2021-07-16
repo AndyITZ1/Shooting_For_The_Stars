@@ -59,7 +59,7 @@ class MinigameScreen(GameScreen):
 
         self.dormant_circles.clear()
         self.active_circles.clear()
-        for _ in range(0, 5):
+        for _ in range(0, 15):
             self.dormant_circles.append(
                 Ring(random.randrange(self.game.WIDTH - 128), random.randrange(self.game.HEIGHT - 128),
                      self.game.assets["circle"], self.game),
@@ -85,7 +85,7 @@ class MinigameScreen(GameScreen):
         else:
             if self.dormant_circles:
                 seconds = (pygame.time.get_ticks() - self.ring_ticks) / 1000
-                if seconds >= 1.8 or seconds >= random.uniform(0.5, 1.8):
+                if seconds >= 2.5 or seconds >= random.uniform(0.6, 1.8):
                     self.active_circles.append(self.dormant_circles.pop(0))
                     self.ring_ticks = pygame.time.get_ticks()
 
