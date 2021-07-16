@@ -41,23 +41,28 @@ class MinigameScreen(GameScreen):
         super().__init__(game)
         self.game = game
         self.counting_down = True
-        self.start_ticks = None  # Start tick
+        self.start_ticks = None  # Countdown ticks
+        self.ring_ticks = None  # Ring spawn ticks
         self.counter = 7
         self.counter_str = str(self.counter)
-        self.circles = []
+        self.active_circles = []
+        self.dormant_circles = []
 
     def on_show(self):
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/minigame_bgm.mp3'))
         pygame.mixer.music.play(-1)
 
-        self.circles = [
-            Ring(random.randrange(self.game.WIDTH - 128), random.randrange(self.game.HEIGHT - 128),
-                 self.game.assets["circle"], self.game)]
+        for _ in range(0, 5):
+            self.dormant_circles.append(
+                    Ring(random.randrange(self.game.WIDTH - 128), random.randrange(self.game.HEIGHT - 128),
+                         self.game.assets["circle"], self.game),
+            )
 
         self.counting_down = True
-        self.start_ticks = pygame.time.get_ticks()
         self.counter = 7
         self.counter_str = str(self.counter)
+        self.start_ticks = pygame.time.get_ticks()
+        self.ring_ticks = pygame.time.get_ticks()
 
     def update(self):
         if self.counting_down:
@@ -71,11 +76,18 @@ class MinigameScreen(GameScreen):
                 self.counting_down = False
 
         else:
-            for circle in self.circles:
+            if self.dormant_circles:
+                seconds = (pygame.time.get_ticks() - self.ring_ticks) / 1000
+                if seconds >= 1.8 or seconds >= random.uniform(0.5, 1.8):
+                    self.active_circles.append(self.dormant_circles.pop(0))
+                    self.ring_ticks = pygame.time.get_ticks()
+
+            for circle in self.active_circles:
                 clicked = circle.update()
                 if clicked:
-                    self.circles.remove(circle)
-            if not self.circles:
+                    self.active_circles.remove(circle)
+
+            if not self.active_circles and not self.dormant_circles:
                 self.game.show_main_menu_screen()
 
     def render(self):
@@ -85,5 +97,5 @@ class MinigameScreen(GameScreen):
             self.game.draw_text(self.counter_str, 80, self.game.WIDTH / 2, self.game.HEIGHT / 2)
             return
         else:
-            for circle in self.circles:
+            for circle in self.active_circles:
                 circle.render()
