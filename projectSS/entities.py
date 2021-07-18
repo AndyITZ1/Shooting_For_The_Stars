@@ -53,6 +53,7 @@ class Player(Entity):
         self.on_ground = False
         self.jumping = False
         self.jumped = False
+        self.pushed = False
 
         # Physics constants
         # TODO: Adjust values for game balance
@@ -84,6 +85,7 @@ class Player(Entity):
         self.on_ground = False
         self.jumping = False
         self.jumped = False
+        self.pushed = False
 
     # This method allows us to control our player. Heavy use of physics and kinematics.
     def move(self):
@@ -116,6 +118,11 @@ class Player(Entity):
         else:
             self.acc.x -= self.vel.x * self.AIR_FRICTION
 
+        # See if player was pushed
+        if self.pushed:
+            self.push()
+            self.pushed = False
+
         # Basic kinematics. They all change based on the acceleration from above.
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
@@ -147,6 +154,10 @@ class Player(Entity):
                     self.game.assets["sfx_blip"].play()
                 else:
                     self.vel.y = -15
+
+    def push(self):
+        self.vel.y = random.randrange(-15, -5)
+        self.acc.x = random.randrange(-15, 15)
 
     def cancel_jump(self):
         if self.jumping:
@@ -213,6 +224,12 @@ class Player(Entity):
             for e in enemy_collisions:
                 e.kill()
 
+        # Check if player hits a pusher
+        push_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.pushers, False)
+        for p in push_collisions:
+            if p.active:
+                self.pushed = True
+
 
 # For now, platforms will be represented with gray rectangles.
 class Platform(Entity):
@@ -260,5 +277,45 @@ class Powerup(Entity):
 
         self.pos.x = x
         self.pos.y = y
+
+        self.update_rect()
+
+
+class Pusher(Entity):
+    def __init__(self, gameplay_screen, x, y, platform):
+        super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.pushers)
+        self.plat = platform
+        self.surf = pygame.Surface((25, 25))
+        self.surf.fill((80, 80, 80))
+        self.pos.x = x
+        self.pos.y = y
+        self.active = False
+        self.vel = 1
+
+        self.start_time = time.time() + 0.01
+
+        self.update_rect()
+
+    def update(self):
+        if self.plat.pos.x - self.plat.surf.get_rect().center[0] < self.pos.x < self.plat.pos.x + self.plat.surf.get_rect().center[0]:
+            self.pos.x += self.vel
+        else:
+            self.vel *= -1
+            self.pos.x += self.vel
+
+        cur_time = time.time()
+        # turn light gray within a 0.5 interval of the bpm start time
+        if cur_time - self.start_time <= 0.15:
+            self.surf.fill((80, 80, 80))
+            self.active = True
+        elif cur_time - self.start_time >= (1/83)*120-0.15:
+            self.surf.fill((80, 80, 80))
+            self.active = True
+        else:
+            self.surf.fill((30, 30, 30))
+            self.active = False
+        # 83 BPM or 0.7229 seconds-per-beat: (1 / 83 bpm) * 60 to get exact seconds
+        if (time.time() - self.start_time) > (1/83)*120:
+            self.start_time = time.time()
 
         self.update_rect()
