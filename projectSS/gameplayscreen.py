@@ -7,6 +7,7 @@ import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
 from projectSS.entities import *
+from projectSS.spritesheet import *
 
 
 class GameplayScreen(GameScreen):
@@ -45,6 +46,15 @@ class GameplayScreen(GameScreen):
         # Variables for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
         self.rand_dist = 0
+
+        # Sprite for powerup
+        abs_dir = os.path.dirname(__file__)
+        self.jump_boost = Spritesheet(os.path.join(abs_dir, 'assets/jumpboost_flashr.png'))
+        self.invincibility = Spritesheet(os.path.join(abs_dir, 'assets/invinc_spritesheetre.png'))
+        self.j_boost_frames = [self.jump_boost.get_image(0, 0, 64, 64),
+                               self.jump_boost.get_image(64, 0, 64, 64)]
+        self.invinc_frames = [self.invincibility.get_image(0, 0, 64, 64),
+                              self.invincibility.get_image(64, 0, 64, 64)]
 
     def on_show(self):
 
@@ -133,9 +143,9 @@ class GameplayScreen(GameScreen):
             self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
         # Tracking player distance/progress, adjusted to start point
-        if self.player.pos.y + 25 < -self.best_distance:
-            self.best_distance = -(self.player.pos.y + 25)
-            self.progress = -(self.player.pos.y + 25) - 1500*self.times_hit
+        if self.player.pos.y + 64 < -self.best_distance:
+            self.best_distance = -(self.player.pos.y + 64)
+            self.progress = -(self.player.pos.y + 64) - 1500*self.times_hit
 
         # Generate platforms and enemies
         self.gen_platforms()
