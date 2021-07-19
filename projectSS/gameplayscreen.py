@@ -30,6 +30,7 @@ class GameplayScreen(GameScreen):
         self.platforms = pygame.sprite.Group()  # Used in player update() method.
         self.powerups = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+        self.pushers = pygame.sprite.Group()
 
         self.camera_y = 0
 
@@ -42,6 +43,7 @@ class GameplayScreen(GameScreen):
         self.best_distance = 0
         self.progress = 0
         self.times_hit = 0
+        self.goal = False
 
         # Variables for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
@@ -64,6 +66,7 @@ class GameplayScreen(GameScreen):
         self.best_distance = 0
         self.enemy_dist = 0
         self.times_hit = 0
+        self.goal = False
         self.progress = 0
         self.rand_dist = 0
 
@@ -101,11 +104,13 @@ class GameplayScreen(GameScreen):
                 y = self.camera_y + random.randrange(20, self.game.HEIGHT - 60)
 
             # Create platform
-            Platform(self, width, x, y)
+            plat = Platform(self, width, x, y)
 
             # Random powerup spawn
             if random.randrange(100) < 15:
                 p = Powerup(self, x, y - 25)
+            elif random.randrange(100) < 22:
+                p = Pusher(self, x, y-23, plat)
 
     # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
     def gen_enemies(self):
@@ -119,6 +124,13 @@ class GameplayScreen(GameScreen):
                       random.randrange(0, self.game.WIDTH//2),                  # Platform x
                       self.camera_y - 15)
                 self.rand_dist = 0
+
+    # generates the goal if the progress bar is filled
+    def gen_goal(self):
+        # Add goal
+        self.goal = True
+        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y-500)
+        goal_platform.surf.fill((255, 215, 0))
 
     # All game logic and their changes go in this method
     def update(self):
@@ -148,8 +160,11 @@ class GameplayScreen(GameScreen):
             self.progress = -(self.player.pos.y + 64) - 1500*self.times_hit
 
         # Generate platforms and enemies
-        self.gen_platforms()
-        self.gen_enemies()
+        if self.progress < 9500:
+            self.gen_platforms()
+            self.gen_enemies()
+        elif not self.goal:
+            self.gen_goal()
 
     # All game visuals and their changes go in this method
     def render(self):
