@@ -6,13 +6,11 @@ from projectSS.gamescreen import GameScreen
 
 
 class ClickedTooLate(Exception):
-
     def __init__(self, message="Didn't click the minigame button in time"):
         self.message = message
 
 
 class Ring(pygame.sprite.Sprite):
-
     def __init__(self, x, y, sprite, game):
         super().__init__()
         self.x = x
@@ -53,7 +51,6 @@ class Ring(pygame.sprite.Sprite):
 
 
 class MinigameScreen(GameScreen):
-
     def __init__(self, game):
         super().__init__(game)
         self.game = game
@@ -64,8 +61,8 @@ class MinigameScreen(GameScreen):
         self.counter_str = str(self.counter)
         self.active_circles = []
         self.dormant_circles = []
-        self.max_spawn_time = 1.8  # TODO: Make boss battles harder per iteration
-        self.min_spawn_time = 0.7
+        self.max_spawn_time = 2.0  # TODO: Make boss battles harder per iteration
+        self.min_spawn_time = 1.0
 
     def on_show(self):
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/minigame_bgm.mp3'))
@@ -90,6 +87,12 @@ class MinigameScreen(GameScreen):
                         collided = True
                 if not collided:
                     self.dormant_circles.append(new_ring)
+
+        if self.max_spawn_time > 1.30:
+            self.max_spawn_time -= 0.25
+        if self.min_spawn_time > 0.53:
+            self.min_spawn_time -= 0.16
+            pass
 
         self.counting_down = True
         self.counter = 7
@@ -127,7 +130,7 @@ class MinigameScreen(GameScreen):
                 self.game.show_main_menu_screen()
 
     def render(self):
-        self.game.screen.fill((251, 171, 52))
+        self.game.screen.blit(self.game.assets["bg_minigame"], (0, 0))
         if self.counting_down:
             self.game.draw_text('Boss battle! Get ready to click!', 40, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 80)
             self.game.draw_text(self.counter_str, 80, self.game.WIDTH / 2, self.game.HEIGHT / 2)

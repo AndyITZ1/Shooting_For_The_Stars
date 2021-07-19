@@ -50,6 +50,7 @@ class Game:
                          "sfx_blip": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/blip.wav')),
                          "minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame.png')),
                          "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png')),
+                         "bg_minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_bg.png')),
                          "circle": pygame.image.load(os.path.join(abs_dir, 'assets/circle.png'))}
 
         # Window caption and icon
