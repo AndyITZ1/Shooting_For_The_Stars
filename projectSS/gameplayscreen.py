@@ -99,7 +99,7 @@ class GameplayScreen(GameScreen):
             # Random powerup spawn
             if random.randrange(100) < 15:
                 p = Powerup(self, x, y - 25)
-            elif random.randrange(100) < 25:
+            elif random.randrange(100) < 22:
                 p = Pusher(self, x, y-23, plat)
 
     # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
@@ -152,7 +152,7 @@ class GameplayScreen(GameScreen):
         # Generate platforms and enemies
         if self.progress < 9500:
             self.gen_platforms()
-            # self.gen_enemies()
+            self.gen_enemies()
         elif not self.goal:
             self.gen_goal()
 
