@@ -39,6 +39,17 @@ class GameplayScreen(GameScreen):
 
         self.player = Player(self)
 
+        # Platform generation variables / constants
+        # Non-constant variables here can be changed with difficulty
+        self.plat_count = 7                 # Total platforms on screen at once
+        self.plat_width_min = 70            # Minimum platform width
+        self.plat_width_max = 120           # Maximum platform width
+        self.plat_min_horizontal_gap = 20   # Minimum horizontal gap between two platforms
+        self.plat_min_screen_gap = 20       # Minimum horizontal gap between screen edge and platform
+        self.plat_max_vertical_gap = 40     # Maximum distance above the screen a platform can spawn
+        self.PLAT_MIN_VERTICAL_GAP = 10     # Minimum distance above the screen a platform can spawn
+        self.PLAT_VERTICAL_OFFSET = 20      # Maximum random variation in y position for whole-screen generation
+        
         # Keeping track of distance for score
         self.best_distance = 0
         self.progress = 0
@@ -85,27 +96,63 @@ class GameplayScreen(GameScreen):
         pygame.mixer.music.play(-1)
 
     def gen_platforms(self, whole_screen=False):
-
-        # TODO: Adjust platform position generation
-        # Don't use a check function and infinite loop like before
-        # Instead, base the random position on existing platforms
-        # For whole_screen=True, generate one platform first, then the rest based on the first
-
-        while len(self.platforms) < 7:
+        
+        for i in range(self.plat_count - len(self.platforms)):
             # Set width/position
-            width = random.randrange(50, 100)
-            x = random.randrange(0, self.game.WIDTH - width)
-
-            # Generate platforms at the top of the screen, just offscreen
-            y = self.camera_y - random.randrange(10, 50)
-
+            width = random.randrange(self.plat_width_min, self.plat_width_max)
+            x = None
+            
             # Generate platforms on the entire screen
             if whole_screen:
-                y = self.camera_y + random.randrange(20, self.game.HEIGHT - 60)
+                # Space platforms equally, then add a random offset
+                y = self.camera_y + i * (self.game.HEIGHT / self.plat_count)\
+                    + random.randrange(-self.PLAT_VERTICAL_OFFSET, self.PLAT_VERTICAL_OFFSET)
+            else:
+                # Generate platforms at the top of the screen, just offscreen
+                y = self.camera_y - random.randrange(self.PLAT_MIN_VERTICAL_GAP, self.plat_max_vertical_gap)
+                
+                # Find closest existing platform
+                if len(self.platforms) > 0:
+                    closest_platform = self.platforms.sprites()[0]
+                    closest_dist = abs(closest_platform.rect.centery - y)
+                    
+                    for p in self.platforms:
+                        dist = abs(p.rect.centery - y)
+                        if dist < closest_dist:
+                            dist = closest_dist
+                            closest_platform = p
+                    
+                    # Check which sides of the existing platform have enough room
+                    gap_left = (closest_platform.rect.left - self.plat_min_horizontal_gap) - self.plat_min_screen_gap -\
+                        width
+                    gap_right = (self.game.WIDTH - self.plat_min_screen_gap) -\
+                        closest_platform.rect.right + self.plat_min_horizontal_gap - width
 
+                    # Generate x with minimum gap
+                    if gap_left > 0:
+                        x_left = self.plat_min_screen_gap + int(width / 2) + random.randrange(gap_left)
+                    
+                    if gap_right > 0:
+                        x_right = self.game.WIDTH - self.plat_min_screen_gap - int(width / 2) - random.randrange(gap_right)
+                    
+                    if gap_left > 0 and gap_right > 0:
+                        if random.randrange(gap_left + gap_right) < gap_left:
+                            x = x_left
+                        else:
+                            x = x_right
+                    elif gap_left > 0:
+                        x = x_left
+                    elif gap_right > 0:
+                        x = x_right
+            
+            # Default random x value
+            if x is None:
+                x = random.randrange(self.plat_min_screen_gap + int(width / 2),
+                                     self.game.WIDTH - (self.plat_min_screen_gap + int(width / 2)))
+    
             # Create platform
             plat = Platform(self, width, x, y)
-
+    
             # Random powerup spawn
             if random.randrange(100) < 15:
                 p = Powerup(self, x, y - 25)
