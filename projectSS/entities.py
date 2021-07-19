@@ -377,9 +377,9 @@ class Enemy(Entity):
 
 
 class Powerup(Entity):
-    def __init__(self, gameplay_screen, x, y):
+    def __init__(self, gameplay_screen, x, y, type):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.powerups)
-        self.type = random.choice(['boost', 'invincible'])
+        self.type = type
         if self.type == 'boost':
             self.power_frames = gameplay_screen.j_boost_frames
         else:

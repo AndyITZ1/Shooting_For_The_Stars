@@ -155,7 +155,9 @@ class GameplayScreen(GameScreen):
     
             # Random powerup spawn
             if random.randrange(100) < 15:
-                p = Powerup(self, x, y - 25)
+                p = Powerup(self, x, y - 25, 'boost')
+            elif random.randrange(100) < 7:
+                p = Powerup(self, x, y - 25, 'invincible')
             elif random.randrange(100) < 22:
                 p = Pusher(self, x, y-23, plat)
 
