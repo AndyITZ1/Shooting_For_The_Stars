@@ -86,9 +86,6 @@ class Player(Entity):
         self.boosted = False
         self.immune = False
 
-        # Rhythm gameplay.
-        self.start_time = time.time() + 0.01
-
     def load_images(self):
         self.idle_walk_frames_l = [self.player_spritesheet.get_image(3, 3, 58, 58),
                                    self.player_spritesheet.get_image(2, 136, 56, 60)]
@@ -196,9 +193,8 @@ class Player(Entity):
                 self.vel.y = -30
                 self.boosted = False
             else:
-                # Rhythm detection
-                curr_time = time.time()
-                if curr_time - self.start_time <= 0.15 or curr_time - self.start_time >= (1/83)*60-0.15:
+                # On beat jump
+                if self.gameplay_screen.rhy_on_beat:
                     self.vel.y = -20
                     self.vel.x *= 2
                     self.game.assets["sfx_blip"].play()
@@ -206,6 +202,8 @@ class Player(Entity):
                         self.surf = self.rhythm_jump_frames[5]
                     else:
                         self.surf = self.rhythm_jump_frames[4]
+                
+                # Off beat jump
                 else:
                     self.vel.y = -15
                     if self.last_direction:
@@ -294,17 +292,11 @@ class Player(Entity):
             self.animate(self.invinc_idle_walk_frames_l, self.invinc_idle_walk_frames_r)
         else:
             cur_time = time.time()
-            # changes to rhythm jump animation within a 0.3 interval of the bpm start time
-            if cur_time - self.start_time <= 0.15:
-                self.rhythm_jump_animate()
-            elif cur_time - self.start_time >= (1 / 83) * 60 - 0.15:
+            # changes to rhythm jump animation when on beat
+            if self.gameplay_screen.rhy_on_beat:
                 self.rhythm_jump_animate()
             else:
                 self.animate(self.idle_walk_frames_l, self.idle_walk_frames_r)
-
-        # 83 BPM or 0.7229 seconds-per-beat: (1 / 83 bpm) * 60 to get exact seconds
-        if (time.time() - self.start_time) > (1/83)*60:
-            self.start_time = time.time()
 
         # Check if player hits powerups
         pows_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.powerups, True)
@@ -414,8 +406,6 @@ class Pusher(Entity):
         self.active = False
         self.vel = 1
 
-        self.start_time = time.time() + 0.01
-
         self.update_rect()
 
     def update(self):
@@ -426,18 +416,12 @@ class Pusher(Entity):
             self.pos.x += self.vel
 
         cur_time = time.time()
-        # turn light gray within a 0.5 interval of the bpm start time
-        if cur_time - self.start_time <= 0.15:
-            self.surf.fill((80, 80, 80))
-            self.active = True
-        elif cur_time - self.start_time >= (1/83)*120-0.15:
+        # turn light gray when on beat
+        if self.gameplay_screen.rhy_on_beat:
             self.surf.fill((80, 80, 80))
             self.active = True
         else:
             self.surf.fill((30, 30, 30))
             self.active = False
-        # 83 BPM or 0.7229 seconds-per-beat: (1 / 83 bpm) * 60 to get exact seconds
-        if (time.time() - self.start_time) > (1/83)*120:
-            self.start_time = time.time()
 
         self.update_rect()
