@@ -51,7 +51,7 @@ class Game:
                          "minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame.png')),
                          "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png')),
                          "bg_minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_bg.png')),
-                         "circle": pygame.image.load(os.path.join(abs_dir, 'assets/circle.png'))}
+                         "circle": pygame.image.load(os.path.join(abs_dir, 'assets/circle.png')),
                          "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav')),
                          "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
 
