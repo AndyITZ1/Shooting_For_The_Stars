@@ -69,9 +69,15 @@ class MainMenu(Menu):
                                    self.game.assets["btn_settings"], self.game.assets["btn_settings_light"],
                                    self.game.show_settings_screen, self.game)
 
+        # TODO: Delete btn_minigame and its location in buttons when done with minigame testing
+        self.btn_minigame = Button(self.center_x - 32, 8,
+                                   self.game.assets["minigame"], self.game.assets["minigame_light"],
+                                   self.game.show_minigame_screen, self.game)
+
         self.buttons.append(self.btn_play)
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
+        self.buttons.append(self.btn_minigame)
 
     def on_show(self):
         if self.game.prev_game_screen != self.game.scrn_settings_menu:
@@ -160,7 +166,6 @@ class GameOverMenu(Menu):
     def __init__(self, game, score=0):
         super().__init__(game)
         self.score = score
-        # TODO: RETRY BUTTON PLACEHOLDER, GET A REAL RETRY BUTTON
         self.btn_retry = Button(self.center_x - 48, self.center_y + 30,
                                 self.game.assets["btn_retry"], self.game.assets["btn_retry_light"],
                                 self.game.show_main_game_screen, self.game)

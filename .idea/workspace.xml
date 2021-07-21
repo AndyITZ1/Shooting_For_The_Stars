@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a225552b-fc8a-408d-8575-439779a7f8b5" name="Default Changelist" comment="Refactored menus to use GameScreen class, added Button class, added main gameplay screen, various  code tweaks">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/entities.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/entities.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/gameplayscreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/gameplayscreen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/gamescreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/gamescreen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectSS/menus.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/menus.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectSS/minigame.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectSS/minigame.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +18,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="7oeagbf9" />
   </component>
   <component name="ProjectId" id="1trWjLae5wBlhx5jiz4u8NXmv5s" />
   <component name="ProjectViewState">
@@ -145,6 +143,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Refactored menus to use GameScreen class, added Button class, added main gameplay screen, various  code tweaks" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/setup_py$main.coverage" NAME="main Coverage Results" MODIFIED="1625718790881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/projectSS" />
+    <SUITE FILE_PATH="coverage/setup_py$main.coverage" NAME="main Coverage Results" MODIFIED="1626457176009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/projectSS" />
   </component>
 </project>

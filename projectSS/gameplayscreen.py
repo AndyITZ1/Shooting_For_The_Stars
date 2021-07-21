@@ -1,8 +1,5 @@
-import time
-import random
 import os
 import sys
-import pygame
 import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
