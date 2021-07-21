@@ -52,6 +52,11 @@ class Game:
                          "minigame_light": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_light.png')),
                          "bg_minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_bg.png')),
                          "circle": pygame.image.load(os.path.join(abs_dir, 'assets/circle.png'))}
+                         "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav')),
+                         "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
+
+        # setup sfx list
+        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"]]
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")
@@ -179,8 +184,12 @@ class Game:
 
         # Apply volumes
         pygame.mixer.music.set_volume(self.setting_music_volume * 0.1)
-        self.assets["sfx_blip"].set_volume(self.setting_sfx_volume * 0.5)
+
+        # TODO: All sfx should be in a list so they can be updated here, don't hard code
+        for s in self.sfx:
+            s.set_volume(self.setting_sfx_volume * 0.5)
 
     @property
     def assets(self):
         return self.__assets
+
