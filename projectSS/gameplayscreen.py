@@ -174,7 +174,7 @@ class GameplayScreen(GameScreen):
                 p = Powerup(self, x, y - 25, 'boost')
             elif random.randrange(100) < 7:
                 p = Powerup(self, x, y - 25, 'invincible')
-            elif random.randrange(100) < 22:
+            elif random.randrange(100) < 7:
                 p = Pusher(self, x, y - 23, plat)
     
     # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
@@ -194,7 +194,7 @@ class GameplayScreen(GameScreen):
     def gen_goal(self):
         # Add goal
         self.goal = True
-        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 500)
+        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 200)
         goal_platform.surf.fill((255, 215, 0))
     
     # Update beat variables
@@ -246,7 +246,7 @@ class GameplayScreen(GameScreen):
             self.progress = -(self.player.pos.y + 64) - 1500 * self.times_hit
         
         # Generate platforms and enemies
-        if self.progress < 9500:
+        if self.progress < 9800:
             self.gen_platforms()
             self.gen_enemies()
         elif not self.goal:
