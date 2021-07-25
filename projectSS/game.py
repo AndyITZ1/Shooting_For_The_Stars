@@ -53,10 +53,16 @@ class Game:
                          "bg_minigame": pygame.image.load(os.path.join(abs_dir, 'assets/minigame_bg.png')),
                          "circle": pygame.image.load(os.path.join(abs_dir, 'assets/circle.png')),
                          "sfx_hit": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/hit.wav')),
+                         "sfx_jump": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/jump.wav')),
+                         "sfx_pushed": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/pushed.wav')),
+                         "sfx_boostjump": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/boostjump.wav')),
+                         "sfx_loseshield": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/loseshield.wav')),
+                         "sfx_pickup": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/pickup.wav')),
                          "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
 
         # setup sfx list
-        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"]]
+        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"], self.assets["sfx_jump"], self.assets["sfx_pushed"]
+                    , self.assets["sfx_boostjump"], self.assets["sfx_loseshield"], self.assets["sfx_pickup"]]
 
         # Window caption and icon
         pygame.display.set_caption("Shooting For The Stars")

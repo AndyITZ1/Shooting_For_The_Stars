@@ -192,6 +192,7 @@ class Player(Entity):
             if self.boosted:
                 self.vel.y = -30
                 self.boosted = False
+                self.game.assets["sfx_boostjump"].play()
             else:
                 # On beat jump
                 if self.gameplay_screen.rhy_on_beat:
@@ -206,6 +207,7 @@ class Player(Entity):
                 # Off beat jump
                 else:
                     self.vel.y = -15
+                    self.game.assets["sfx_jump"].play()
                     if self.last_direction:
                         self.surf = self.jump_frames[1]
                     else:
@@ -301,6 +303,7 @@ class Player(Entity):
         # Check if player hits powerups
         pows_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.powerups, True)
         for p in pows_collisions:
+            self.game.assets["sfx_pickup"].play()
             if p.type == 'boost':
                 self.boosted = True
             elif p.type == 'invincible':
@@ -311,6 +314,7 @@ class Player(Entity):
         if enemy_collisions:
             # If player is in IMMUNE STATE, will lose immunity after hitting 1 enemy
             if self.immune:
+                self.game.assets["sfx_loseshield"].play()
                 self.immune = False
             else:
                 self.game.assets["sfx_hit"].play()
@@ -323,8 +327,10 @@ class Player(Entity):
         for p in push_collisions:
             # If player is in IMMUNE STATE, will lose immunity after hitting 1 enemy
             if self.immune:
+                self.game.assets["sfx_loseshield"].play()
                 self.immune = False
             if p.active:
+                self.game.assets["sfx_pushed"].play()
                 self.pushed = True
 
         # Walking to Idle Animation transition
