@@ -6,30 +6,37 @@ from projectSS.gameplayscreen import GameplayScreen
 from projectSS.minigame import MinigameScreen
 
 
-# Icon made by Freepik from www.flaticon.com
-# Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
-# Icon made by iconixor from www.flaticon.com
-# Music in the background from https://www.FesliyanStudios.com
+# --------------- In-code asset acknowledgement --------------- #
+#
+#   Icon made by Freepik from www.flaticon.com
+#   Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
+#   Icon made by iconixor from www.flaticon.com
+#   Music in the background from https://www.FesliyanStudios.com
 
 class Game:
-    # Initialization of the game. This includes starting up pygame, creating the screen, loading assets,
-    # and creating menus.
-    def __init__(self):
-        # starts up pygame
-        pygame.init()
-        self.running = True
+    """
+    Shooting For The Stars game class. This class handles the entire functioning of the game by just initializing it.
+    """
 
-        # width and height of the game window (resolution)
+    def __init__(self):
+        # --------------- Pygame initialization --------------- #
+
+        pygame.init()
+        self.running = True     # Boolean that tells the game loop to continue.
+
+        # Game window resolution.
         self.WIDTH = 800
         self.HEIGHT = 600
 
-        # Create the game window
+        # Creation of the game window
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
 
-        # loading assets. PLEASE use the below line of code to import assets! Without it, the installation will break!
-        # Most GUI images are 32x32. Main menu background is 800x600, to match resolution.
-        # GUI elements have a gradiant version named "light" that will replace it when the mouse hovers over it.
-        # This dictionary of assets DOES NOT handle background music (but does handle SFX blip)!
+        # --------------- Game assets --------------- #
+
+        #   * PLEASE use the below line of code to import assets! Without it, user installation will break!
+        #   * Most GUI images are 32x32.
+        #   * GUI elements have a gradiant version named "light" that will replace it when the mouse hovers over it.
+        #   * This dictionary of assets DOES NOT handle background music (but does handle SFX blip)!
         abs_dir = os.path.dirname(__file__)
         self.__assets = {"icon": pygame.image.load(os.path.join(abs_dir, 'assets/musical_notes.png')),
                          "btn_quit": pygame.image.load(os.path.join(abs_dir, 'assets/exit.png')),
@@ -60,108 +67,127 @@ class Game:
                          "sfx_pickup": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/pickup.wav')),
                          "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
 
-        # setup sfx list
-        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"], self.assets["sfx_jump"], self.assets["sfx_pushed"]
-                    , self.assets["sfx_boostjump"], self.assets["sfx_loseshield"], self.assets["sfx_pickup"]]
+        # SFX List.
+        self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"], self.assets["sfx_jump"], self.assets["sfx_pushed"],
+                    self.assets["sfx_boostjump"], self.assets["sfx_loseshield"], self.assets["sfx_pickup"]]
 
-        # Window caption and icon
+        # Window caption and icon.
         pygame.display.set_caption("Shooting For The Stars")
         pygame.display.set_icon(self.__assets["icon"])
 
-        # Game settings
+        # Set default music and SFX volumes and update them through a dedicated helper function.
         self.setting_music_volume = 0.8
         self.setting_sfx_volume = 0.8
         self.update_settings()
 
-        # Stores the mouse position in a tuple. [0] accesses x, [1] accesses y.
+        # --------------- Game Logic --------------- #
+
+        # Stores the mouse position in a tuple. mouse_pos[0] accesses x, mouse_pos[1] accesses y.
         self.mouse_pos = pygame.mouse.get_pos()
         self.mouse_clicked = False
 
-        # Initialize game screens
+        # Initialize game screens/menus. Game.update() handles switching between screens/menus.
         self.scrn_main_menu = MainMenu(self)
         self.scrn_settings_menu = SettingsMenu(self)
         self.scrn_gameplay_screen = GameplayScreen(self)
         self.scrn_gameover_menu = GameOverMenu(self, self.scrn_gameplay_screen)
         self.scrn_minigame_screen = MinigameScreen(self)
 
-        # Set MainMenu as default game screen
-        self.game_screen = self.scrn_main_menu
-
-        # Game screen to change to on the next update
+        # Stores the next game screen that will be switched to in the next iteration of Game.update().
         self.next_game_screen = None
 
-        # Keep track of previous screen to know where to return on button clicks.
+        # Keeps track of the previous screen to know where to return on button clicks.
         self.prev_game_screen = None
 
+        # Set MainMenu as default game screen. It will be the first screen to be seen by the user.
+        self.game_screen = self.scrn_main_menu
+
+        # Call upon the MainMenu's on_show() method to begin it's initialization.
         self.game_screen.on_show()
 
-        # Fixed FPS timer
+        # Fixed FPS timer to maintain a smooth gaming experience.
         self.FPS = 60
         self.FramePerSec = pygame.time.Clock()
 
-        # Run game
+        # Begin to run the game.
         self.game_loop()
 
     def game_loop(self):
+        """
+        As with any video game, Shooting For The Stars' loop is contained in a method. Each iteration of the loop is
+        considered a "tick" in the game. Each tick controls game FPS, logic, and rendering.
+        """
+
         while self.running:
-            # Limit FPS to fixed value
+            # Limit FPS to fixed value.
             self.FramePerSec.tick(self.FPS)
             self.update()
             self.render()
 
-    # Main update function. Updates user I/O and game logic
     def update(self):
-        # Update mouse position
+        """
+        This function, which is called in each iteration of Game.game_loop(), ensures that game logic progresses.
+        """
+
+        # Update mouse position. Reset mouse_clicked boolean from any previous mouse clicks.
         self.mouse_pos = pygame.mouse.get_pos()
         self.mouse_clicked = False
 
-        # Handle events
+        # Event handling
         for event in pygame.event.get():
-            # if X button of window is clicked the game is exited
+            # If X button of window is clicked the game is exited
             if event.type == pygame.QUIT:
                 sys.exit()
 
+            # If user clicked the mouse, update the corresponding boolean.
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_clicked = True
 
-        # Change game screen if necessary
+        # Change game screen if necessary.
         if self.next_game_screen is not None:
             self.prev_game_screen = self.game_screen
             self.game_screen = self.next_game_screen
-            self.game_screen.on_show()
-
             self.next_game_screen = None
 
-        # Update current game screen
+            self.game_screen.on_show()  # Call on the new game_screen to initialize itself.
+
+        # Call on the current game_screen's update() method to allow it to progress its game logic.
         self.game_screen.update()
 
-    # Main render function
     def render(self):
+        """
+        This method handles rendering to the screen by resetting it, calling on the current game_screen's respective
+        render() method, and updating the screen. Called in each iteration of Game.game_loop().
+        """
 
-        # Clear screen
         self.screen.fill((0, 0, 0))
-
-        # Render current game screen
         self.game_screen.render()
-
-        # Tell PyGame to update screen with everything drawn
         pygame.display.update()
 
     def draw_text(self, text, size, x, y):
+        """
+        Helper function called in various game screens/menus to draw text to the screen.
+
+        :param text: String containing desired message to user.
+        :param size: The desired size of the text.
+        :param x: The x position of the screen where text will be displayed.
+        :param y: The y position of the screen where text will be displayed.
+        """
         font = pygame.font.Font(self.__assets["font_loc"], size)
         text_surface = font.render(text, True, (0, 0, 0))
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-    # Methods used by the current game screen to change to a different game screen
+    # --------------- Methods used by the current game screen to change to a different game screen --------------- #
+
     def show_main_menu_screen(self):
         self.next_game_screen = self.scrn_main_menu
 
     def show_settings_screen(self):
         self.next_game_screen = self.scrn_settings_menu
 
-    def show_main_game_screen(self):
+    def show_gameplay_screen(self):
         self.next_game_screen = self.scrn_gameplay_screen
 
     def show_previous_game_screen(self):
@@ -174,8 +200,10 @@ class Game:
     def show_minigame_screen(self):
         self.next_game_screen = self.scrn_minigame_screen
 
-    # Apply settings updates
     def update_settings(self):
+        """
+        The game's dedicated function for setting the music and SFX volumes. Also takes care of edge cases.
+        """
 
         # Set volumes min/max
         if self.setting_music_volume < 0:
@@ -188,14 +216,13 @@ class Game:
         elif self.setting_sfx_volume > 1:
             self.setting_sfx_volume = 1
 
-        # Apply volumes
+        # Modify the music's volume. Pygame represents music volume with values between 0 - 1, hence the 0.1 value.
         pygame.mixer.music.set_volume(self.setting_music_volume * 0.1)
 
-        # TODO: All sfx should be in a list so they can be updated here, don't hard code
+        # Modify all of the stored SFXs' volumes.
         for s in self.sfx:
             s.set_volume(self.setting_sfx_volume * 0.5)
 
     @property
     def assets(self):
         return self.__assets
-

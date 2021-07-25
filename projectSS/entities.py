@@ -2,10 +2,9 @@ import math
 import time
 import random
 import os.path
-import pygame
 from pygame.locals import *
 from pygame.math import Vector2
-from abc import ABC, abstractmethod
+from abc import ABC
 from projectSS.spritesheet import *
 
 

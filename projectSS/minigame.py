@@ -27,7 +27,7 @@ class Ring(pygame.sprite.Sprite):
         self.width = sprite.get_width()
         self.height = sprite.get_height()
         self.inner_radius = self.width / 2  # Inner sprite radius. Used in collision detection
-        self.outer_radius = 200  # Outer ring starting outer_radius. Decreases in size during gameplay. Can be changed.
+        self.outer_radius = 200  # Outer ring. Decreases in size during gameplay. Can be changed.
         self.outer_radius_delta = -1.75     # The change over time of the outer_radius ring. Can be changed.
 
         self.mouse_hover = False  # Boolean used in mouse detection.

@@ -59,7 +59,7 @@ class MainMenu(Menu):
         # Add buttons
         self.btn_play = Button(self.center_x - 32, self.center_y,
                                self.game.assets["btn_play"], self.game.assets["btn_play_light"],
-                               self.game.show_main_game_screen, self.game)
+                               self.game.show_gameplay_screen, self.game)
 
         self.btn_quit = Button(self.game.WIDTH - 40, self.game.HEIGHT - 40,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
@@ -168,7 +168,7 @@ class GameOverMenu(Menu):
         self.score = score
         self.btn_retry = Button(self.center_x - 48, self.center_y + 30,
                                 self.game.assets["btn_retry"], self.game.assets["btn_retry_light"],
-                                self.game.show_main_game_screen, self.game)
+                                self.game.show_gameplay_screen, self.game)
 
         self.btn_quit = Button(self.center_x + 32, self.center_y + 30,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
