@@ -65,7 +65,8 @@ class Game:
                          "sfx_boostjump": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/boostjump.wav')),
                          "sfx_loseshield": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/loseshield.wav')),
                          "sfx_pickup": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/pickup.wav')),
-                         "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png'))}
+                         "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png')),
+                         "sfx_boss": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/boss_encounter.wav'))}
 
         # SFX List.
         self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"], self.assets["sfx_jump"], self.assets["sfx_pushed"],
