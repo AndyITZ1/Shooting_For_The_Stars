@@ -44,7 +44,7 @@ class Player(Entity):
 
         # This can be refactor if needed, but uses the Spritesheet class to load and pick out images
         abs_dir = os.path.dirname(__file__)
-        self.player_spritesheet = Spritesheet(os.path.join(abs_dir, 'assets/player_spritesheetr.png'))
+        self.player_spritesheet = Spritesheet(os.path.join(abs_dir, 'assets/player_spritesheet.png'))
         # Variables for animation/switching of sprites
         self.play_walk = False
         self.play_jump = False
@@ -109,6 +109,13 @@ class Player(Entity):
                                           self.player_spritesheet.get_image(196, 198, 66, 66)]
         self.invinc_jump_frames = [self.player_spritesheet.get_image(130, 264, 66, 66),
                                    self.player_spritesheet.get_image(196, 264, 66, 66)]
+        # IL, WL, IR, WR, JL, JR
+        self.invinc_rhythm_frames = [self.player_spritesheet.get_image(0, 396, 66, 66),
+                                     self.player_spritesheet.get_image(130, 330, 66, 66),
+                                     self.player_spritesheet.get_image(66, 396, 66, 66),
+                                     self.player_spritesheet.get_image(196, 330, 66, 66),
+                                     self.player_spritesheet.get_image(130, 396, 66, 66),
+                                     self.player_spritesheet.get_image(196, 396, 66, 66)]
 
     # Reset player variables when starting gameplay
     def reset(self):
@@ -204,18 +211,31 @@ class Player(Entity):
                     self.vel.x *= 2
                     self.game.assets["sfx_blip"].play()
                     if self.last_direction:
-                        self.surf = self.rhythm_jump_frames[5]
+                        if self.immune:
+                            self.surf = self.invinc_rhythm_frames[5]
+                        else:
+                            self.surf = self.rhythm_jump_frames[5]
                     else:
-                        self.surf = self.rhythm_jump_frames[4]
-                
+                        if self.immune:
+                            self.surf = self.invinc_rhythm_frames[4]
+                        else:
+                            self.surf = self.rhythm_jump_frames[4]
+
+
                 # Off beat jump
                 else:
                     self.vel.y = -15
                     self.game.assets["sfx_jump"].play()
                     if self.last_direction:
-                        self.surf = self.jump_frames[1]
+                        if self.immune:
+                            self.surf = self.invinc_jump_frames[1]
+                        else:
+                            self.surf = self.jump_frames[1]
                     else:
-                        self.surf = self.jump_frames[0]
+                        if self.immune:
+                            self.surf = self.invinc_jump_frames[0]
+                        else:
+                            self.surf = self.jump_frames[0]
 
     def push(self):
         self.vel.y = random.randrange(-15, -5)
@@ -249,14 +269,26 @@ class Player(Entity):
     def rhythm_jump_animate(self):
         if not self.play_walk and not self.play_jump:
             if self.last_direction:
-                self.surf = self.rhythm_jump_frames[1]
+                if self.immune:
+                    self.surf = self.invinc_rhythm_frames[2]
+                else:
+                    self.surf = self.rhythm_jump_frames[1]
             else:
-                self.surf = self.rhythm_jump_frames[0]
+                if self.immune:
+                    self.surf = self.invinc_rhythm_frames[0]
+                else:
+                    self.surf = self.rhythm_jump_frames[0]
         elif self.play_walk:
             if self.last_direction:
-                self.surf = self.rhythm_jump_frames[3]
+                if self.immune:
+                    self.surf = self.invinc_rhythm_frames[3]
+                else:
+                    self.surf = self.rhythm_jump_frames[3]
             else:
-                self.surf = self.rhythm_jump_frames[2]
+                if self.immune:
+                    self.surf = self.invinc_rhythm_frames[1]
+                else:
+                    self.surf = self.rhythm_jump_frames[2]
 
     # Player platform collision detection & rhythm restart
     def update(self):
@@ -298,15 +330,16 @@ class Player(Entity):
                 self.surf = self.player_boost_frames[1]
             else:
                 self.surf = self.player_boost_frames[0]
-        elif self.immune:
-            self.animate(self.invinc_idle_walk_frames_l, self.invinc_idle_walk_frames_r)
         else:
             cur_time = time.time()
             # changes to rhythm jump animation when on beat
             if self.gameplay_screen.rhy_on_beat:
                 self.rhythm_jump_animate()
             else:
-                self.animate(self.idle_walk_frames_l, self.idle_walk_frames_r)
+                if self.immune:
+                    self.animate(self.invinc_idle_walk_frames_l, self.invinc_idle_walk_frames_r)
+                else:
+                    self.animate(self.idle_walk_frames_l, self.idle_walk_frames_r)
 
         # Check if player hits powerups
         pows_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.powerups, True)
