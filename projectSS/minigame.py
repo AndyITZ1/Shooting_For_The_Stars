@@ -75,9 +75,10 @@ class MinigameScreen(GameScreen):
     """
     The GameScreen that represents the ring-clicking minigame.
     """
-    def __init__(self, game):
+    def __init__(self, game, gameplay_screen):
         super().__init__(game)
         self.game = game
+        self.gameplay_screen = gameplay_screen
 
         self.counting_down = True
         self.start_ticks = None  # Countdown ticks
@@ -89,6 +90,7 @@ class MinigameScreen(GameScreen):
         self.dormant_rings = []
 
         # ----- Ring spawn time variables. All of them can be changed to suite needs of the game -----#
+
         self.max_spawn_time = 2.0   # Indicates the longest spawn time possible.
         self.smallest_max_time = 1.30   # Indicates the smallest value max_spawn_time can be decreased to.
         self.max_spawn_time_delta = -0.25   # Change of max_spawn_time per iteration of minigame.
@@ -96,6 +98,11 @@ class MinigameScreen(GameScreen):
         self.min_spawn_time = 1.0   # Indicates the shortest spawn time possible.
         self.smallest_min_time = 0.53   # Indicates the smallest value min_spawn_time can be decreased to.
         self.min_spawn_time_delta = -0.16   # Change of min_spawn_time per iteration of minigame.
+
+        # --------------- Minigame Rewards/Punishments -------------- #
+
+        self.reward = 2000
+        self.punishment = -2000
 
     def on_show(self):
         """
@@ -170,10 +177,13 @@ class MinigameScreen(GameScreen):
                         self.active_rings.remove(ring)
                 except ClickedTooLate:
                     # User clicked too late. Return to main menu, for now.
+                    self.gameplay_screen.progress += self.punishment
                     self.game.show_gameplay_screen()
 
             if not self.active_rings and not self.dormant_rings:
                 # User has successfully clicked all rings in time. Return to main menu, for now.
+                self.gameplay_screen.progress += self.reward
+                self.gameplay_screen.best_distance += self.reward
                 self.game.show_gameplay_screen()
 
     def render(self):

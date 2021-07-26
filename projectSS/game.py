@@ -95,7 +95,7 @@ class Game:
         self.scrn_gameplay_screen = GameplayScreen(self)
         self.scrn_gameover_menu = GameOverMenu(self, self.scrn_gameplay_screen)
         self.scrn_level_complete_menu = LevelCompleteMenu(self, self.scrn_gameplay_screen)
-        self.scrn_minigame_screen = MinigameScreen(self)
+        self.scrn_minigame_screen = MinigameScreen(self, self.scrn_gameplay_screen)
 
         # Stores the next game screen that will be switched to in the next iteration of Game.update().
         self.next_game_screen = None
