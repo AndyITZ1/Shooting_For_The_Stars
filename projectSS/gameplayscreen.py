@@ -41,6 +41,7 @@ class GameplayScreen(GameScreen):
         self.powerups = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.pushers = pygame.sprite.Group()
+        self.bosses = pygame.sprite.Group()
 
         self.camera_y = 0
         # Despawn point for entities. Anything below this y-limit gets destroyed.
@@ -243,6 +244,9 @@ class GameplayScreen(GameScreen):
 
         # Call the platform generator method to add additional platforms above the base platform.
         self.gen_platforms(True)
+
+        # TODO: Jose's boss debug statement.
+        Boss(self, base_platform.pos.x + 100, base_platform.pos.y - 32, base_platform)
 
         # Reset the background music and start the rhythm mechanic timer.
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), self.music_file))

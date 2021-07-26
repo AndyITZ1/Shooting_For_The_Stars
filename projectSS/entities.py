@@ -127,6 +127,7 @@ class Player(Entity):
         self.jumping = False
         self.jumped = False
         self.immune = False
+        self.boosted = False
         self.pushed = False
 
     # This method allows us to control our player. Heavy use of physics and kinematics.
@@ -342,6 +343,7 @@ class Player(Entity):
         if self.last_pos.x + 0.005 >= self.pos.x >= self.last_pos.x - 0.005 and self.on_ground:
             self.play_walk = False
 
+
 # For now, platforms will be represented with gray rectangles.
 class Platform(Entity):
     def __init__(self, gameplay_screen, width, x, y, goal=False):
@@ -355,7 +357,6 @@ class Platform(Entity):
         self.update_rect()
 
 
-# Representing enemies with yellow squares
 class Enemy(Entity):
     def __init__(self, gameplay_screen, span, x, y):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.enemies)
@@ -406,7 +407,6 @@ class Powerup(Entity):
         self.update_rect()
 
 
-
 class Pusher(Entity):
     def __init__(self, gameplay_screen, x, y, platform):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.pushers)
@@ -436,4 +436,17 @@ class Pusher(Entity):
             self.surf.fill((30, 30, 30))
             self.active = False
 
+        self.update_rect()
+
+
+class Boss(Entity):
+    def __init__(self, gameplay_screen, x, y, platform):
+        super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.bosses)
+        self.plat = platform
+        self.surf = pygame.Surface((32, 32))
+        self.surf.fill((255, 0, 0))
+        self.pos.x = x
+        self.pos.y = y
+
+    def update(self):
         self.update_rect()
