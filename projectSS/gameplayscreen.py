@@ -8,35 +8,49 @@ from projectSS.spritesheet import *
 
 
 class GameplayScreen(GameScreen):
+    """
+    The main gameplay screen class that manages the rhythm-based 2D vertical game. Implements GameScreen interface:
+
+    * Super().__init__(game) will bind the Game object to variable self.game.
+    * on_show() will initialize/reinitialize the GameplayScreen when Game switches to this screen.
+    * update() will process the GameplayScreen's logic.
+    * render() will draw all assets in their current state to the screen.
+    """
+
     def __init__(self, game):
-        super().__init__(game)
-        # Create two buttons so player can enter settings or exit game. Add them to our buttons list
+
+        super().__init__(game)      # Binds the Game object to variable self.game.
+
+        # --------------- Clickable UI Buttons --------------- #
+
         self.btn_settings = Button(8, 8,
                                    self.game.assets["btn_settings"], self.game.assets["btn_settings_light"],
                                    self.game.show_settings_screen, self.game)
         self.btn_quit = Button(self.game.WIDTH - 40, 8,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
                                sys.exit, self.game)
-
         self.buttons = []
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
 
-        # Creating a list of sprites, platforms, and powerups. Allows easy sprite access.
-        self.entities = pygame.sprite.Group()
+        # --------------- Entities Lists --------------- #
+
+        # These lists allow for easy sprite access.
+        self.entities = pygame.sprite.Group()   # Master list, since all inherit from Entities class.
         self.platforms = pygame.sprite.Group()  # Used in player update() method.
         self.powerups = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.pushers = pygame.sprite.Group()
 
+        # Despawn point for entities. Anything below this y-limit gets destroyed.
         self.camera_y = 0
-
-        # Despawn point for entities
         self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
+        # Creation of player character.
         self.player = Player(self)
 
-        # Platform generation variables / constants
+        # --------------- Platform Generation Variables and Constants --------------- #
+
         # Non-constant variables here can be changed with difficulty
         self.plat_count = 7  # Total platforms on screen at once
         self.plat_width_min = 70  # Minimum platform width
@@ -46,6 +60,8 @@ class GameplayScreen(GameScreen):
         self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
         self.PLAT_MIN_VERTICAL_GAP = 10  # Minimum distance above the screen a platform can spawn
         self.PLAT_VERTICAL_OFFSET = 20  # Maximum random variation in y position for whole-screen generation
+
+        # --------------- Rhythm-Based Mechanic --------------- #
 
         # Rhythm timing variables
         self.rhy_bpm = 165  # Music BPM
@@ -61,6 +77,8 @@ class GameplayScreen(GameScreen):
         self.rhy_on_beat = False
         self.rhy_start_time = 0
 
+        # --------------- Distance and Score --------------- #
+
         # Keeping track of distance for score
         self.best_distance = 0
         self.progress = 0
@@ -71,7 +89,8 @@ class GameplayScreen(GameScreen):
         self.enemy_dist = 0
         self.rand_dist = 0
 
-        # Sprite for powerup
+        # --------------- Powerup Sprites --------------- #
+
         abs_dir = os.path.dirname(__file__)
         self.jump_boost = Spritesheet(os.path.join(abs_dir, 'assets/jumpboost_flashr.png'))
         self.invincibility = Spritesheet(os.path.join(abs_dir, 'assets/invinc_spritesheetre.png'))
@@ -81,8 +100,12 @@ class GameplayScreen(GameScreen):
                               self.invincibility.get_image(64, 0, 64, 64)]
 
     def on_show(self):
+        """
+        This method initializes/re-initializes the GameplayScreen object's variables. This is done when the next screen
+        in Game is GameplayScreen.
+        """
 
-        # Reset variables
+        # Reset variables.
         self.camera_y = -self.game.HEIGHT + 10
         self.despawn_y = self.camera_y + self.game.HEIGHT + 32
         self.best_distance = 0
@@ -92,51 +115,64 @@ class GameplayScreen(GameScreen):
         self.progress = 0
         self.rand_dist = 0
 
+        # Reset player character.
         self.player.reset()
 
+        # Kill all entities that may have been left over from previous game.
         for e in self.entities:
             e.kill()
 
-        # Add base platform
+        # Add base platform.
         base_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
         base_platform.surf.fill((255, 0, 0))
 
+        # Call the platform generator method to add additional platforms above the base platform.
         self.gen_platforms(True)
 
+        # Reset the background music and start the rhythm mechanic timer.
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
         pygame.mixer.music.play(-1)
         self.rhy_start_time = time.time()
 
     def gen_platforms(self, whole_screen=False):
+        """
+        This method handles all platform generation. This includes creating the first initial platforms and the later
+        dynamically created platforms. Also handles the random generation of powerups and the pusher entity.
 
+        :param whole_screen: True indicates that the whole screen should be filled with the appropriate number of
+            platforms. This is done in the on_show() method. The default False value instead indicates that platforms
+            should be spawned above the screen height limit. This is done during game progression.
+        """
+
+        # For i in range number of platforms missing from required number of platforms.
         for i in range(self.plat_count - len(self.platforms)):
-            # Set width/position
+            # Set width/position.
             width = random.randrange(self.plat_width_min, self.plat_width_max)
             x = None
 
-            # Generate platforms on the entire screen
+            # Generate platforms on the entire screen.
             if whole_screen:
                 # Space platforms equally, then add a random offset
                 y = self.camera_y + i * (self.game.HEIGHT / self.plat_count) \
                     + random.randrange(-self.PLAT_VERTICAL_OFFSET, self.PLAT_VERTICAL_OFFSET)
+
+            # Dynamically generator platforms during gameplay.
             else:
-                # Generate platforms at the top of the screen, just offscreen
+                # Generate platforms at the top of the screen, just offscreen.
                 y = self.camera_y - random.randrange(self.PLAT_MIN_VERTICAL_GAP, self.plat_max_vertical_gap)
 
                 # Find closest existing platform
                 if len(self.platforms) > 0:
                     closest_platform = self.platforms.sprites()[0]
                     closest_dist = abs(closest_platform.rect.centery - y)
-
                     for p in self.platforms:
                         dist = abs(p.rect.centery - y)
                         if dist < closest_dist:
-                            # dist = closest_dist
                             closest_platform = p
 
                     # Check which sides of the existing platform have enough room
-                    gap_left = (closest_platform.rect.left - self.plat_min_horizontal_gap) - self.plat_min_screen_gap - \
-                        width
+                    gap_left = (closest_platform.rect.left - self.plat_min_horizontal_gap) \
+                        - self.plat_min_screen_gap - width
                     gap_right = (self.game.WIDTH - self.plat_min_screen_gap) - \
                         closest_platform.rect.right + self.plat_min_horizontal_gap - width
 
@@ -158,15 +194,16 @@ class GameplayScreen(GameScreen):
                     elif gap_right > 0:
                         x = x_right
 
-            # Default random x value
+            # Default random x value.
             if x is None:
                 x = random.randrange(self.plat_min_screen_gap + int(width / 2),
                                      self.game.WIDTH - (self.plat_min_screen_gap + int(width / 2)))
 
-            # Create platform
+            # Create platform with the calculated x and y values.
             plat = Platform(self, width, x, y)
 
-            # Random powerup spawn
+            # --------------- Powerups and Pusher Spawning --------------- #
+
             if random.randrange(100) < 15:
                 Powerup(self, x, y - 25, 'boost')
             elif random.randrange(100) < 7:
@@ -174,8 +211,16 @@ class GameplayScreen(GameScreen):
             elif random.randrange(100) < 7:
                 Pusher(self, x, y - 23, plat)
 
-    # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
     def gen_enemies(self):
+        """
+        This method handles the enemy generation using a custom algorithm. Enemy generation increases when player
+        reaches higher level progression.
+        """
+
+        # TODO: Create boss generation code here.
+        # TODO: Consider adding a Bool to game.py to indicate whether on_call() should be invoked or not (pause game).
+
+        # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
         if self.progress > 1000 and len(self.enemies) < 3:
             if self.rand_dist == 0:
                 self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.progress - 1000) // 1000))
@@ -187,26 +232,31 @@ class GameplayScreen(GameScreen):
                       self.camera_y - 15)
                 self.rand_dist = 0
 
-    # generates the goal if the progress bar is filled
     def gen_goal(self):
-        # Add goal
+        """
+        This method generates the goal platform once the player fills the progress bar.
+        """
+
         self.goal = True
         goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 200)
-        goal_platform.surf.fill((255, 215, 0))
+        goal_platform.surf.fill((255, 215, 0))  # Goal platform is a solid yellow for now.
 
-    # Update beat variables
     def update_beat(self):
-        # Current time
+        """
+        This method handles the rhythm mechanic and updating the corresponding variables based on timer.
+        """
+
+        # Current time.
         cur_time = time.time() - (self.rhy_start_time + self.rhy_offset)
 
-        # Get time between beats
+        # Get time between beats.
         beat_time = 60 / (self.rhy_bpm * self.rhy_beat_divisions)
 
-        # Get previous and next beat times
+        # Get previous and next beat times.
         self.rhy_prev_beat = int(cur_time / beat_time) * beat_time
         self.rhy_next_beat = int((cur_time + beat_time) / beat_time) * beat_time
 
-        # Get time to closest beat
+        # Get time to closest beat.
         prev_beat_time = cur_time - self.rhy_prev_beat
         next_beat_time = self.rhy_next_beat - cur_time
         self.rhy_closest_beat_time = prev_beat_time if prev_beat_time < next_beat_time else next_beat_time
@@ -216,67 +266,91 @@ class GameplayScreen(GameScreen):
 
     # All game logic and their changes go in this method
     def update(self):
-        self.update_buttons()
-        self.update_beat()
-        self.entities.update()
-        self.player.update()
+        """
+        This method is called on each iteration of Game's update() function. This update function, in particular,
+        handles the GameplayScreen's logic and updates its variables when needed.
+        """
 
-        # Check if player has hit an enemy, lowering progress by 1500
+        self.update_buttons()   # Update all UI buttons for user interaction.
+        self.update_beat()      # Update rhythm mechanic variables.
+        self.entities.update()  # Call the update method of all entities.
+        self.player.update()    # Update the player character.
+
+        # Check if player has hit an enemy, lowering progress by 1500.
         if self.player.hit:
             self.player.hit = False
             self.times_hit += 1
             self.progress = self.best_distance - 1500 * self.times_hit
             self.rand_dist = 0
 
-        # Check if the player has died
+        # Check if the player has died.
         if not self.player.alive or self.progress < 0:
             self.game.show_game_over_screen()
 
-        # allows for screen to scroll up and destroy
+        # allows for screen to scroll up and destroy.
         if self.player.rect_render.top <= self.game.HEIGHT / 4:
             self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
             self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
-        # Tracking player distance/progress, adjusted to start point
+        # Tracking player distance/progress, adjusted to start point.
         if self.player.pos.y + 64 < -self.best_distance:
             self.best_distance = -(self.player.pos.y + 64)
             self.progress = -(self.player.pos.y + 64) - 1500 * self.times_hit
 
-        # Generate platforms and enemies
+        # Generate platforms and enemies.
         if self.progress < 9800:
             self.gen_platforms()
             self.gen_enemies()
         elif not self.goal:
             self.gen_goal()
 
-    # All game visuals and their changes go in this method
     def render(self):
-        # Draws the background and buttons
+        """
+        This method handles drawing to the screen all visual aspects of the game. Called in iteration of Game's
+        game_loop() method.
+        """
+
+        # Draw background image.
         self.game.screen.blit(self.game.assets["bg_game"], (0, 0))
 
+        # Call on all entities to draw themselves to the screen.
         for e in self.entities:
             e.render()
 
+        # Call on player to draw itself.
         self.player.render()
 
+        # Draw all buttons using this helper method.
         self.render_buttons()
 
-        # Draw progress bar
+        # Draw progress bar using this helper method.
         self.draw_progress()
 
         # Draw current score
         self.game.draw_text(str(round(self.progress)), 30, self.game.WIDTH / 2, 50)
 
     def draw_progress(self):
+        """
+        This method draws the progress bar that fills up as the player progresses.
+        """
+
         pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH / 3, 10, self.game.WIDTH / 3, 20), 3, 5, 5, 5, 5)
         pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH / 3 + 2, 12,
                                                            min(self.game.WIDTH / 3 * (self.progress / 10000),
                                                                self.game.WIDTH / 3 - 2), 16), 0, 5, 5, 5, 5)
 
     def update_buttons(self):
+        """
+        This method invokes all buttons to update their logic.
+        """
+
         for btn in self.buttons:
             btn.update()
 
     def render_buttons(self):
+        """
+        This method invokes all buttons to draw themselves to the screen.
+        """
+
         for btn in self.buttons:
             btn.render()
