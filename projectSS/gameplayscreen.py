@@ -121,6 +121,7 @@ class GameplayScreen(GameScreen):
 
         # --------------- Pause Screen ------------------ #
         self.paused = False
+        self.pause_key_pressed = False
         self.trans_screen = pygame.Surface((self.game.WIDTH, self.game.HEIGHT)).convert_alpha()
         self.trans_screen.fill((0, 0, 0, 50))
 
@@ -402,11 +403,11 @@ class GameplayScreen(GameScreen):
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_p] or pressed_keys[K_ESCAPE]:
-            self.paused = True
-            pygame.mixer.music.pause()
-        elif pressed_keys[K_c]:
-            self.paused = False
-            pygame.mixer.music.unpause()
+            if not self.pause_key_pressed:
+                self.paused = not self.paused
+                self.pause_key_pressed = True
+        else:
+            self.pause_key_pressed = False
 
         self.update_buttons()  # Update all UI buttons for user interaction.
         if not self.paused:
