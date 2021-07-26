@@ -28,7 +28,7 @@ class GameplayScreen(GameScreen):
                                    self.game.show_settings_screen, self.game)
         self.btn_quit = Button(self.game.WIDTH - 40, 8,
                                self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
-                               sys.exit, self.game)
+                               self.game.show_main_menu_screen, self.game)
         self.buttons = []
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
@@ -119,6 +119,11 @@ class GameplayScreen(GameScreen):
                                self.jump_boost.get_image(64, 0, 64, 64)]
         self.invinc_frames = [self.invincibility.get_image(0, 0, 64, 64),
                               self.invincibility.get_image(64, 0, 64, 64)]
+
+        # --------------- Pause Screen ------------------ #
+        self.paused = False
+        self.trans_screen = pygame.Surface((self.game.WIDTH, self.game.HEIGHT)).convert_alpha()
+        self.trans_screen.fill((0, 0, 0, 50))
 
         # --------------- Debug Variables --------------- #
         self.enable_debug = True  # Change to False for production release to disable debug mode
@@ -228,6 +233,7 @@ class GameplayScreen(GameScreen):
         self.goal = False
         self.progress = 0
         self.rand_dist = 0
+        self.paused = False
 
         # Set up variables for individual levels
         self.set_level_variables()
@@ -395,74 +401,83 @@ class GameplayScreen(GameScreen):
         handles the GameplayScreen's logic and updates its variables when needed.
         """
 
+        pressed_keys = pygame.key.get_pressed()
+        if pressed_keys[K_p] or pressed_keys[K_ESCAPE]:
+            self.paused = True
+            pygame.mixer.music.pause()
+        elif pressed_keys[K_c]:
+            self.paused = False
+            pygame.mixer.music.unpause()
+
         self.update_buttons()  # Update all UI buttons for user interaction.
-        self.update_beat()  # Update rhythm mechanic variables.
-        self.entities.update()  # Call the update method of all entities.
-        self.player.update()  # Update the player character.
+        if not self.paused:
+            self.update_beat()  # Update rhythm mechanic variables.
+            self.entities.update()  # Call the update method of all entities.
+            self.player.update()  # Update the player character.
 
-        # Debug mode
-        if self.enable_debug:
-            pressed_keys = pygame.key.get_pressed()
+            # Debug mode
+            if self.enable_debug:
+                pressed_keys = pygame.key.get_pressed()
 
-            # Enable / Disable debug mode
-            if pressed_keys[K_i]:
-                if not self.debug_key_pressed:
-                    self.debug = not self.debug
-                    self.debug_key_pressed = True
-            else:
-                self.debug_key_pressed = False
+                # Enable / Disable debug mode
+                if pressed_keys[K_i]:
+                    if not self.debug_key_pressed:
+                        self.debug = not self.debug
+                        self.debug_key_pressed = True
+                else:
+                    self.debug_key_pressed = False
 
-            # Create debug platform
-            if self.debug and self.debug_platform is None:
-                self.debug_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
-                self.debug_platform.surf.fill((128, 0, 255))
+                # Create debug platform
+                if self.debug and self.debug_platform is None:
+                    self.debug_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
+                    self.debug_platform.surf.fill((128, 0, 255))
 
-            # Delete debug platform
-            if not self.debug and self.debug_platform is not None:
-                self.debug_platform.kill()
+                # Delete debug platform
+                if not self.debug and self.debug_platform is not None:
+                    self.debug_platform.kill()
 
-            # Keep debug platform at screen edge
-            if self.debug_platform is not None:
-                self.debug_platform.pos.y = self.camera_y + self.game.HEIGHT - 10
-                self.debug_platform.update_rect()
+                # Keep debug platform at screen edge
+                if self.debug_platform is not None:
+                    self.debug_platform.pos.y = self.camera_y + self.game.HEIGHT - 10
+                    self.debug_platform.update_rect()
 
-        # Check if player has hit an enemy, lowering progress by 1500.
-        if self.player.hit and not self.debug:
-            self.player.hit = False
-            self.times_hit += 1
-            self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
-            self.rand_dist = 0
+            # Check if player has hit an enemy, lowering progress by 1500.
+            if self.player.hit and not self.debug:
+                self.player.hit = False
+                self.times_hit += 1
+                self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
+                self.rand_dist = 0
 
-        # Check if the player has died.
-        if not self.player.alive or self.progress < 0:
-            self.game.show_game_over_screen()
+            # Check if the player has died.
+            if not self.player.alive or self.progress < 0:
+                self.game.show_game_over_screen()
 
-        # Check if goal has been reached
-        if self.player.won:
-            # Increment level and show level complete screen
-            self.level += 1
-            self.game.show_level_complete_screen()
+            # Check if goal has been reached
+            if self.player.won:
+                # Increment level and show level complete screen
+                self.level += 1
+                self.game.show_level_complete_screen()
 
-        # allows for screen to scroll up and destroy.
-        if self.player.rect_render.top <= self.game.HEIGHT / 4:
-            self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
+            # allows for screen to scroll up and destroy.
+            if self.player.rect_render.top <= self.game.HEIGHT / 4:
+                self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
 
-            # Don't move camera too far above completion height
-            self.camera_y = max(self.camera_y, -self.distance_requirement - self.game.HEIGHT - 200)
+                # Don't move camera too far above completion height
+                self.camera_y = max(self.camera_y, -self.distance_requirement - self.game.HEIGHT - 200)
 
-            self.despawn_y = self.camera_y + self.game.HEIGHT + 32
+                self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
-        # Tracking player distance/progress, adjusted to start point.
-        if self.player.pos.y + 64 < -self.best_distance:
-            self.best_distance = -(self.player.pos.y + 64)
-            self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
+            # Tracking player distance/progress, adjusted to start point.
+            if self.player.pos.y + 64 < -self.best_distance:
+                self.best_distance = -(self.player.pos.y + 64)
+                self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
 
-        # Generate platforms and enemies.
-        if self.progress < self.distance_requirement - 200:
-            self.gen_platforms()
-            self.gen_enemies()
-        elif not self.goal:
-            self.gen_goal()
+            # Generate platforms and enemies.
+            if self.progress < self.distance_requirement - 200:
+                self.gen_platforms()
+                self.gen_enemies()
+            elif not self.goal:
+                self.gen_goal()
 
     def render(self):
         """
@@ -486,6 +501,10 @@ class GameplayScreen(GameScreen):
         # Draw progress bar using this helper method.
         self.draw_progress()
 
+        # Draws pause screen
+        if self.paused:
+            self.draw_pause_screen()
+
         # Draw current score
         self.game.draw_text(str(round(self.progress)), 30, self.game.WIDTH / 2, 50)
 
@@ -500,6 +519,13 @@ class GameplayScreen(GameScreen):
                                                                        self.progress / self.distance_requirement),
                                                                self.game.WIDTH / 3 - 2), 16), 0, 5, 5, 5, 5)
 
+    def draw_pause_screen(self):
+        """
+        This method draws the pause screen
+        """
+        self.game.screen.blit(self.trans_screen, (0, 0))
+        self.game.draw_text('Paused', 30, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 40)
+        
     def update_buttons(self):
         """
         This method invokes all buttons to update their logic.
