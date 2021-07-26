@@ -97,11 +97,11 @@ class GameplayScreen(GameScreen):
         self.rand_dist = 0
         
         # Enemy and powerup generation chances
-        self.enm_spawn_dist = 1000 # Start spawning at this height
-        self.enm_min_dist = 300 # Lowest random gap between enemies
-        self.enm_max_dist = 500 # Lower limit to highest random gap between enemies
-        self.enm_max_dist_start = 1200 # Initial value to highest random gap
-        self.enm_hit_penalty = 1500 # Amount to lower progress by when hit
+        self.enm_spawn_dist = 1000  # Start spawning at this height
+        self.enm_min_dist = 300  # Lowest random gap between enemies
+        self.enm_max_dist = 500  # Lower limit to highest random gap between enemies
+        self.enm_max_dist_start = 1200  # Initial value to highest random gap
+        self.enm_hit_penalty = 1500  # Amount to lower progress by when hit
         self.enm_pusher_chance = 15
         
         self.pwr_shield_chance = 7
@@ -118,7 +118,7 @@ class GameplayScreen(GameScreen):
                               self.invincibility.get_image(64, 0, 64, 64)]
 
         # --------------- Debug Variables --------------- #
-        self.enable_debug = True # Change to False for production release to disable debug mode
+        self.enable_debug = True  # Change to False for production release to disable debug mode
         self.debug = False
         self.debug_key_pressed = False
         self.debug_platform = None
