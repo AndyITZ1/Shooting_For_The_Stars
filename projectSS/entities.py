@@ -73,6 +73,7 @@ class Player(Entity):
         self.jumping = False
         self.jumped = False
         self.pushed = False
+        self.push_time = 0
 
         # Physics constants
         # TODO: Adjust values for game balance
@@ -129,6 +130,7 @@ class Player(Entity):
         self.immune = False
         self.boosted = False
         self.pushed = False
+        self.push_time = 0
 
     # This method allows us to control our player. Heavy use of physics and kinematics.
     def move(self):
@@ -332,11 +334,13 @@ class Player(Entity):
         push_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.pushers, False)
         for p in push_collisions:
             # If player is in IMMUNE STATE, will lose immunity after hitting 1 enemy
-            if self.immune:
+            if self.immune and time.time() - self.push_time > 0.5:
                 self.game.assets["sfx_loseshield"].play()
+                self.push_time = time.time()
                 self.immune = False
-            if p.active:
+            if p.active and time.time() - self.push_time > 0.5:
                 self.game.assets["sfx_pushed"].play()
+                self.push_time = time.time()
                 self.pushed = True
 
         # Walking to Idle Animation transition
