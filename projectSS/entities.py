@@ -139,17 +139,17 @@ class Player(Entity):
 
         # Check if any keyboard keys have been pressed. Modify acceleration/velocity accordingly.
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[K_LEFT]:
+        if pressed_keys[K_LEFT] or pressed_keys[K_a]:
             self.last_direction = False
             self.play_walk = True
             self.acc.x = -self.ACCELERATION
-        elif pressed_keys[K_RIGHT]:
+        elif pressed_keys[K_RIGHT] or pressed_keys[K_d]:
             self.last_direction = True
             self.play_walk = True
             self.acc.x = self.ACCELERATION
 
         # Player is holding space key? Jump until max jump height is reached. Space key is let go? Stop jump.
-        if pressed_keys[K_SPACE]:
+        if pressed_keys[K_SPACE] or pressed_keys[K_UP] or pressed_keys[K_w]:
             self.jump()
             self.jumping = True
             self.play_jump = True
