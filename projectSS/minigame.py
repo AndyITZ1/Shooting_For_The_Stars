@@ -85,6 +85,8 @@ class MinigameScreen(GameScreen):
         self.ring_ticks = None  # Ring spawn ticks
         self.counter = 7
         self.counter_str = str(self.counter)
+        self.difficulty = 4
+        self.minigame_mode = False
 
         self.active_rings = []
         self.dormant_rings = []
@@ -111,6 +113,9 @@ class MinigameScreen(GameScreen):
         """
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/minigame_bgm.mp3'))
         pygame.mixer.music.play(-1)
+
+        # If the previous minigame was played from main menu, reset the bool.
+        self.minigame_mode = False
 
         self.dormant_rings.clear()
         self.active_rings.clear()
@@ -140,6 +145,7 @@ class MinigameScreen(GameScreen):
             self.max_spawn_time += self.max_spawn_time_delta
         if self.min_spawn_time > self.smallest_min_time:
             self.min_spawn_time += self.min_spawn_time_delta
+        self.difficulty -= 1
 
         # Set the beginning state of MinigameScreen to be in countdown mode.
         self.counting_down = True
@@ -177,14 +183,31 @@ class MinigameScreen(GameScreen):
                         self.active_rings.remove(ring)
                 except ClickedTooLate:
                     # User clicked too late. Return to main menu, for now.
+                    # TODO: Subtract from the distance!
                     self.gameplay_screen.progress += self.punishment
-                    self.game.show_gameplay_screen()
+
+                    if self.game.prev_game_screen == self.game.scrn_main_menu:
+                        self.minigame_mode = True
+                        self.game.show_main_menu_screen()
+                        return
+                    else:
+                        self.minigame_mode = False
+                        self.game.show_gameplay_screen()
+                        return
 
             if not self.active_rings and not self.dormant_rings:
                 # User has successfully clicked all rings in time. Return to main menu, for now.
                 self.gameplay_screen.progress += self.reward
-                self.gameplay_screen.best_distance += self.reward
-                self.game.show_gameplay_screen()
+                self.gameplay_screen.best_distance -= self.reward
+
+                if self.game.prev_game_screen == self.game.scrn_main_menu:
+                    self.minigame_mode = True
+                    self.game.show_main_menu_screen()
+                    return
+                else:
+                    self.minigame_mode = False
+                    self.game.show_gameplay_screen()
+                    return
 
     def render(self):
         """
@@ -194,7 +217,16 @@ class MinigameScreen(GameScreen):
         if self.counting_down:
             self.game.draw_text('Boss battle! Get ready to click!', 40, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 80)
             self.game.draw_text(self.counter_str, 80, self.game.WIDTH / 2, self.game.HEIGHT / 2)
-            return
+
+            difficulty_string = "Difficulty: "
+            if self.difficulty == 3:
+                difficulty_string += "Easy"
+            elif self.difficulty == 2:
+                difficulty_string += "Medium"
+            else:
+                difficulty_string += "Hard"
+
+            self.game.draw_text(difficulty_string, 30, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 80)
         else:
             for ring in self.active_rings:
                 ring.render()

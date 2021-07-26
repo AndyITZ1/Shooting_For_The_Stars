@@ -1,5 +1,4 @@
 import os
-import sys
 import pygame.math
 from projectSS.gamescreen import GameScreen
 from projectSS.menus import Button
@@ -463,7 +462,7 @@ class GameplayScreen(GameScreen):
                 self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
 
                 # Don't move camera too far above completion height
-                self.camera_y = max(self.camera_y, -self.distance_requirement - self.game.HEIGHT - 200)
+                self.camera_y = max(self.camera_y, -self.distance_requirement - (self.enm_hit_penalty * self.times_hit) - self.game.HEIGHT - 200)
 
                 self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
