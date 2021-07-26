@@ -43,6 +43,8 @@ class GameplayScreen(GameScreen):
         self.pushers = pygame.sprite.Group()
         self.bosses = pygame.sprite.Group()
 
+        self.boss_pos = [0, 0]
+
         self.camera_y = 0
         # Despawn point for entities. Anything below this y-limit gets destroyed.
         self.despawn_y = 0
@@ -246,7 +248,9 @@ class GameplayScreen(GameScreen):
         self.gen_platforms(True)
 
         # TODO: Jose's boss debug statement.
-        Boss(self, base_platform.pos.x + 100, base_platform.pos.y - 32, base_platform)
+        self.boss_pos[0] = base_platform.pos.x + 100
+        self.boss_pos[1] = base_platform.pos.y - 32
+        Boss(self, self.boss_pos[0], self.boss_pos[1], base_platform)
 
         # Reset the background music and start the rhythm mechanic timer.
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), self.music_file))
@@ -337,7 +341,6 @@ class GameplayScreen(GameScreen):
         """
 
         # TODO: Create boss generation code here.
-        # TODO: Consider adding a Bool to game.py to indicate whether on_call() should be invoked or not (pause game).
 
         # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
         if self.progress > self.enm_spawn_dist and len(self.enemies) < 3:

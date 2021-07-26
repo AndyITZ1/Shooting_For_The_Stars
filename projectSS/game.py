@@ -1,6 +1,7 @@
-import pygame
 import sys
 import os
+import time
+import pygame
 from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu, LevelCompleteMenu
 from projectSS.gameplayscreen import GameplayScreen
 from projectSS.minigame import MinigameScreen
@@ -11,6 +12,7 @@ from projectSS.minigame import MinigameScreen
 #   Icon made by Freepik from www.flaticon.com
 #   Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
 #   Icon made by iconixor from www.flaticon.com
+#   Boss encounter SFX made by Tony Parsons at dreamstime.com
 #   Music in the background from https://www.FesliyanStudios.com
 
 class Game:
@@ -151,7 +153,13 @@ class Game:
             self.game_screen = self.next_game_screen
             self.next_game_screen = None
 
-            self.game_screen.on_show()  # Call on the new game_screen to initialize itself.
+            if self.prev_game_screen == self.scrn_minigame_screen:
+                # Reload music and reset rhythm mechanic timer.
+                pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
+                pygame.mixer.music.play(-1)
+                self.scrn_gameplay_screen.rhy_start_time = time.time()
+            else:
+                self.game_screen.on_show()  # Call on the new game_screen to initialize itself.
 
         # Call on the current game_screen's update() method to allow it to progress its game logic.
         self.game_screen.update()

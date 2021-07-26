@@ -339,6 +339,10 @@ class Player(Entity):
                 self.game.assets["sfx_pushed"].play()
                 self.pushed = True
 
+        # Walking to Idle Animation transition
+        if self.last_pos.x + 0.005 >= self.pos.x >= self.last_pos.x - 0.005 and self.on_ground:
+            self.play_walk = False
+
         # Check if player hits a boss
         boss_collision = pygame.sprite.spritecollide(self, self.gameplay_screen.bosses, True)
         if boss_collision:
@@ -348,16 +352,13 @@ class Player(Entity):
             while pygame.mixer.get_busy():
                 continue
 
-            # TODO: Play minigame, perhaps in a mini-game loop here
+            # TODO: Set player's position to boss's
+            # Stop player movement, or else character moves in same direction as it was before boss collision.
+            self.vel.x = 0
+            self.vel.y = 0
 
-            # Reload music and reset rhythm mechanic timer.
-            pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
-            pygame.mixer.music.play(-1)
-            self.gameplay_screen.rhy_start_time = time.time()
-
-        # Walking to Idle Animation transition
-        if self.last_pos.x + 0.005 >= self.pos.x >= self.last_pos.x - 0.005 and self.on_ground:
-            self.play_walk = False
+            # Switch to minigame.
+            self.game.show_minigame_screen()
 
 
 # For now, platforms will be represented with gray rectangles.

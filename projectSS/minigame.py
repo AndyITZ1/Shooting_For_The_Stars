@@ -170,11 +170,11 @@ class MinigameScreen(GameScreen):
                         self.active_rings.remove(ring)
                 except ClickedTooLate:
                     # User clicked too late. Return to main menu, for now.
-                    self.game.show_main_menu_screen()
+                    self.game.show_gameplay_screen()
 
             if not self.active_rings and not self.dormant_rings:
                 # User has successfully clicked all rings in time. Return to main menu, for now.
-                self.game.show_main_menu_screen()
+                self.game.show_gameplay_screen()
 
     def render(self):
         """
