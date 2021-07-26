@@ -42,9 +42,9 @@ class GameplayScreen(GameScreen):
         self.enemies = pygame.sprite.Group()
         self.pushers = pygame.sprite.Group()
 
-        # Despawn point for entities. Anything below this y-limit gets destroyed.
         self.camera_y = 0
-        self.despawn_y = self.camera_y + self.game.HEIGHT + 32
+        # Despawn point for entities. Anything below this y-limit gets destroyed.
+        self.despawn_y = 0
 
         # Creation of player character.
         self.player = Player(self)
@@ -56,12 +56,15 @@ class GameplayScreen(GameScreen):
         self.plat_width_min = 70  # Minimum platform width
         self.plat_width_max = 120  # Maximum platform width
         self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
-        self.plat_min_screen_gap = 20  # Minimum horizontal gap between screen edge and platform
         self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
+        self.PLAT_MIN_SCREEN_GAP = 20  # Minimum horizontal gap between screen edge and platform
         self.PLAT_MIN_VERTICAL_GAP = 10  # Minimum distance above the screen a platform can spawn
         self.PLAT_VERTICAL_OFFSET = 20  # Maximum random variation in y position for whole-screen generation
 
         # --------------- Rhythm-Based Mechanic --------------- #
+
+        # Music file
+        self.music_file = 'assets/retrofunk.mp3'
 
         # Rhythm timing variables
         self.rhy_bpm = 165  # Music BPM
@@ -79,6 +82,10 @@ class GameplayScreen(GameScreen):
 
         # --------------- Distance and Score --------------- #
 
+        # Current level
+        self.level = 0
+        self.distance_requirement = 10000
+
         # Keeping track of distance for score
         self.best_distance = 0
         self.progress = 0
@@ -88,6 +95,17 @@ class GameplayScreen(GameScreen):
         # Variables for enemy generation, each 500 dist roll a 1/10 chance to generate a new enemy
         self.enemy_dist = 0
         self.rand_dist = 0
+        
+        # Enemy and powerup generation chances
+        self.enm_spawn_dist = 1000 # Start spawning at this height
+        self.enm_min_dist = 300 # Lowest random gap between enemies
+        self.enm_max_dist = 500 # Lower limit to highest random gap between enemies
+        self.enm_max_dist_start = 1200 # Initial value to highest random gap
+        self.enm_hit_penalty = 1500 # Amount to lower progress by when hit
+        self.enm_pusher_chance = 15
+        
+        self.pwr_shield_chance = 7
+        self.pwr_jump_chance = 7
 
         # --------------- Powerup Sprites --------------- #
 
@@ -98,6 +116,99 @@ class GameplayScreen(GameScreen):
                                self.jump_boost.get_image(64, 0, 64, 64)]
         self.invinc_frames = [self.invincibility.get_image(0, 0, 64, 64),
                               self.invincibility.get_image(64, 0, 64, 64)]
+
+        # --------------- Debug Variables --------------- #
+        self.enable_debug = True # Change to False for production release to disable debug mode
+        self.debug = False
+        self.debug_key_pressed = False
+        self.debug_platform = None
+
+    def set_level_variables(self):
+        """
+        Sets up the gameplay variables for different levels.
+        """
+        
+        # TODO: Balance variables for different levels
+        if self.level == 0:
+            self.distance_requirement = 10000
+            
+            # Music / Rhythm
+            self.music_file = 'assets/retrofunk.mp3'
+            self.rhy_bpm = 165
+            self.rhy_offset = 0.120  # Time (s) to first beat
+            self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
+        
+            # Platform generation
+            self.plat_count = 7  # Total platforms on screen at once
+            self.plat_width_min = 70  # Minimum platform width
+            self.plat_width_max = 120  # Maximum platform width
+            self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
+            self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
+        
+            # Enemies / Powerups
+            self.enm_spawn_dist = 1000
+            self.enm_min_dist = 300
+            self.enm_max_dist = 500
+            self.enm_max_dist_start = 1200
+            self.enm_hit_penalty = 1500
+            self.enm_pusher_chance = 15
+        
+            self.pwr_shield_chance = 7
+            self.pwr_jump_chance = 7
+    
+        elif self.level == 1:
+            self.distance_requirement = 10000
+            
+            # Music / Rhythm
+            self.music_file = 'assets/retrofunk.mp3'
+            self.rhy_bpm = 165
+            self.rhy_offset = 0.120  # Time (s) to first beat
+            self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
+        
+            # Platform generation
+            self.plat_count = 7  # Total platforms on screen at once
+            self.plat_width_min = 70  # Minimum platform width
+            self.plat_width_max = 120  # Maximum platform width
+            self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
+            self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
+        
+            # Enemies / Powerups
+            self.enm_spawn_dist = 1000
+            self.enm_min_dist = 300
+            self.enm_max_dist = 500
+            self.enm_max_dist_start = 1200
+            self.enm_hit_penalty = 1500
+            self.enm_pusher_chance = 15
+        
+            self.pwr_shield_chance = 7
+            self.pwr_jump_chance = 7
+    
+        elif self.level == 2:
+            self.distance_requirement = 10000
+            
+            # Music / Rhythm
+            self.music_file = 'assets/retrofunk.mp3'
+            self.rhy_bpm = 165
+            self.rhy_offset = 0.120  # Time (s) to first beat
+            self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
+        
+            # Platform generation
+            self.plat_count = 7  # Total platforms on screen at once
+            self.plat_width_min = 70  # Minimum platform width
+            self.plat_width_max = 120  # Maximum platform width
+            self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
+            self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
+        
+            # Enemies / Powerups
+            self.enm_spawn_dist = 1000
+            self.enm_min_dist = 300
+            self.enm_max_dist = 500
+            self.enm_max_dist_start = 1200
+            self.enm_hit_penalty = 1500
+            self.enm_pusher_chance = 15
+        
+            self.pwr_shield_chance = 7
+            self.pwr_jump_chance = 7
 
     def on_show(self):
         """
@@ -114,7 +225,10 @@ class GameplayScreen(GameScreen):
         self.goal = False
         self.progress = 0
         self.rand_dist = 0
-
+        
+        # Set up variables for individual levels
+        self.set_level_variables()
+        
         # Reset player character.
         self.player.reset()
 
@@ -125,12 +239,13 @@ class GameplayScreen(GameScreen):
         # Add base platform.
         base_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
         base_platform.surf.fill((255, 0, 0))
+        self.debug_platform = None
 
         # Call the platform generator method to add additional platforms above the base platform.
         self.gen_platforms(True)
 
         # Reset the background music and start the rhythm mechanic timer.
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), self.music_file))
         pygame.mixer.music.play(-1)
         self.rhy_start_time = time.time()
 
@@ -172,16 +287,16 @@ class GameplayScreen(GameScreen):
 
                     # Check which sides of the existing platform have enough room
                     gap_left = (closest_platform.rect.left - self.plat_min_horizontal_gap) \
-                        - self.plat_min_screen_gap - width
-                    gap_right = (self.game.WIDTH - self.plat_min_screen_gap) - \
+                        - self.PLAT_MIN_SCREEN_GAP - width
+                    gap_right = (self.game.WIDTH - self.PLAT_MIN_SCREEN_GAP) - \
                         closest_platform.rect.right + self.plat_min_horizontal_gap - width
 
                     # Generate x with minimum gap
                     if gap_left > 0:
-                        x_left = self.plat_min_screen_gap + int(width / 2) + random.randrange(gap_left)
+                        x_left = self.PLAT_MIN_SCREEN_GAP + int(width / 2) + random.randrange(gap_left)
 
                     if gap_right > 0:
-                        x_right = self.game.WIDTH - self.plat_min_screen_gap - int(width / 2) - random.randrange(
+                        x_right = self.game.WIDTH - self.PLAT_MIN_SCREEN_GAP - int(width / 2) - random.randrange(
                             gap_right)
 
                     if gap_left > 0 and gap_right > 0:
@@ -196,8 +311,8 @@ class GameplayScreen(GameScreen):
 
             # Default random x value.
             if x is None:
-                x = random.randrange(self.plat_min_screen_gap + int(width / 2),
-                                     self.game.WIDTH - (self.plat_min_screen_gap + int(width / 2)))
+                x = random.randrange(self.PLAT_MIN_SCREEN_GAP + int(width / 2),
+                                     self.game.WIDTH - (self.PLAT_MIN_SCREEN_GAP + int(width / 2)))
 
             # Create platform with the calculated x and y values.
             plat = Platform(self, width, x, y)
@@ -221,9 +336,10 @@ class GameplayScreen(GameScreen):
         # TODO: Consider adding a Bool to game.py to indicate whether on_call() should be invoked or not (pause game).
 
         # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
-        if self.progress > 1000 and len(self.enemies) < 3:
+        if self.progress > self.enm_spawn_dist and len(self.enemies) < 3:
             if self.rand_dist == 0:
-                self.rand_dist = random.randrange(300, max(500, 1200 - 100 * (self.progress - 1000) // 1000))
+                self.rand_dist = random.randrange(self.enm_min_dist, max(self.enm_max_dist,
+                                                  self.enm_max_dist_start - 100 * (self.progress - 1000) // 1000))
                 self.enemy_dist = self.progress
             if self.progress - self.enemy_dist > self.rand_dist:
                 Enemy(self,
@@ -238,7 +354,7 @@ class GameplayScreen(GameScreen):
         """
 
         self.goal = True
-        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 200)
+        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 200, True)
         goal_platform.surf.fill((255, 215, 0))  # Goal platform is a solid yellow for now.
 
     def update_beat(self):
@@ -276,29 +392,67 @@ class GameplayScreen(GameScreen):
         self.entities.update()  # Call the update method of all entities.
         self.player.update()    # Update the player character.
 
+        # Debug mode
+        if self.enable_debug:
+            pressed_keys = pygame.key.get_pressed()
+
+            # Enable / Disable debug mode
+            if pressed_keys[K_i]:
+                if not self.debug_key_pressed:
+                    self.debug = not self.debug
+                    self.debug_key_pressed = True
+            else:
+                self.debug_key_pressed = False
+
+            # Create debug platform
+            if self.debug and self.debug_platform is None:
+                self.debug_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
+                self.debug_platform.surf.fill((128, 0, 255))
+            
+            # Delete debug platform
+            if not self.debug and self.debug_platform is not None:
+                self.debug_platform.kill()
+            
+            # Keep debug platform at screen edge
+            if self.debug_platform is not None:
+                self.debug_platform.pos.y = self.camera_y + self.game.HEIGHT - 10
+                self.debug_platform.update_rect()
+
+
         # Check if player has hit an enemy, lowering progress by 1500.
-        if self.player.hit:
+        if self.player.hit and not self.debug:
             self.player.hit = False
             self.times_hit += 1
-            self.progress = self.best_distance - 1500 * self.times_hit
+            self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
             self.rand_dist = 0
 
         # Check if the player has died.
         if not self.player.alive or self.progress < 0:
             self.game.show_game_over_screen()
+        
+        # Check if goal has been reached
+        if self.player.won:
+            # Increment level and show level complete screen
+            self.level += 1
+            self.game.show_level_complete_screen()
 
         # allows for screen to scroll up and destroy.
         if self.player.rect_render.top <= self.game.HEIGHT / 4:
             self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
+            
+            # Don't move camera too far above completion height
+            self.camera_y = max(self.camera_y, -self.distance_requirement - self.game.HEIGHT - 200)
+                
+            
             self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
         # Tracking player distance/progress, adjusted to start point.
         if self.player.pos.y + 64 < -self.best_distance:
             self.best_distance = -(self.player.pos.y + 64)
-            self.progress = -(self.player.pos.y + 64) - 1500 * self.times_hit
+            self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
 
         # Generate platforms and enemies.
-        if self.progress < 9800:
+        if self.progress < self.distance_requirement - 200:
             self.gen_platforms()
             self.gen_enemies()
         elif not self.goal:
@@ -336,7 +490,7 @@ class GameplayScreen(GameScreen):
 
         pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH / 3, 10, self.game.WIDTH / 3, 20), 3, 5, 5, 5, 5)
         pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH / 3 + 2, 12,
-                                                           min(self.game.WIDTH / 3 * (self.progress / 10000),
+                                                           min(self.game.WIDTH / 3 * (self.progress / self.distance_requirement),
                                                                self.game.WIDTH / 3 - 2), 16), 0, 5, 5, 5, 5)
 
     def update_buttons(self):

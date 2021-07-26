@@ -67,6 +67,7 @@ class Player(Entity):
         self.acc = Vector2(0, 0)
 
         self.alive = True
+        self.won = False
         self.hit = False
         self.on_ground = False
         self.jumping = False
@@ -120,6 +121,7 @@ class Player(Entity):
         self.acc.y = 0
 
         self.alive = True
+        self.won = False
         self.hit = False
         self.on_ground = False
         self.jumping = False
@@ -277,6 +279,10 @@ class Player(Entity):
                     self.pos.y = p.rect.top - ((self.rect.height / 2) - 0.1)
                     self.vel.y = 0
                     self.on_ground = True
+                    
+                    # Set win if goal platform
+                    if p.goal:
+                        self.won = True
 
         # If player is not colliding with a platform
         else:
@@ -338,12 +344,13 @@ class Player(Entity):
 
 # For now, platforms will be represented with gray rectangles.
 class Platform(Entity):
-    def __init__(self, gameplay_screen, width, x, y):
+    def __init__(self, gameplay_screen, width, x, y, goal=False):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.platforms)
         self.surf = pygame.Surface((width, 20))
         self.surf.fill((211, 211, 211))
         self.pos.x = x
         self.pos.y = y
+        self.goal = goal
 
         self.update_rect()
 

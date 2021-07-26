@@ -1,7 +1,7 @@
 import pygame
 import sys
 import os
-from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu
+from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu, LevelCompleteMenu
 from projectSS.gameplayscreen import GameplayScreen
 from projectSS.minigame import MinigameScreen
 
@@ -91,6 +91,7 @@ class Game:
         self.scrn_settings_menu = SettingsMenu(self)
         self.scrn_gameplay_screen = GameplayScreen(self)
         self.scrn_gameover_menu = GameOverMenu(self, self.scrn_gameplay_screen)
+        self.scrn_level_complete_menu = LevelCompleteMenu(self, self.scrn_gameplay_screen)
         self.scrn_minigame_screen = MinigameScreen(self)
 
         # Stores the next game screen that will be switched to in the next iteration of Game.update().
@@ -196,7 +197,10 @@ class Game:
     def show_game_over_screen(self):
         self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
         self.next_game_screen = self.scrn_gameover_menu
-
+    
+    def show_level_complete_screen(self):
+        self.next_game_screen = self.scrn_level_complete_menu
+    
     def show_minigame_screen(self):
         self.next_game_screen = self.scrn_minigame_screen
 

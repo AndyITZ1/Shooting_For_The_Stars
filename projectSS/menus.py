@@ -194,3 +194,45 @@ class GameOverMenu(Menu):
         self.game.draw_text('Score: ' + str(self.score), 30, self.center_x, self.center_y - 80)
 
         self.render_buttons()
+
+
+class LevelCompleteMenu(Menu):
+    def __init__(self, game, gameplay_screen):
+        super().__init__(game)
+        self.gameplay_screen = gameplay_screen
+
+        self.btn_continue = Button(self.center_x - 48, self.center_y + 30,
+                                   self.game.assets["btn_play"], self.game.assets["btn_play_light"],
+                                   self.game.show_gameplay_screen, self.game)
+        self.btn_quit = Button(self.center_x + 32, self.center_y + 30,
+                               self.game.assets["btn_quit"], self.game.assets["btn_quit_light"],
+                               self.game.show_main_menu_screen, self.game)
+        
+        self.buttons.append(self.btn_continue)
+        self.buttons.append(self.btn_quit)
+
+    def on_show(self):
+        # TODO: Add level completion music
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
+        pygame.mixer.music.play(-1)
+
+    def update(self):
+        # Don't add continue button after level 3
+        if self.gameplay_screen.level < 3:
+            self.btn_continue.update()
+        
+        self.btn_quit.update()
+
+    def render(self):
+        # Draws the background using the image
+        self.game.screen.blit(self.game.assets["bg_game"], (0, 0))
+
+        # Text
+        self.game.draw_text('Level %d Complete!' % self.gameplay_screen.level, 40, self.center_x, self.center_y - 40)
+        self.game.draw_text('Score: ' + str(self.gameplay_screen.best_distance), 30, self.center_x, self.center_y - 80)
+
+        # Don't add continue button after level 3
+        if self.gameplay_screen.level < 3:
+            self.btn_continue.render()
+
+        self.btn_quit.render()
