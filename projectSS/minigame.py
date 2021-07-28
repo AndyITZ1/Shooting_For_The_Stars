@@ -1,5 +1,6 @@
 import os
 import random
+import time
 from math import sqrt
 import pygame
 from projectSS.gamescreen import GameScreen
@@ -101,11 +102,6 @@ class MinigameScreen(GameScreen):
         self.smallest_min_time = 0.53   # Indicates the smallest value min_spawn_time can be decreased to.
         self.min_spawn_time_delta = -0.16   # Change of min_spawn_time per iteration of minigame.
 
-        # --------------- Minigame Rewards/Punishments -------------- #
-
-        self.reward = 2000
-        self.punishment = -2000
-
     def on_show(self):
         """
         The method is is first run when game.py switches to this GameScreen. It cleans up any and resets any previous
@@ -182,32 +178,28 @@ class MinigameScreen(GameScreen):
                     if clicked:
                         self.active_rings.remove(ring)
                 except ClickedTooLate:
-                    # User clicked too late. Return to main menu, for now.
-                    # TODO: Subtract from the distance!
-                    self.gameplay_screen.progress += self.punishment
-
+                    # User clicked too late. User lost!
                     if self.game.prev_game_screen == self.game.scrn_main_menu:
                         self.minigame_mode = True
+                        self.punishment()
                         self.game.show_main_menu_screen()
                         return
                     else:
                         self.minigame_mode = False
+                        self.punishment()
                         self.game.show_gameplay_screen()
                         return
 
             if not self.active_rings and not self.dormant_rings:
-                # User has successfully clicked all rings in time. Return to main menu, for now.
-                self.gameplay_screen.progress += self.reward
-                self.gameplay_screen.best_distance -= self.reward
-
+                # User has successfully clicked all rings in time. User won!
                 if self.game.prev_game_screen == self.game.scrn_main_menu:
                     self.minigame_mode = True
+                    self.reward()
                     self.game.show_main_menu_screen()
-                    return
                 else:
                     self.minigame_mode = False
+                    self.reward()
                     self.game.show_gameplay_screen()
-                    return
 
     def render(self):
         """
@@ -230,3 +222,46 @@ class MinigameScreen(GameScreen):
         else:
             for ring in self.active_rings:
                 ring.render()
+
+    def reward(self):
+        pygame.mixer.music.stop()
+
+        self.game.screen.blit(self.game.assets["bg_minigame"], (0, 0))
+        self.game.draw_text("Success!", 60, self.game.WIDTH / 2, self.game.HEIGHT / 2)
+
+        if self.game.prev_game_screen != self.game.scrn_main_menu:
+            self.game.draw_text("You will now be granted a massive", 50, self.game.WIDTH / 2,
+                                self.game.HEIGHT / 2 + 80)
+            self.game.draw_text("boost with invincibility!", 50, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 150)
+
+            self.gameplay_screen.player.immune = True
+            self.gameplay_screen.player.vel.y = -50
+
+        pygame.display.update()
+
+        self.game.assets["sfx_boss_win"].play()
+        while pygame.mixer.get_busy():
+            continue
+
+        if self.game.prev_game_screen != self.game.scrn_main_menu:
+            self.game.assets["sfx_boostjump"].play()
+
+    def punishment(self):
+        pygame.mixer.music.stop()
+
+        self.game.screen.blit(self.game.assets["bg_minigame"], (0, 0))
+        self.game.draw_text("Better luck next time!", 60, self.game.WIDTH / 2, self.game.HEIGHT / 2)
+
+        if self.game.prev_game_screen != self.game.scrn_main_menu:
+            self.game.draw_text("Your progress will now", 40, self.game.WIDTH / 2,
+                                self.game.HEIGHT / 2 + 80)
+            self.game.draw_text("decrease by 1500!", 40, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 120)
+
+            self.gameplay_screen.progress -= 1500
+
+        pygame.display.update()
+
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/gameover_bgm.mp3'))
+        pygame.mixer.music.play(-1)
+        time.sleep(3.5)
+        pygame.mixer.music.stop()

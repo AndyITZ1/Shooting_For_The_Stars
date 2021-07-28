@@ -132,12 +132,14 @@ class GameplayScreen(GameScreen):
                               self.pusher_sprite.get_image(60, 132, 60, 66)]
 
         # --------------- Pause Screen ------------------ #
+
         self.paused = False
         self.pause_key_pressed = False
         self.trans_screen = pygame.Surface((self.game.WIDTH, self.game.HEIGHT)).convert_alpha()
         self.trans_screen.fill((0, 0, 0, 50))
 
         # --------------- Debug Variables --------------- #
+
         self.enable_debug = True  # Change to False for production release to disable debug mode
         self.debug = False
         self.debug_key_pressed = False
@@ -382,8 +384,6 @@ class GameplayScreen(GameScreen):
         This method handles the enemy generation using a custom algorithm. Enemy generation increases when player
         reaches higher level progression.
         """
-
-        # TODO: Create boss generation code here.
 
         # enemy generation algorithm 300 to 1200 spaces after 1000, maximum is lowered by 100 every 1000
         if self.progress > self.enm_spawn_dist and len(self.enemies) < 3:

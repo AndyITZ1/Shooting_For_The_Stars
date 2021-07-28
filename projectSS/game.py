@@ -12,7 +12,7 @@ from projectSS.minigame import MinigameScreen
 #   Icon made by Freepik from www.flaticon.com
 #   Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
 #   Icon made by iconixor from www.flaticon.com
-#   Boss encounter SFX made by Tony Parsons at dreamstime.com
+#   Boss encounter & minigame win SFX's made by Tony Parsons at dreamstime.com
 #   Music in the background from https://www.FesliyanStudios.com
 
 class Game:
@@ -68,11 +68,13 @@ class Game:
                          "sfx_loseshield": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/loseshield.wav')),
                          "sfx_pickup": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/pickup.wav')),
                          "enemy_disc": pygame.image.load(os.path.join(abs_dir, 'assets/disc.png')),
-                         "sfx_boss": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/boss_encounter.wav'))}
+                         "sfx_boss": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/boss_encounter.wav')),
+                         "sfx_boss_win": pygame.mixer.Sound(os.path.join(abs_dir, 'assets/boss_win.wav'))}
 
         # SFX List.
         self.sfx = [self.assets["sfx_blip"], self.assets["sfx_hit"], self.assets["sfx_jump"], self.assets["sfx_pushed"],
-                    self.assets["sfx_boostjump"], self.assets["sfx_loseshield"], self.assets["sfx_pickup"]]
+                    self.assets["sfx_boostjump"], self.assets["sfx_loseshield"], self.assets["sfx_pickup"],
+                    self.assets["sfx_boss"], self.assets["sfx_boss_win"]]
 
         # Window caption and icon.
         pygame.display.set_caption("Shooting For The Stars")
