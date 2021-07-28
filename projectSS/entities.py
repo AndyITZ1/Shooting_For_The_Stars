@@ -367,11 +367,11 @@ class Player(Entity):
         push_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.pushers, False)
         for p in push_collisions:
             # If player is in IMMUNE STATE, will lose immunity after hitting 1 enemy
-            if self.immune and time.time() - self.push_time > 0.5:
+            if self.immune and time.time() - self.push_time > 1.0:
                 self.game.assets["sfx_loseshield"].play()
                 self.push_time = time.time()
                 self.immune = False
-            if p.active and time.time() - self.push_time > 0.5:
+            if p.active and time.time() - self.push_time > 1.0:
                 self.game.assets["sfx_pushed"].play()
                 self.push_time = time.time()
                 self.pushed = True
@@ -504,7 +504,6 @@ class Pusher(Entity):
 
         self.animate()
 
-        cur_time = time.time()
         # turn light gray when on beat
         if self.gameplay_screen.rhy_on_beat:
             if self.last_direction:

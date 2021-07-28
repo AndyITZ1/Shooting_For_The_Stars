@@ -455,7 +455,6 @@ class GameplayScreen(GameScreen):
             # Debug mode
             if self.enable_debug:
                 pressed_keys = pygame.key.get_pressed()
-                self.highest_level = 3
                 # Enable / Disable debug mode
                 if pressed_keys[K_i]:
                     if not self.debug_key_pressed:
@@ -538,7 +537,8 @@ class GameplayScreen(GameScreen):
         self.render_buttons()
 
         # Draw progress bar using this helper method.
-        self.draw_progress()
+        if self.level < 3:
+            self.draw_progress()
 
         # Draws pause screen
         if self.paused:
