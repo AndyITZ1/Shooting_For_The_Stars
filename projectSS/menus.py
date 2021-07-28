@@ -74,10 +74,20 @@ class MainMenu(Menu):
                                    self.game.assets["minigame"], self.game.assets["minigame_light"],
                                    self.game.show_minigame_screen, self.game)
 
+        self.btn_level_minus = Button(self.center_x - 92, self.center_y + 92,
+                                    self.game.assets["btn_minus"], self.game.assets["btn_minus_light"],
+                                    self.level_minus, self.game)
+
+        self.btn_level_plus = Button(self.center_x + 42, self.center_y + 92,
+                                   self.game.assets["btn_plus"], self.game.assets["btn_plus_light"],
+                                   self.level_plus, self.game)
+
         self.buttons.append(self.btn_play)
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
         self.buttons.append(self.btn_minigame)
+        self.buttons.append(self.btn_level_plus)
+        self.buttons.append(self.btn_level_minus)
 
     def on_show(self):
         if self.game.prev_game_screen != self.game.scrn_settings_menu:
@@ -93,8 +103,21 @@ class MainMenu(Menu):
 
         # Title text
         self.game.draw_text('Shooting for the Stars', 40, self.center_x, self.center_y - 40)
-
+        if self.game.gameplay.level > self.game.gameplay.highest_level:
+            self.game.draw_text("Locked", 30,
+                                self.center_x-15, self.center_y + 110)
+        else:
+            self.game.draw_text(str(self.game.gameplay.level+1) if self.game.gameplay.level < 3 else "Endless", 30,
+                                self.center_x-15, self.center_y + 110)
         self.render_buttons()
+
+    def level_minus(self):
+        if self.game.gameplay.level > 0:
+            self.game.gameplay.level -= 1
+
+    def level_plus(self):
+        if self.game.gameplay.level < 3:
+            self.game.gameplay.level += 1
 
 
 class SettingsMenu(Menu):
@@ -230,6 +253,8 @@ class LevelCompleteMenu(Menu):
         # Text
         self.game.draw_text('Level %d Complete!' % self.gameplay_screen.level, 40, self.center_x, self.center_y - 40)
         self.game.draw_text('Score: ' + str(self.gameplay_screen.best_distance), 30, self.center_x, self.center_y - 80)
+        if self.gameplay_screen.level > 2:
+            self.game.draw_text('Endless Mode Unlocked', 30, self.center_x, self.center_y - 120)
 
         # Don't add continue button after level 3
         if self.gameplay_screen.level < 3:

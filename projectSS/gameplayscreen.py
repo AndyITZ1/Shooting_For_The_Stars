@@ -86,6 +86,8 @@ class GameplayScreen(GameScreen):
 
         # Current level
         self.level = 0
+        # Highest level
+        self.highest_level = 0
         self.distance_requirement = 10000
 
         # Keeping track of distance for score
@@ -153,7 +155,7 @@ class GameplayScreen(GameScreen):
             # Music / Rhythm
             self.music_file = 'assets/BlipStream.mp3'
             self.rhy_bpm = 75
-            self.rhy_offset = 0  # Time (s) to first beat
+            self.rhy_offset = 0.120  # Time (s) to first beat
             self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
 
             # Platform generation
@@ -221,6 +223,31 @@ class GameplayScreen(GameScreen):
             self.enm_spawn_dist = 1000
             self.enm_min_dist = 300
             self.enm_max_dist = 500
+            self.enm_max_dist_start = 1200
+            self.enm_hit_penalty = 1500
+            self.enm_pusher_chance = 15
+
+            self.pwr_shield_chance = 7
+            self.pwr_jump_chance = 7
+        else:
+            self.distance_requirement = 999999
+            # Music / Rhythm
+            self.music_file = 'assets/retrofunk.mp3'
+            self.rhy_bpm = 165
+            self.rhy_offset = 0.120  # Time (s) to first beat
+            self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
+
+            # Platform generation
+            self.plat_count = 6  # Total platforms on screen at once
+            self.plat_width_min = 70  # Minimum platform width
+            self.plat_width_max = 120  # Maximum platform width
+            self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
+            self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
+
+            # Enemies / Powerups
+            self.enm_spawn_dist = 1000
+            self.enm_min_dist = 400
+            self.enm_max_dist = 900
             self.enm_max_dist_start = 1200
             self.enm_hit_penalty = 1500
             self.enm_pusher_chance = 15
@@ -428,7 +455,7 @@ class GameplayScreen(GameScreen):
             # Debug mode
             if self.enable_debug:
                 pressed_keys = pygame.key.get_pressed()
-
+                self.highest_level = 3
                 # Enable / Disable debug mode
                 if pressed_keys[K_i]:
                     if not self.debug_key_pressed:
@@ -466,6 +493,8 @@ class GameplayScreen(GameScreen):
             if self.player.won:
                 # Increment level and show level complete screen
                 self.level += 1
+                if self.highest_level < self.level:
+                    self.highest_level = self.level
                 self.game.show_level_complete_screen()
 
             # allows for screen to scroll up and destroy.

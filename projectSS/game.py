@@ -201,7 +201,10 @@ class Game:
         self.next_game_screen = self.scrn_settings_menu
 
     def show_gameplay_screen(self):
-        self.next_game_screen = self.scrn_gameplay_screen
+        if self.gameplay.level > self.gameplay.highest_level:
+            self.__assets['sfx_pushed'].play()
+        else:
+            self.next_game_screen = self.scrn_gameplay_screen
 
     def show_previous_game_screen(self):
         self.next_game_screen = self.prev_game_screen
@@ -242,3 +245,7 @@ class Game:
     @property
     def assets(self):
         return self.__assets
+
+    @property
+    def gameplay(self):
+        return self.scrn_gameplay_screen
