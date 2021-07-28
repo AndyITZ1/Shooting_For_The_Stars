@@ -465,29 +465,55 @@ class Pusher(Entity):
     def __init__(self, gameplay_screen, x, y, platform):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.pushers)
         self.plat = platform
-        self.surf = pygame.Surface((25, 25))
-        self.surf.fill((80, 80, 80))
+        self.surf = gameplay_screen.pusher_walk_frames_l[1]
+        # self.surf = pygame.Surface((25, 25))
+        # self.surf.fill((80, 80, 80))
         self.pos.x = x
         self.pos.y = y
         self.active = False
         self.vel = 1
+        self.last_direction = True
+        self.last_update = 0
+        self.current_frame = 0
 
         self.update_rect()
 
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 150:
+            self.last_update = now
+            if self.last_direction:
+                self.current_frame = (self.current_frame + 1) % len(self.gameplay_screen.pusher_walk_frames_r)
+                self.surf = self.gameplay_screen.pusher_walk_frames_r[self.current_frame]
+            else:
+                self.current_frame = (self.current_frame + 1) % len(self.gameplay_screen.pusher_walk_frames_l)
+                self.surf = self.gameplay_screen.pusher_walk_frames_l[self.current_frame]
+
     def update(self):
+        old_pos_x = self.pos.x
         if self.plat.pos.x - self.plat.surf.get_rect().center[0] < self.pos.x < self.plat.pos.x + self.plat.surf.get_rect().center[0]:
             self.pos.x += self.vel
         else:
             self.vel *= -1
             self.pos.x += self.vel
 
+        if self.pos.x > old_pos_x:
+            self.last_direction = True
+        elif self.pos.x < old_pos_x:
+            self.last_direction = False
+
+        self.animate()
+
         cur_time = time.time()
         # turn light gray when on beat
         if self.gameplay_screen.rhy_on_beat:
-            self.surf.fill((80, 80, 80))
+            if self.last_direction:
+                self.surf = self.gameplay_screen.pusher_thrust[1]
+            else:
+                self.surf = self.gameplay_screen.pusher_thrust[0]
             self.active = True
         else:
-            self.surf.fill((30, 30, 30))
+            # self.surf.fill((30, 30, 30))
             self.active = False
 
         self.update_rect()

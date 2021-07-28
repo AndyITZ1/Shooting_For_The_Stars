@@ -119,6 +119,16 @@ class GameplayScreen(GameScreen):
         self.invinc_frames = [self.invincibility.get_image(0, 0, 64, 64),
                               self.invincibility.get_image(64, 0, 64, 64)]
 
+        # --------------- Pusher Sprite ----------------- #
+
+        self.pusher_sprite = Spritesheet(os.path.join(abs_dir, 'assets/pusherspritesheetr.png'))
+        self.pusher_walk_frames_l = [self.pusher_sprite.get_image(0, 0, 60, 66),
+                                     self.pusher_sprite.get_image(0, 66, 60, 66)]
+        self.pusher_walk_frames_r = [self.pusher_sprite.get_image(60, 0, 60, 66),
+                                     self.pusher_sprite.get_image(60, 66, 60, 66)]
+        self.pusher_thrust = [self.pusher_sprite.get_image(0, 132, 60, 66),
+                              self.pusher_sprite.get_image(60, 132, 60, 66)]
+
         # --------------- Pause Screen ------------------ #
         self.paused = False
         self.pause_key_pressed = False
@@ -338,7 +348,7 @@ class GameplayScreen(GameScreen):
             elif random.randrange(100) < 7:
                 Powerup(self, x, y - 25, 'invincible')
             elif random.randrange(100) < 7:
-                Pusher(self, x, y - 23, plat)
+                Pusher(self, x, y - 36, plat)
 
     def gen_enemies(self):
         """
