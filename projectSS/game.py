@@ -156,7 +156,7 @@ class Game:
             if self.prev_game_screen == self.scrn_minigame_screen:
                 if not self.scrn_minigame_screen.minigame_mode:
                     # Reload music and reset rhythm mechanic timer.
-                    pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/retrofunk.mp3'))
+                    pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), self.scrn_gameplay_screen.music_file))
                     pygame.mixer.music.play(-1)
                     self.scrn_gameplay_screen.rhy_start_time = time.time()
                 else:

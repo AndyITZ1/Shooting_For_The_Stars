@@ -148,39 +148,39 @@ class GameplayScreen(GameScreen):
 
         # TODO: Balance variables for different levels
         if self.level == 0:
-            self.distance_requirement = 10000
+            self.distance_requirement = 8000
 
             # Music / Rhythm
-            self.music_file = 'assets/retrofunk.mp3'
-            self.rhy_bpm = 165
-            self.rhy_offset = 0.120  # Time (s) to first beat
+            self.music_file = 'assets/BlipStream.mp3'
+            self.rhy_bpm = 75
+            self.rhy_offset = 0  # Time (s) to first beat
             self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
 
             # Platform generation
-            self.plat_count = 7  # Total platforms on screen at once
-            self.plat_width_min = 70  # Minimum platform width
-            self.plat_width_max = 120  # Maximum platform width
+            self.plat_count = 8  # Total platforms on screen at once
+            self.plat_width_min = 90  # Minimum platform width
+            self.plat_width_max = 130  # Maximum platform width
             self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
             self.plat_max_vertical_gap = 40  # Maximum distance above the screen a platform can spawn
 
             # Enemies / Powerups
             self.enm_spawn_dist = 1000
-            self.enm_min_dist = 300
-            self.enm_max_dist = 500
+            self.enm_min_dist = 600
+            self.enm_max_dist = 800
             self.enm_max_dist_start = 1200
-            self.enm_hit_penalty = 1500
-            self.enm_pusher_chance = 15
+            self.enm_hit_penalty = 1000
+            self.enm_pusher_chance = 0
 
             self.pwr_shield_chance = 7
             self.pwr_jump_chance = 7
 
         elif self.level == 1:
-            self.distance_requirement = 10000
+            self.distance_requirement = 9000
 
             # Music / Rhythm
-            self.music_file = 'assets/retrofunk.mp3'
-            self.rhy_bpm = 165
-            self.rhy_offset = 0.120  # Time (s) to first beat
+            self.music_file = 'assets/8bitmusic.mp3'
+            self.rhy_bpm = 97
+            self.rhy_offset = 0  # Time (s) to first beat
             self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
 
             # Platform generation
@@ -192,11 +192,11 @@ class GameplayScreen(GameScreen):
 
             # Enemies / Powerups
             self.enm_spawn_dist = 1000
-            self.enm_min_dist = 300
-            self.enm_max_dist = 500
+            self.enm_min_dist = 600
+            self.enm_max_dist = 800
             self.enm_max_dist_start = 1200
-            self.enm_hit_penalty = 1500
-            self.enm_pusher_chance = 15
+            self.enm_hit_penalty = 1250
+            self.enm_pusher_chance = 7
 
             self.pwr_shield_chance = 7
             self.pwr_jump_chance = 7
@@ -211,7 +211,7 @@ class GameplayScreen(GameScreen):
             self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
 
             # Platform generation
-            self.plat_count = 7  # Total platforms on screen at once
+            self.plat_count = 6  # Total platforms on screen at once
             self.plat_width_min = 70  # Minimum platform width
             self.plat_width_max = 120  # Maximum platform width
             self.plat_min_horizontal_gap = 20  # Minimum horizontal gap between two platforms
@@ -343,11 +343,11 @@ class GameplayScreen(GameScreen):
 
             # --------------- Powerups and Pusher Spawning --------------- #
 
-            if random.randrange(100) < 15:
+            if random.randrange(100) < self.pwr_jump_chance:
                 Powerup(self, x, y - 25, 'boost')
-            elif random.randrange(100) < 7:
+            elif random.randrange(100) < self.pwr_shield_chance:
                 Powerup(self, x, y - 25, 'invincible')
-            elif random.randrange(100) < 7:
+            elif random.randrange(100) < self.enm_pusher_chance:
                 Pusher(self, x, y - 36, plat)
 
     def gen_enemies(self):
