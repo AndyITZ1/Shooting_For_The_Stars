@@ -126,3 +126,4 @@ pip-selfcheck.json
 /build/
 /dist/
 *.xml
+/projectSS/userData.json

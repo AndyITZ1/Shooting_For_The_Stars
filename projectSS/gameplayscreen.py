@@ -87,8 +87,10 @@ class GameplayScreen(GameScreen):
         # Current level
         self.level = 0
         # Highest level
-        self.highest_level = 0
+        self.highest_level = self.game.user_data[0]
+        self.high_score = self.game.user_data[1]
         self.distance_requirement = 10000
+        self.endless = False
 
         # Keeping track of distance for score
         self.best_distance = 0
@@ -153,6 +155,7 @@ class GameplayScreen(GameScreen):
         # TODO: Balance variables for different levels
         if self.level == 0:
             self.distance_requirement = 8000
+            self.endless = False
 
             # Music / Rhythm
             self.music_file = 'assets/BlipStream.mp3'
@@ -180,6 +183,7 @@ class GameplayScreen(GameScreen):
 
         elif self.level == 1:
             self.distance_requirement = 9000
+            self.endless = False
 
             # Music / Rhythm
             self.music_file = 'assets/8bitmusic.mp3'
@@ -207,6 +211,7 @@ class GameplayScreen(GameScreen):
 
         elif self.level == 2:
             self.distance_requirement = 10000
+            self.endless = False
 
             # Music / Rhythm
             self.music_file = 'assets/retrofunk.mp3'
@@ -232,7 +237,9 @@ class GameplayScreen(GameScreen):
             self.pwr_shield_chance = 7
             self.pwr_jump_chance = 7
         else:
-            self.distance_requirement = 999999
+            self.distance_requirement = float('inf')
+            self.endless = True
+
             # Music / Rhythm
             self.music_file = 'assets/retrofunk.mp3'
             self.rhy_bpm = 165
@@ -465,6 +472,7 @@ class GameplayScreen(GameScreen):
 
                 # Create debug platform
                 if self.debug and self.debug_platform is None:
+                    self.highest_level = 3
                     self.debug_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
                     self.debug_platform.surf.fill((128, 0, 255))
 
@@ -486,6 +494,9 @@ class GameplayScreen(GameScreen):
 
             # Check if the player has died.
             if not self.player.alive or self.progress < 0:
+                if self.endless:
+                    if self.high_score < self.best_distance:
+                        self.high_score = self.best_distance
                 self.game.show_game_over_screen()
 
             # Check if goal has been reached

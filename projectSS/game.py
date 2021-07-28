@@ -2,6 +2,7 @@ import sys
 import os
 import time
 import pygame
+import json
 from projectSS.menus import MainMenu, SettingsMenu, GameOverMenu, LevelCompleteMenu
 from projectSS.gameplayscreen import GameplayScreen
 from projectSS.minigame import MinigameScreen
@@ -84,6 +85,17 @@ class Game:
         self.setting_music_volume = 0.8
         self.setting_sfx_volume = 0.8
         self.update_settings()
+
+        # Saving user data, level and high score
+        self.user_data = [0, 0]
+        if os.path.isfile(os.path.join(abs_dir, 'userData.json')) and os.access(os.path.join(abs_dir, 'userData.json'), os.R_OK):
+            f = open(os.path.join(abs_dir, 'userData.json'), "r")
+            self.user_data = json.load(f)
+            f.close()
+        else:
+            f = open(os.path.join(abs_dir, 'userData.json'), "w")
+            f.write(json.dumps(self.user_data))
+            f.close()
 
         # --------------- Game Logic --------------- #
 
@@ -198,6 +210,7 @@ class Game:
 
     def show_main_menu_screen(self):
         self.next_game_screen = self.scrn_main_menu
+        self.save_user_data()
 
     def show_settings_screen(self):
         self.next_game_screen = self.scrn_settings_menu
@@ -207,16 +220,21 @@ class Game:
             self.__assets['sfx_pushed'].play()
         else:
             self.next_game_screen = self.scrn_gameplay_screen
+            self.save_user_data()
 
     def show_previous_game_screen(self):
         self.next_game_screen = self.prev_game_screen
 
     def show_game_over_screen(self):
         self.scrn_gameover_menu.score = int(self.scrn_gameplay_screen.best_distance)
+        self.scrn_gameover_menu.endless = self.scrn_gameplay_screen.endless
+        self.scrn_gameover_menu.highscore = int(self.scrn_gameplay_screen.high_score)
+        self.save_user_data()
         self.next_game_screen = self.scrn_gameover_menu
     
     def show_level_complete_screen(self):
         self.next_game_screen = self.scrn_level_complete_menu
+        self.save_user_data()
     
     def show_minigame_screen(self):
         self.next_game_screen = self.scrn_minigame_screen
@@ -243,6 +261,14 @@ class Game:
         # Modify all of the stored SFXs' volumes.
         for s in self.sfx:
             s.set_volume(self.setting_sfx_volume * 0.5)
+
+    def save_user_data(self):
+        abs_dir = os.path.dirname(__file__)
+        self.user_data[0] = self.gameplay.highest_level
+        self.user_data[1] = self.gameplay.high_score
+        f = open(os.path.join(abs_dir, 'userData.json'), "w")
+        f.write(json.dumps(self.user_data))
+        f.close()
 
     @property
     def assets(self):

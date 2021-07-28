@@ -186,9 +186,12 @@ class SettingsMenu(Menu):
 
 
 class GameOverMenu(Menu):
-    def __init__(self, game, score=0):
+    def __init__(self, game, score=0, endless=False, highscore=0):
         super().__init__(game)
         self.score = score
+        self.endless = endless
+        self.highscore = highscore
+
         self.btn_retry = Button(self.center_x - 48, self.center_y + 30,
                                 self.game.assets["btn_retry"], self.game.assets["btn_retry_light"],
                                 self.game.show_gameplay_screen, self.game)
@@ -213,7 +216,13 @@ class GameOverMenu(Menu):
         self.game.screen.blit(self.game.assets["bg_game"], (0, 0))
 
         # Text
-        self.game.draw_text('Game Over', 40, self.center_x, self.center_y - 40)
+        if self.endless and self.highscore == self.score:
+            self.game.draw_text('High Score!', 40, self.center_x, self.center_y - 40)
+        elif self.endless:
+            self.game.draw_text('Game Over', 40, self.center_x, self.center_y - 40)
+            self.game.draw_text('High Score: ' + str(self.highscore), 30, self.center_x, self.center_y - 110)
+        else:
+            self.game.draw_text('Game Over', 40, self.center_x, self.center_y - 40)
         self.game.draw_text('Score: ' + str(self.score), 30, self.center_x, self.center_y - 80)
 
         self.render_buttons()
@@ -252,7 +261,7 @@ class LevelCompleteMenu(Menu):
 
         # Text
         self.game.draw_text('Level %d Complete!' % self.gameplay_screen.level, 40, self.center_x, self.center_y - 40)
-        self.game.draw_text('Score: ' + str(self.gameplay_screen.best_distance), 30, self.center_x, self.center_y - 80)
+        self.game.draw_text('Score: ' + str(int(self.gameplay_screen.best_distance)), 30, self.center_x, self.center_y - 80)
         if self.gameplay_screen.level > 2:
             self.game.draw_text('Endless Mode Unlocked', 30, self.center_x, self.center_y - 120)
 
