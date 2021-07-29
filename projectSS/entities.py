@@ -398,15 +398,29 @@ class Player(Entity):
 
 # For now, platforms will be represented with gray rectangles.
 class Platform(Entity):
-    def __init__(self, gameplay_screen, width, x, y, goal=False):
+    def __init__(self, gameplay_screen, width, x, y, color, goal=False):
         super().__init__(gameplay_screen, gameplay_screen.entities, gameplay_screen.platforms)
         self.surf = pygame.Surface((width, 20))
-        self.surf.fill((211, 211, 211))
+        self.surf.fill(color)
+        
+        self.surf_inner = pygame.Surface((width - 8, 12))
+        self.surf_inner.fill((32, 32, 32))
+        self.rect_render_inner = None
+        
         self.pos.x = x
         self.pos.y = y
         self.goal = goal
 
         self.update_rect()
+    
+    def update_rect(self):
+        super().update_rect()
+        self.rect_render_inner = self.surf_inner.get_rect(
+            center=(self.pos.x, self.pos.y - self.gameplay_screen.camera_y))
+    
+    def render(self):
+        super().render()
+        self.game.screen.blit(self.surf_inner, self.rect_render_inner)
 
 
 class Enemy(Entity):
