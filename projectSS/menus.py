@@ -245,7 +245,7 @@ class LevelCompleteMenu(Menu):
 
     def on_show(self):
         # TODO: Add level completion music
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/8bitmusic.mp3'))
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/victory.mp3'))
         pygame.mixer.music.play(-1)
 
     def update(self):
