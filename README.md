@@ -1,6 +1,6 @@
 # Shooting For The Stars
 
-​	Group Project for CIS4930. Designed, built, and cared for by Luan Tran, Daniel Brodbeck, Jose Lopez, Elizaveta Vlasova, and Calvin Yang.
+​	Group Project for CIS4930. Designed, built, and cared for by Luan Tran, Daniel Brodbeck, Jose Lopez, and Calvin Yang.
 
 ---
 
@@ -40,15 +40,19 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
 
 ### Controls
 
-- Left/right arrow keys: move character left/right.
-- space: jump. Hold the jump key to jump higher.
+- Left/right arrow keys OR A/D keys: move character left/right.
+- Up arrow key OR W key OR space: jump. Hold the jump key to jump higher.
 
 ### Mechanics
 
 - Screen wrapping: If your character goes past the screen's border, you wrap around to the other side of the screen. May prove useful to reach far-away platforms or to dodge enemies.
-- Jumping on the beat: If you jump on the music's beat (also indicated when your character turns green), your regular jump becomes empowered. You jump higher and your movement speed is doubled. Helpful when trying to reach far-away platforms.
-- Power-ups: small purple power-ups can be seen randomly on platforms. Picking up these power-ups will super-charge your character, indicated by the orange coloration. This massively boosts your next jump.
-- Enemies: Once you reach higher platforms, yellow enemies will occasionally be spotted moving back and forth based on the music's beat. Touching one of these enemies will kill you, so make sure to avoid them and to time your jumps correctly.
+- Jumping on the beat: If you jump on the music's beat (also indicated when your character either bops their head or if they turn yellow while having the shield powerup), your regular jump becomes empowered. You jump higher and your movement speed is doubled. Helpful when trying to reach far-away platforms.
+- Power-ups: two powerups make prove useful to your adventures. Three yellow arrows indicate a boost powerup. This will make your next jump become empowered! The other powerup is a rainbow music symbol. Picking it up will give you a shield that prevents any enemy damage or effects.
+- Enemies:
+  - Music disc enemies will occasionally be spotted moving back and forth. Touching one of these enemies will set you back in terms of level progress, so make sure to avoid them and to time your jumps correctly. 
+  - Starting at level 2 and above, pusher enemies can be seen moving back and forth on random platforms. Touching them will fling your character away, so be careful to not touch them!
+  - Each level has a boss that can be encountered roughly half-way in the level. If you choose to engage it, be prepared to do a mouse-clicking minigame. Expect high rewards to be granted for passing the boss battle and heavy punishment for failing the minigame!
+- Levels: The game is made up of 3 levels, each harder than the previous, and an endless mode. To unlock harder levels and endless mode, you must first unlock them by beating the previous level. Fear not, because your unlocked levels are saved if you wish to exit the game.
 
 ---
 
@@ -65,7 +69,7 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
 ---
 ## End User Feedback/Experience from outside demo testers
 Controls: Basic controls similar to other games, but easy to pick up on without telling users.
-  
+
 Difficulty: From a new player perspective, the game was difficult and met with frustration between jumps at the beginning. Upon learning about other key features like power-ups and rhythmic jump mechanic without letting the user know the game became less frustrating. 
 
 Pacing of difficulty change upon was not either too fast or slow, since the player had to adapt to key features, but this did not make it quickly easier given other challenges like the rate of power-up spawns and also enemies spawning. 
@@ -90,4 +94,7 @@ Assets:
 Licensed under Creative Commons: By Attribution 3.0
 - Game music: DOVA-SYNDROME HP: https://dova-s.jp/
 http://creativecommons.org/licenses/by/3.0/
+- Game music: https://www.FesliyanStudios.com
 - Game background, by u/ak077: https://www.reddit.com/r/wallpapers/comments/b4eyji/8bit_sunset_2560x1700/
+- Two icons made by users Freepik and Iconixor found at www.flaticon.com
+- Boss encounter and minigame win SFX made by Tony Parsons at www.dreamstime.com

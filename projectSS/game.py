@@ -12,7 +12,6 @@ from projectSS.minigame import MinigameScreen
 # --------------- In-code asset acknowledgement --------------- #
 #
 #   Icon made by Freepik from www.flaticon.com
-#   Icon made by Kiranshastry from www.flaticon.com   # TODO: Delete once minigame testing is complete
 #   Icon made by iconixor from www.flaticon.com
 #   Boss encounter & minigame win SFX's made by Tony Parsons at dreamstime.com
 #   Music in the background from https://www.FesliyanStudios.com
