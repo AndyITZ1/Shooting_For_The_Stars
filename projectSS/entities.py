@@ -102,19 +102,21 @@ class Player(Entity):
                                    self.player_spritesheet.get_image(200, 70, 64, 60)]
         self.player_boost_frames = [self.player_spritesheet.get_image(0, 198, 66, 66),
                                     self.player_spritesheet.get_image(66, 198, 66, 66)]
-        self.invinc_idle_walk_frames_l = [self.player_spritesheet.get_image(0, 264, 66, 66),
-                                          self.player_spritesheet.get_image(130, 198, 66, 66)]
-        self.invinc_idle_walk_frames_r = [self.player_spritesheet.get_image(66, 264, 66, 66),
-                                          self.player_spritesheet.get_image(196, 198, 66, 66)]
+        self.invinc_idle_walk_frames_l = [self.player_spritesheet.get_image(0, 264, 66, 63),
+                                          self.player_spritesheet.get_image(130, 198, 66, 65)]
+        self.invinc_idle_walk_frames_r = [self.player_spritesheet.get_image(66, 264, 66, 63),
+                                          self.player_spritesheet.get_image(196, 198, 66, 65)]
         self.invinc_jump_frames = [self.player_spritesheet.get_image(130, 264, 66, 66),
                                    self.player_spritesheet.get_image(196, 264, 66, 66)]
         # IL, WL, IR, WR, JL, JR
-        self.invinc_rhythm_frames = [self.player_spritesheet.get_image(0, 396, 66, 66),
-                                     self.player_spritesheet.get_image(130, 330, 66, 66),
-                                     self.player_spritesheet.get_image(66, 396, 66, 66),
-                                     self.player_spritesheet.get_image(196, 330, 66, 66),
+        self.invinc_rhythm_frames = [self.player_spritesheet.get_image(0, 396, 66, 63),
+                                     self.player_spritesheet.get_image(130, 330, 66, 65),
+                                     self.player_spritesheet.get_image(66, 396, 66, 63),
+                                     self.player_spritesheet.get_image(196, 330, 66, 65),
                                      self.player_spritesheet.get_image(130, 396, 66, 66),
                                      self.player_spritesheet.get_image(196, 396, 66, 66)]
+        self.invinc_boost = [self.player_spritesheet.get_image(0, 330, 66, 66),
+                             self.player_spritesheet.get_image(66, 330, 66, 66)]
 
     # Reset player variables when starting gameplay
     def reset(self):
@@ -323,9 +325,15 @@ class Player(Entity):
 
         if self.boosted:
             if self.last_direction:
-                self.surf = self.player_boost_frames[1]
+                if self.immune:
+                    self.surf = self.invinc_boost[1]
+                else:
+                    self.surf = self.player_boost_frames[1]
             else:
-                self.surf = self.player_boost_frames[0]
+                if self.immune:
+                    self.surf = self.invinc_boost[0]
+                else:
+                    self.surf = self.player_boost_frames[0]
         else:
             cur_time = time.time()
             # changes to rhythm jump animation when on beat
