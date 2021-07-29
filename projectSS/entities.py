@@ -530,6 +530,7 @@ class Boss(Entity):
         # self.surf.fill((255, 0, 0))
         self.pos.x = x
         self.pos.y = y
+        self.update_rect()
 
     def update(self):
         self.update_rect()
