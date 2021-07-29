@@ -143,7 +143,8 @@ class GameplayScreen(GameScreen):
 
         # --------------- Debug Variables --------------- #
 
-        self.enable_debug = True  # Change to False for production release to disable debug mode
+        # TODO Disable this for production release
+        self.enable_debug = False  # Change to False for production release to disable debug mode
         self.debug = False
         self.debug_key_pressed = False
         self.debug_platform = None
@@ -153,7 +154,6 @@ class GameplayScreen(GameScreen):
         Sets up the gameplay variables for different levels.
         """
 
-        # TODO: Balance variables for different levels
         if self.level == 0:
             self.distance_requirement = 8000
             self.endless = False
@@ -422,7 +422,7 @@ class GameplayScreen(GameScreen):
         """
 
         self.goal = True
-        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 200, True)
+        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 150, True)
         goal_platform.surf.fill((255, 215, 0))  # Goal platform is a solid yellow for now.
 
     def update_beat(self):
@@ -533,7 +533,7 @@ class GameplayScreen(GameScreen):
                 self.progress = self.best_distance - self.enm_hit_penalty * self.times_hit
 
             # Generate platforms and enemies.
-            if self.progress < self.distance_requirement - 200:
+            if self.progress < self.distance_requirement - 150:
                 self.gen_platforms()
                 self.gen_enemies()
             elif not self.goal:

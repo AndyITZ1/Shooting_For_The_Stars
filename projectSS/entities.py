@@ -76,7 +76,6 @@ class Player(Entity):
         self.push_time = 0
 
         # Physics constants
-        # TODO: Adjust values for game balance
         self.ACCELERATION = 0.5
         self.FRICTION = 0.1
         self.AIR_FRICTION = 0.06

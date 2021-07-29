@@ -69,11 +69,11 @@ class MainMenu(Menu):
                                    self.game.assets["btn_settings"], self.game.assets["btn_settings_light"],
                                    self.game.show_settings_screen, self.game)
 
-        # TODO: Delete btn_minigame and its location in buttons when done with minigame testing
-        self.btn_minigame = Button(self.center_x - 32, 8,
-                                   self.game.assets["minigame"], self.game.assets["minigame_light"],
-                                   self.game.show_minigame_screen, self.game)
-
+        # Uncomment this minigame button for testing
+        # self.btn_minigame = Button(self.center_x - 32, 8,
+        #                            self.game.assets["minigame"], self.game.assets["minigame_light"],
+        #                            self.game.show_minigame_screen, self.game)
+        #
         self.btn_level_minus = Button(self.center_x - 92, self.center_y + 92,
                                     self.game.assets["btn_minus"], self.game.assets["btn_minus_light"],
                                     self.level_minus, self.game)
@@ -85,7 +85,7 @@ class MainMenu(Menu):
         self.buttons.append(self.btn_play)
         self.buttons.append(self.btn_quit)
         self.buttons.append(self.btn_settings)
-        self.buttons.append(self.btn_minigame)
+        # self.buttons.append(self.btn_minigame)
         self.buttons.append(self.btn_level_plus)
         self.buttons.append(self.btn_level_minus)
 
