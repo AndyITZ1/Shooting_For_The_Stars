@@ -584,12 +584,11 @@ class GameplayScreen(GameScreen):
         """
         This method draws the progress bar that fills up as the player progresses.
         """
-
-        pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH / 3, 10, self.game.WIDTH / 3, 20), 3, 5, 5, 5, 5)
         pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH / 3 + 2, 12,
                                                            min(self.game.WIDTH / 3 * (
                                                                    self.progress / self.distance_requirement),
                                                                self.game.WIDTH / 3 - 2), 16), 0, 5, 5, 5, 5)
+        pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH / 3, 10, self.game.WIDTH / 3, 20), 3, 5, 5, 5, 5)
 
     def draw_pause_screen(self):
         """
