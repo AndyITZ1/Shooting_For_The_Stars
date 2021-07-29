@@ -259,7 +259,7 @@ class GameplayScreen(GameScreen):
             self.enm_min_dist = 400
             self.enm_max_dist = 900
             self.enm_max_dist_start = 1200
-            self.enm_hit_penalty = 1500
+            self.enm_hit_penalty = 2000
             self.enm_pusher_chance = 15
 
             self.pwr_shield_chance = 7
@@ -567,7 +567,7 @@ class GameplayScreen(GameScreen):
             self.draw_pause_screen()
 
         # Draw current score
-        self.game.draw_text(str(round(self.progress)), 30, self.game.WIDTH / 2, 50)
+        self.game.draw_text(str(round(self.progress)), 30, self.game.WIDTH / 2, 50 if not self.endless else 20)
 
     def draw_progress(self):
         """

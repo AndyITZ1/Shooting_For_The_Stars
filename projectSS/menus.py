@@ -154,9 +154,8 @@ class SettingsMenu(Menu):
         self.update_buttons()
 
     def render(self):
-        # TODO: Why is this a solid color? Shouldn't it just be the same as the main menu bg?
-        # Background color
-        self.game.screen.fill((255, 140, 105))
+        # Draws the background using the image
+        self.game.screen.blit(self.game.assets["bg_main_menu"], (0, 0))
 
         self.game.draw_text('Options', 50, self.center_x, self.center_y - 192)
 
@@ -244,7 +243,6 @@ class LevelCompleteMenu(Menu):
         self.buttons.append(self.btn_quit)
 
     def on_show(self):
-        # TODO: Add level completion music
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'assets/victory.mp3'))
         pygame.mixer.music.play(-1)
 
