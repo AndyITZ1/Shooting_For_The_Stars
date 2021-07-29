@@ -385,7 +385,9 @@ class Player(Entity):
             while pygame.mixer.get_busy():
                 continue
 
-            # TODO: Set player's position to boss's
+            # Set player's position to boss's
+            self.pos = boss_collision[0].pos
+
             # Stop player movement, or else character moves in same direction as it was before boss collision.
             self.vel.x = 0
             self.vel.y = 0
