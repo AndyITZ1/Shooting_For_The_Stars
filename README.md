@@ -53,6 +53,7 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
   - Starting at level 2 and above, pusher enemies can be seen moving back and forth on random platforms. Touching them will fling your character away, so be careful to not touch them!
   - Each level has a boss that can be encountered roughly half-way in the level. If you choose to engage it, be prepared to do a mouse-clicking minigame. Expect high rewards to be granted for passing the boss battle and heavy punishment for failing the minigame!
 - Levels: The game is made up of 3 levels, each harder than the previous, and an endless mode. To unlock harder levels and endless mode, you must first unlock them by beating the previous level. Fear not, because your unlocked levels are saved if you wish to exit the game.
+- Minigame: Encountering a boss will let you play a minigame for high risk, high reward. The goal is to click on the buttons just as the outer blue ring touches it. Just as each level is harder than the previous one, each minigame is harder than the previous one.
 
 ---
 
