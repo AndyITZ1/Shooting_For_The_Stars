@@ -241,6 +241,7 @@ class MinigameScreen(GameScreen):
 
             self.gameplay_screen.player.immune = True
             self.gameplay_screen.player.jumped = False
+            self.gameplay_screen.player.jumping = False
             self.gameplay_screen.player.on_ground = True
             self.gameplay_screen.player.vel.y = -50
 
