@@ -380,7 +380,7 @@ class GameplayScreen(GameScreen):
             # If we haven't spawned a boss for this level and we are at half progress, spawn boss-platform
             if not self.boss_spawned and self.progress >= self.distance_requirement / 2:
                 plat = Platform(self, self.game.WIDTH - 200, self.game.WIDTH / 2, y)
-                Boss(self, plat.pos.x, y - 32, plat)
+                Boss(self, plat.pos.x, y - 52, plat)
                 self.boss_platform_space = -100
                 self.boss_spawned = True
                 continue
