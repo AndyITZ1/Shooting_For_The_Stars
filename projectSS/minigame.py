@@ -10,6 +10,7 @@ class ClickedTooLate(Exception):
     """
     A custom-made exception used if the player did not click on the minigame rings in time.
     """
+
     def __init__(self, message="Didn't click the minigame button in time"):
         self.message = message
 
@@ -18,6 +19,7 @@ class Ring(pygame.sprite.Sprite):
     """
     The class that represents the ring objects that appear in the minigame.
     """
+
     def __init__(self, x, y, sprite, game):
         super().__init__()
         self.x = x
@@ -29,7 +31,7 @@ class Ring(pygame.sprite.Sprite):
         self.height = sprite.get_height()
         self.inner_radius = self.width / 2  # Inner sprite radius. Used in collision detection
         self.outer_radius = 200  # Outer ring. Decreases in size during gameplay. Can be changed.
-        self.outer_radius_delta = -1.75     # The change over time of the outer_radius ring. Can be changed.
+        self.outer_radius_delta = -1.75  # The change over time of the outer_radius ring. Can be changed.
 
         self.mouse_hover = False  # Boolean used in mouse detection.
 
@@ -76,6 +78,7 @@ class MinigameScreen(GameScreen):
     """
     The GameScreen that represents the ring-clicking minigame.
     """
+
     def __init__(self, game, gameplay_screen):
         super().__init__(game)
         self.game = game
@@ -92,15 +95,10 @@ class MinigameScreen(GameScreen):
         self.active_rings = []
         self.dormant_rings = []
 
-        # ----- Ring spawn time variables. All of them can be changed to suite needs of the game -----#
+        # ----- Ring spawn time variables. -----#
 
-        self.max_spawn_time = 2.0   # Indicates the longest spawn time possible.
-        self.smallest_max_time = 1.30   # Indicates the smallest value max_spawn_time can be decreased to.
-        self.max_spawn_time_delta = -0.25   # Change of max_spawn_time per iteration of minigame.
-
-        self.min_spawn_time = 1.0   # Indicates the shortest spawn time possible.
-        self.smallest_min_time = 0.53   # Indicates the smallest value min_spawn_time can be decreased to.
-        self.min_spawn_time_delta = -0.16   # Change of min_spawn_time per iteration of minigame.
+        self.max_spawn_time = None  # Indicates the longest spawn time possible.
+        self.min_spawn_time = None  # Indicates the shortest spawn time possible.
 
     def on_show(self):
         """
@@ -136,16 +134,23 @@ class MinigameScreen(GameScreen):
                 if not collided:
                     self.dormant_rings.append(new_ring)
 
-        # Game speed change.
-        if self.max_spawn_time > self.smallest_max_time:
-            self.max_spawn_time += self.max_spawn_time_delta
-        if self.min_spawn_time > self.smallest_min_time:
-            self.min_spawn_time += self.min_spawn_time_delta
-        self.difficulty -= 1
+        # Ring spawn time variables. All of them can be changed to suite needs of the game
+        if self.gameplay_screen.level == 0:
+            self.difficulty = 0
+            self.max_spawn_time = 1.75
+            self.min_spawn_time = 0.84
+        elif self.gameplay_screen.level == 1:
+            self.difficulty = 1
+            self.max_spawn_time = 1.50
+            self.min_spawn_time = 0.68
+        else:
+            self.difficulty = 2
+            self.max_spawn_time = 1.25
+            self.min_spawn_time = 0.52
 
         # Set the beginning state of MinigameScreen to be in countdown mode.
         self.counting_down = True
-        self.counter = 7    # 7 was chosen since the background music's beat drops after 7 seconds.
+        self.counter = 7  # 7 was chosen since the background music's beat drops after 7 seconds.
         self.counter_str = str(self.counter)
         self.start_ticks = pygame.time.get_ticks()
         self.ring_ticks = pygame.time.get_ticks()
@@ -211,9 +216,9 @@ class MinigameScreen(GameScreen):
             self.game.draw_text(self.counter_str, 80, self.game.WIDTH / 2, self.game.HEIGHT / 2)
 
             difficulty_string = "Difficulty: "
-            if self.difficulty == 3:
+            if self.difficulty == 0:
                 difficulty_string += "Easy"
-            elif self.difficulty == 2:
+            elif self.difficulty == 1:
                 difficulty_string += "Medium"
             else:
                 difficulty_string += "Hard"
@@ -253,11 +258,14 @@ class MinigameScreen(GameScreen):
         self.game.draw_text("Better luck next time!", 60, self.game.WIDTH / 2, self.game.HEIGHT / 2)
 
         if self.game.prev_game_screen != self.game.scrn_main_menu:
-            self.game.draw_text("Your progress will now", 40, self.game.WIDTH / 2,
+            self.game.draw_text("Your progress will now be", 40, self.game.WIDTH / 2,
                                 self.game.HEIGHT / 2 + 80)
-            self.game.draw_text("decrease by 1500!", 40, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 120)
+            self.game.draw_text("decreased substantially!", 40, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 120)
 
-            self.gameplay_screen.progress -= 1500
+            self.gameplay_screen.times_hit += 2
+            self.gameplay_screen.progress = self.gameplay_screen.best_distance - \
+                self.gameplay_screen.enm_hit_penalty * self.gameplay_screen.times_hit
+            self.gameplay_screen.rand_dist = 0
 
         pygame.display.update()
 

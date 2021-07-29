@@ -42,7 +42,8 @@ class GameplayScreen(GameScreen):
         self.pushers = pygame.sprite.Group()
         self.bosses = pygame.sprite.Group()
 
-        self.boss_pos = [0, 0]
+        self.boss_spawned = False
+        self.boss_platform_space = 0
 
         self.camera_y = 0
         # Despawn point for entities. Anything below this y-limit gets destroyed.
@@ -280,6 +281,8 @@ class GameplayScreen(GameScreen):
         self.progress = 0
         self.rand_dist = 0
         self.paused = False
+        self.boss_spawned = False
+        self.boss_platform_space = 0
 
         # Set up variables for individual levels
         self.set_level_variables()
@@ -298,11 +301,6 @@ class GameplayScreen(GameScreen):
 
         # Call the platform generator method to add additional platforms above the base platform.
         self.gen_platforms(True)
-
-        # TODO: Jose's boss debug statement.
-        self.boss_pos[0] = base_platform.pos.x + 100
-        self.boss_pos[1] = base_platform.pos.y - 32
-        Boss(self, self.boss_pos[0], self.boss_pos[1], base_platform)
 
         # Reset the background music and start the rhythm mechanic timer.
         pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), self.music_file))
@@ -335,6 +333,10 @@ class GameplayScreen(GameScreen):
             else:
                 # Generate platforms at the top of the screen, just offscreen.
                 y = self.camera_y - random.randrange(self.PLAT_MIN_VERTICAL_GAP, self.plat_max_vertical_gap)
+                # If the last platform is boss-platform, add extra vertical space to next platform.
+                if self.boss_platform_space != 0:
+                    y += self.boss_platform_space
+                    self.boss_platform_space = 0
 
                 # Find closest existing platform
                 if len(self.platforms) > 0:
@@ -375,7 +377,15 @@ class GameplayScreen(GameScreen):
                                      self.game.WIDTH - (self.PLAT_MIN_SCREEN_GAP + int(width / 2)))
 
             # Create platform with the calculated x and y values.
-            plat = Platform(self, width, x, y)
+            # If we haven't spawned a boss for this level and we are at half progress, spawn boss-platform
+            if not self.boss_spawned and self.progress >= self.distance_requirement / 2:
+                plat = Platform(self, self.game.WIDTH - 200, self.game.WIDTH / 2, y)
+                Boss(self, plat.pos.x, y - 32, plat)
+                self.boss_platform_space = -100
+                self.boss_spawned = True
+                continue
+            else:
+                plat = Platform(self, width, x, y)
 
             # --------------- Powerups and Pusher Spawning --------------- #
 
@@ -397,7 +407,7 @@ class GameplayScreen(GameScreen):
             if self.rand_dist == 0:
                 self.rand_dist = random.randrange(self.enm_min_dist, max(self.enm_max_dist,
                                                                          self.enm_max_dist_start - 100 * (
-                                                                                     self.progress - 1000) // 1000))
+                                                                                 self.progress - 1000) // 1000))
                 self.enemy_dist = self.progress
             if self.progress - self.enemy_dist > self.rand_dist:
                 Enemy(self,
@@ -512,7 +522,8 @@ class GameplayScreen(GameScreen):
                 self.camera_y = self.player.rect.top - self.game.HEIGHT / 4
 
                 # Don't move camera too far above completion height
-                self.camera_y = max(self.camera_y, -self.distance_requirement - (self.enm_hit_penalty * self.times_hit) - self.game.HEIGHT - 200)
+                self.camera_y = max(self.camera_y, -self.distance_requirement - (
+                            self.enm_hit_penalty * self.times_hit) - self.game.HEIGHT - 200)
 
                 self.despawn_y = self.camera_y + self.game.HEIGHT + 32
 
@@ -566,7 +577,7 @@ class GameplayScreen(GameScreen):
         pygame.draw.rect(self.game.screen, (0, 0, 0), (self.game.WIDTH / 3, 10, self.game.WIDTH / 3, 20), 3, 5, 5, 5, 5)
         pygame.draw.rect(self.game.screen, (76, 187, 23), (self.game.WIDTH / 3 + 2, 12,
                                                            min(self.game.WIDTH / 3 * (
-                                                                       self.progress / self.distance_requirement),
+                                                                   self.progress / self.distance_requirement),
                                                                self.game.WIDTH / 3 - 2), 16), 0, 5, 5, 5, 5)
 
     def draw_pause_screen(self):
@@ -575,7 +586,7 @@ class GameplayScreen(GameScreen):
         """
         self.game.screen.blit(self.trans_screen, (0, 0))
         self.game.draw_text('Paused', 30, self.game.WIDTH / 2, self.game.HEIGHT / 2 - 40)
-        
+
     def update_buttons(self):
         """
         This method invokes all buttons to update their logic.
