@@ -309,7 +309,7 @@ class Player(Entity):
         if not self.jumped and plat_collisions:
             for p in plat_collisions:
                 # Place the player on the platform if they are high enough (w/ vel forgiveness) and falling
-                if self.vel.y > 0 and self.rect.bottom < p.rect.centery + self.vel.y:
+                if self.vel.y >= 0 and self.rect.bottom < p.rect.centery + self.vel.y:
                     # Set player to be slightly inside platform, otherwise they will jitter
                     self.pos.y = p.rect.top - ((self.rect.height / 2) - 0.1)
                     self.vel.y = 0
