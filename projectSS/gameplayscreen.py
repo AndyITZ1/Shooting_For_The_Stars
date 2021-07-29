@@ -160,9 +160,9 @@ class GameplayScreen(GameScreen):
 
             # Music / Rhythm
             self.music_file = 'assets/BlipStream.mp3'
-            self.rhy_bpm = 75
-            self.rhy_offset = 0.120  # Time (s) to first beat
-            self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
+            self.rhy_bpm = 150
+            self.rhy_offset = 0.24  # Time (s) to first beat
+            self.rhy_beat_divisions = 0.5  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
 
             # Platform generation
             self.plat_count = 8  # Total platforms on screen at once
@@ -189,7 +189,7 @@ class GameplayScreen(GameScreen):
             # Music / Rhythm
             self.music_file = 'assets/8bitmusic.mp3'
             self.rhy_bpm = 97
-            self.rhy_offset = 0  # Time (s) to first beat
+            self.rhy_offset = 0.132  # Time (s) to first beat
             self.rhy_beat_divisions = 1  # Adjust divisions of beat (2, 4 = faster, 0.5, 0.25 = slower)
 
             # Platform generation

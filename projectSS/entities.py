@@ -426,7 +426,8 @@ class Enemy(Entity):
 
     def update(self):
         # Sine wave oscillation for basic enemies, could be improved
-        self.pos.x = self.start + (self.span * math.sin(time.time() * self.gameplay_screen.rhy_bpm/120 * math.pi) + self.span)
+        self.pos.x = self.start + (self.span * math.sin(time.time() *
+                                  (self.gameplay_screen.rhy_bpm * self.gameplay_screen.rhy_beat_divisions)/120 * math.pi) + self.span)
 
         if self.pos.y > self.gameplay_screen.despawn_y:
             self.kill()
