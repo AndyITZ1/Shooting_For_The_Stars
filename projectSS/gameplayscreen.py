@@ -114,6 +114,11 @@ class GameplayScreen(GameScreen):
         self.pwr_shield_chance = 7
         self.pwr_jump_chance = 7
 
+        # --------------- Level appearance ------------------ #
+        
+        self.plat_color = (255, 128, 0)
+
+
         # --------------- Powerup Sprites --------------- #
 
         abs_dir = os.path.dirname(__file__)
@@ -157,6 +162,9 @@ class GameplayScreen(GameScreen):
         if self.level == 0:
             self.distance_requirement = 8000
             self.endless = False
+            
+            # Appearance
+            self.plat_color = (255, 128, 0)
 
             # Music / Rhythm
             self.music_file = 'assets/BlipStream.mp3'
@@ -185,6 +193,9 @@ class GameplayScreen(GameScreen):
         elif self.level == 1:
             self.distance_requirement = 9000
             self.endless = False
+            
+            # Appearance
+            self.plat_color = (255, 128, 0)
 
             # Music / Rhythm
             self.music_file = 'assets/8bitmusic.mp3'
@@ -213,6 +224,9 @@ class GameplayScreen(GameScreen):
         elif self.level == 2:
             self.distance_requirement = 10000
             self.endless = False
+            
+            # Appearance
+            self.plat_color = (255, 128, 0)
 
             # Music / Rhythm
             self.music_file = 'assets/retrofunk.mp3'
@@ -295,8 +309,7 @@ class GameplayScreen(GameScreen):
             e.kill()
 
         # Add base platform.
-        base_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
-        base_platform.surf.fill((255, 0, 0))
+        base_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0, (255, 0, 0))
         self.debug_platform = None
 
         # Call the platform generator method to add additional platforms above the base platform.
@@ -379,13 +392,13 @@ class GameplayScreen(GameScreen):
             # Create platform with the calculated x and y values.
             # If we haven't spawned a boss for this level and we are at half progress, spawn boss-platform
             if not self.boss_spawned and self.progress >= self.distance_requirement / 2:
-                plat = Platform(self, self.game.WIDTH - 200, self.game.WIDTH / 2, y)
+                plat = Platform(self, self.game.WIDTH - 200, self.game.WIDTH / 2, y, self.plat_color)
                 Boss(self, plat.pos.x, y - 52, plat)
                 self.boss_platform_space = -100
                 self.boss_spawned = True
                 continue
             else:
-                plat = Platform(self, width, x, y)
+                plat = Platform(self, width, x, y, self.plat_color)
 
             # --------------- Powerups and Pusher Spawning --------------- #
 
@@ -422,8 +435,7 @@ class GameplayScreen(GameScreen):
         """
 
         self.goal = True
-        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 150, True)
-        goal_platform.surf.fill((255, 215, 0))  # Goal platform is a solid yellow for now.
+        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 150, (255, 215, 0), True)
 
     def update_beat(self):
         """
@@ -483,8 +495,7 @@ class GameplayScreen(GameScreen):
                 # Create debug platform
                 if self.debug and self.debug_platform is None:
                     self.highest_level = 3
-                    self.debug_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0)
-                    self.debug_platform.surf.fill((128, 0, 255))
+                    self.debug_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, 0, (128, 0, 255))
 
                 # Delete debug platform
                 if not self.debug and self.debug_platform is not None:
