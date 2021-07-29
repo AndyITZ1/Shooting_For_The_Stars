@@ -524,7 +524,8 @@ class Boss(Entity):
         self.plat = platform
         abs_dir = os.path.dirname(__file__)
         self.boss_sprite = Spritesheet(os.path.join(abs_dir, 'assets/boss_sprite.png'))
-        self.surf = self.boss_sprite.get_image(0, 0, 44, 88)
+        self.boss_frame = self.boss_sprite.get_image(0, 0, 44, 88)
+        self.surf = self.boss_frame
         # self.surf = pygame.Surface((32, 32))
         # self.surf.fill((255, 0, 0))
         self.pos.x = x

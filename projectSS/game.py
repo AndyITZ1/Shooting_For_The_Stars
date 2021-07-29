@@ -175,6 +175,8 @@ class Game:
                     self.scrn_gameplay_screen.rhy_start_time = time.time()
                 else:
                     self.game_screen.on_show()
+            elif self.prev_game_screen == self.scrn_settings_menu and self.game_screen == self.scrn_gameplay_screen:
+                pass
             else:
                 self.game_screen.on_show()  # Call on the new game_screen to initialize itself.
 
