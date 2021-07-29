@@ -303,7 +303,8 @@ class Player(Entity):
 
         # Platform collisions
         plat_collisions = pygame.sprite.spritecollide(self, self.gameplay_screen.platforms, False)
-
+        self.on_ground = False
+        
         # Ignore collisions if the player jumped this frame
         if not self.jumped and plat_collisions:
             for p in plat_collisions:
@@ -317,10 +318,6 @@ class Player(Entity):
                     # Set win if goal platform
                     if p.goal:
                         self.won = True
-
-        # If player is not colliding with a platform
-        else:
-            self.on_ground = False
 
         self.update_rect()
 
