@@ -44,7 +44,7 @@ class Ring(pygame.sprite.Sprite):
                             self.y <= self.game.mouse_pos[1] < self.y + self.height)
 
         # Player is hovering over ring, has clicked on it, and the outer ring is the correct size.
-        if self.mouse_hover and self.game.mouse_clicked and 52 <= self.outer_radius <= 67:
+        if self.mouse_hover and self.game.mouse_clicked and 52 <= self.outer_radius <= 72:
             self.game.assets["sfx_blip"].play()
             return True
         else:
@@ -240,6 +240,8 @@ class MinigameScreen(GameScreen):
             self.game.draw_text("boost with invincibility!", 50, self.game.WIDTH / 2, self.game.HEIGHT / 2 + 150)
 
             self.gameplay_screen.player.immune = True
+            self.gameplay_screen.player.jumped = False
+            self.gameplay_screen.player.on_ground = True
             self.gameplay_screen.player.vel.y = -50
 
         pygame.display.update()
