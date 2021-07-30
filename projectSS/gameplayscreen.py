@@ -148,7 +148,6 @@ class GameplayScreen(GameScreen):
 
         # --------------- Debug Variables --------------- #
 
-        # TODO Disable this for production release
         self.enable_debug = False  # Change to False for production release to disable debug mode
         self.debug = False
         self.debug_key_pressed = False

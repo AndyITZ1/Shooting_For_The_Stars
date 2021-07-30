@@ -42,6 +42,8 @@ Project GitHub Repo: https://github.com/Andytr13/Shooting_For_The_Stars
 
 - Left/right arrow keys OR A/D keys: move character left/right.
 - Up arrow key OR W key OR space: jump. Hold the jump key to jump higher.
+- P or ESC to pause the game during gameplay, press again to unpause.
+- Mouse Click and Cursor movement during Rhythm Game Minigame
 
 ### Mechanics
 
