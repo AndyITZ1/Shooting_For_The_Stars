@@ -343,7 +343,7 @@ class GameplayScreen(GameScreen):
                     + random.randrange(-self.PLAT_VERTICAL_OFFSET, self.PLAT_VERTICAL_OFFSET)
 
             # Dynamically generator platforms during gameplay.
-            else:
+            elif not self.goal:
                 # Generate platforms at the top of the screen, just offscreen.
                 y = self.camera_y - random.randrange(self.PLAT_MIN_VERTICAL_GAP, self.plat_max_vertical_gap)
                 # If the last platform is boss-platform, add extra vertical space to next platform.
@@ -435,7 +435,7 @@ class GameplayScreen(GameScreen):
         """
 
         self.goal = True
-        goal_platform = Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 150, (255, 215, 0), True)
+        Platform(self, self.game.WIDTH, self.game.WIDTH / 2, self.camera_y - 150, (255, 215, 0), True)
 
     def update_beat(self):
         """
