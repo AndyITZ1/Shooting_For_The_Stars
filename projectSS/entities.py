@@ -383,6 +383,7 @@ class Player(Entity):
         # Walking to Idle Animation transition
         if self.last_pos.x + 0.005 >= self.pos.x >= self.last_pos.x - 0.005 and self.on_ground:
             self.play_walk = False
+        self.last_pos = self.pos
 
         # Check if player hits a boss
         boss_collision = pygame.sprite.spritecollide(self, self.gameplay_screen.bosses, True)

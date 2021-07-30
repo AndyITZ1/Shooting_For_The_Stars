@@ -243,7 +243,7 @@ class MinigameScreen(GameScreen):
             self.gameplay_screen.player.jumped = False
             self.gameplay_screen.player.jumping = False
             self.gameplay_screen.player.on_ground = True
-            self.gameplay_screen.player.vel.y = -50
+            self.gameplay_screen.player.vel.y = -50.0
 
         pygame.display.update()
 
