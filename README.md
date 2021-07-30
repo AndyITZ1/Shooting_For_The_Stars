@@ -101,3 +101,4 @@ http://creativecommons.org/licenses/by/3.0/
 - Game background, by u/ak077: https://www.reddit.com/r/wallpapers/comments/b4eyji/8bit_sunset_2560x1700/
 - Two icons made by users Freepik and Iconixor found at www.flaticon.com
 - Boss encounter and minigame win SFX made by Tony Parsons at www.dreamstime.com
+- Game player, enemy, and boss sprites created by Lighty and Luan Tran.
